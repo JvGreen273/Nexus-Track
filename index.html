@@ -1,984 +1,1409 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#00f5ff">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>NEXUS TRACK</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg0:#020810; --bg1:#050a14; --bg2:#0a1628; --bg3:#0f1e38;
-      --cyan:#00f5ff; --cyan2:#00c4cc; --cyang:rgba(0,245,255,0.10);
-      --mag:#ff00aa; --green:#00ff88; --amber:#ffaa00; --red:#ff3355;
-      --txt:#e8f4ff; --txt2:#7a9cc4; --txt3:#3d5a7a;
-      --b1:rgba(0,245,255,0.10); --b2:rgba(0,245,255,0.35);
-      --fd:'Orbitron',sans-serif; --fb:'Rajdhani',sans-serif; --fm:'Share Tech Mono',monospace;
-    }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;overflow:hidden}
-    body{font-family:var(--fb);background:var(--bg0);color:var(--txt);font-size:15px}
-    ::-webkit-scrollbar{width:4px}
-    ::-webkit-scrollbar-track{background:var(--bg1)}
-    ::-webkit-scrollbar-thumb{background:var(--cyan2);border-radius:2px}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#00f5ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NEXUS TRACK">
+<meta name="application-name" content="NEXUS TRACK">
+<meta name="description" content="Sistema profesional de rastreo GPS en tiempo real">
+<title>NEXUS TRACK</title>
 
-    /* GRID BG */
-    #gridbg{
-      position:fixed;inset:0;pointer-events:none;z-index:0;
-      background-image:linear-gradient(rgba(0,245,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.025) 1px,transparent 1px);
-      background-size:48px 48px;
-    }
+<!-- PWA Manifest inline -->
+<link rel="manifest" id="manifest-link">
 
-    /* SCREENS */
-    .screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column}
-    .screen.active{display:flex}
+<!-- Apple Touch Icons (para iOS sin App Store) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23020810'/%3E%3Ccircle cx='256' cy='256' r='180' stroke='%2300f5ff' stroke-width='8' fill='none' opacity='.3'/%3E%3Ccircle cx='256' cy='256' r='120' stroke='%2300f5ff' stroke-width='4' fill='none' opacity='.5'/%3E%3Ccircle cx='256' cy='256' r='50' fill='%2300f5ff'/%3E%3Ccircle cx='256' cy='256' r='25' fill='%23020810'/%3E%3C/svg%3E">
 
-    /* ══ AUTH ══ */
-    #auth-screen{align-items:center;justify-content:center;background:var(--bg0)}
-    .auth-wrap{width:100%;max-width:440px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:28px}
-    .brand{text-align:center}
-    .brand-logo{
-      width:70px;height:70px;margin:0 auto 16px;position:relative;
-      display:flex;align-items:center;justify-content:center;
-    }
-    .brand-logo::before,.brand-logo::after{
-      content:'';position:absolute;inset:0;border-radius:50%;border-style:solid;
-    }
-    .brand-logo::before{
-      border:2px solid var(--cyan);
-      box-shadow:0 0 20px rgba(0,245,255,0.3),inset 0 0 20px rgba(0,245,255,0.05);
-      animation:spin 7s linear infinite;border-top-color:transparent;
-    }
-    .brand-logo::after{
-      inset:10px;border:1.5px solid var(--mag);
-      animation:spin 4s linear infinite reverse;border-bottom-color:transparent;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .brand-dot{
-      width:24px;height:24px;background:var(--cyan);border-radius:50%;
-      box-shadow:0 0 18px rgba(0,245,255,0.8);position:relative;z-index:2;
-    }
-    .brand-title{
-      font-family:var(--fd);font-size:30px;font-weight:900;
-      letter-spacing:6px;color:var(--cyan);
-      text-shadow:0 0 30px rgba(0,245,255,0.4);line-height:1;
-    }
-    .brand-sub{color:var(--txt3);font-size:12px;letter-spacing:2px;margin-top:6px}
-    .auth-card{
-      width:100%;background:rgba(10,22,40,0.85);
-      backdrop-filter:blur(24px);border:1px solid var(--b1);border-radius:18px;overflow:hidden;
-    }
-    .auth-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--b1);position:relative}
-    .auth-tab{
-      padding:16px;background:none;border:none;color:var(--txt3);
-      font-family:var(--fd);font-size:10px;letter-spacing:2px;text-transform:uppercase;
-      cursor:pointer;transition:color .2s;
-    }
-    .auth-tab.on{color:var(--cyan)}
-    .tab-bar{
-      position:absolute;bottom:0;left:0;width:50%;height:2px;
-      background:linear-gradient(90deg,var(--cyan),var(--cyan2));
-      box-shadow:0 0 10px rgba(0,245,255,0.6);
-      transition:transform .3s cubic-bezier(.4,0,.2,1);
-    }
-    .auth-form{padding:28px;display:flex;flex-direction:column;gap:14px}
-    .auth-greeting{color:var(--txt2);font-size:16px}
-    .auth-greeting span{color:var(--cyan)}
-    .inp-wrap{position:relative}
-    .inp-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none;font-size:14px}
-    .nx-inp{
-      width:100%;padding:12px 14px 12px 38px;
-      background:var(--bg3);border:1px solid var(--b1);border-radius:8px;
-      color:var(--txt);font-family:var(--fb);font-size:14px;outline:none;
-      transition:border-color .2s,box-shadow .2s;
-    }
-    .nx-inp::placeholder{color:var(--txt3)}
-    .nx-inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,245,255,0.08)}
-    .pw-eye{
-      position:absolute;right:12px;top:50%;transform:translateY(-50%);
-      background:none;border:none;color:var(--txt3);cursor:pointer;font-size:14px;transition:color .2s;
-    }
-    .pw-eye:hover{color:var(--cyan)}
-    .btn-primary{
-      width:100%;padding:13px;
-      background:linear-gradient(135deg,var(--cyan),var(--cyan2));
-      border:none;border-radius:8px;color:var(--bg0);
-      font-family:var(--fd);font-size:11px;font-weight:700;
-      letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .2s;
-    }
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,245,255,0.35)}
-    .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
-    .auth-switch{text-align:center;color:var(--txt3);font-size:13px}
-    .lnk{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:13px;text-decoration:underline}
-    .err-msg{
-      color:var(--red);font-size:12px;text-align:center;
-      display:none;padding:8px;background:rgba(255,51,85,0.08);
-      border:1px solid rgba(255,51,85,0.3);border-radius:6px;
-    }
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
-    /* ══ NAV ══ */
-    .nav{
-      height:54px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
-      padding:0 18px;background:rgba(5,10,20,0.92);backdrop-filter:blur(20px);
-      border-bottom:1px solid var(--b1);position:relative;z-index:200;
-    }
-    .nav-brand{
-      display:flex;align-items:center;gap:10px;font-family:var(--fd);
-      font-size:15px;font-weight:700;letter-spacing:3px;color:var(--cyan);
-    }
-    .nav-logo-sm{
-      width:30px;height:30px;border-radius:50%;border:1.5px solid var(--cyan);
-      display:flex;align-items:center;justify-content:center;background:rgba(0,245,255,0.06);
-    }
-    .nav-logo-sm::before{content:'';width:10px;height:10px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan)}
-    .conn-pill{
-      display:flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;
-      font-family:var(--fd);font-size:9px;letter-spacing:2px;border:1px solid;transition:all .3s;
-    }
-    .conn-pill.online{color:var(--green);border-color:var(--green);background:rgba(0,255,136,0.06)}
-    .conn-pill.offline{color:var(--txt3);border-color:var(--b1)}
-    .conn-dot{width:7px;height:7px;border-radius:50%;background:currentColor}
-    .conn-pill.online .conn-dot{animation:blink 2s infinite}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-    .nav-right{display:flex;align-items:center;gap:10px}
-    .user-chip{
-      display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;
-      background:var(--bg2);border:1px solid var(--b1);border-radius:20px;
-    }
-    .user-av{
-      width:26px;height:26px;border-radius:50%;background:rgba(0,245,255,0.12);
-      border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;
-      font-family:var(--fd);font-size:11px;color:var(--cyan);
-    }
-    .user-name-sm{font-size:12px;color:var(--txt2)}
-    .btn-ghost{
-      background:none;border:none;color:var(--txt3);cursor:pointer;
-      padding:7px;border-radius:6px;font-size:15px;transition:all .2s;
-    }
-    .btn-ghost:hover{color:var(--cyan);background:var(--cyang)}
+<style>
+/* ════════════════════════════════════════════════════
+   NEXUS TRACK — DESIGN SYSTEM FINAL
+   Paleta: Cian eléctrico · Magenta neón · Verde señal
+════════════════════════════════════════════════════ */
+:root{
+  --bg0:#020810; --bg1:#040c18; --bg2:#081422; --bg3:#0c1c30;
+  --bg4:#10243a; --bg5:#162e48;
+  --cyan:#00f5ff; --cyan2:#00d4e0; --cyan3:#009aaa;
+  --cy06:rgba(0,245,255,0.06); --cy10:rgba(0,245,255,0.10);
+  --cy15:rgba(0,245,255,0.15); --cy25:rgba(0,245,255,0.25);
+  --cy40:rgba(0,245,255,0.40);
+  --mag:#ff00aa; --mag2:#cc0088;
+  --mg06:rgba(255,0,170,0.06); --mg15:rgba(255,0,170,0.15);
+  --grn:#00ff88; --grn2:#00cc6a;
+  --gn06:rgba(0,255,136,0.06); --gn15:rgba(0,255,136,0.15);
+  --amb:#ffaa00; --red:#ff3355;
+  --txt0:#f0f8ff; --txt1:#c8ddf0; --txt2:#7a9cc4;
+  --txt3:#3d5a7a; --txt4:#1a2e44;
+  --b0:rgba(0,245,255,0.04); --b1:rgba(0,245,255,0.09);
+  --b2:rgba(0,245,255,0.20); --b3:rgba(0,245,255,0.40);
+  --fd:'Orbitron',sans-serif; --fb:'Rajdhani',sans-serif; --fm:'Share Tech Mono',monospace;
+  --nav:58px; --sb:330px;
+  --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:24px;
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-l:env(safe-area-inset-left,0px);
+  --safe-r:env(safe-area-inset-right,0px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;scroll-behavior:smooth}
+body{
+  font-family:var(--fb);background:var(--bg0);color:var(--txt1);
+  height:100dvh;overflow:hidden;-webkit-font-smoothing:antialiased;
+  -webkit-text-size-adjust:100%;
+}
+::selection{background:var(--cy25);color:var(--cyan)}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--cyan3);border-radius:2px}
 
-    /* ══ APP BODY ══ */
-    .app-body{display:flex;flex:1;overflow:hidden;height:calc(100vh - 54px)}
+/* ── GRID BACKGROUND ── */
+#gridbg{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(0,245,255,0.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,245,255,0.018) 1px,transparent 1px);
+  background-size:52px 52px;
+}
+#gridbg::after{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 100% 50% at 20% 0%,rgba(0,245,255,0.06),transparent),
+    radial-gradient(ellipse 60% 40% at 80% 100%,rgba(255,0,170,0.04),transparent);
+}
 
-    /* ══ SIDEBAR ══ */
-    .sidebar{
-      width:310px;flex-shrink:0;background:rgba(5,10,20,0.92);
-      border-right:1px solid var(--b1);overflow-y:auto;overflow-x:hidden;
-      display:flex;flex-direction:column;z-index:100;
-      transition:transform .3s cubic-bezier(.4,0,.2,1);
-    }
-    .sidebar.closed{transform:translateX(-100%);position:absolute;height:calc(100vh - 54px)}
-    .s-section{padding:16px;border-bottom:1px solid rgba(0,245,255,0.06)}
-    .s-title{
-      font-family:var(--fd);font-size:9px;letter-spacing:2.5px;
-      color:var(--txt3);text-transform:uppercase;margin-bottom:12px;
-      display:flex;align-items:center;gap:6px;
-    }
-    .s-title::before{content:'';width:12px;height:1px;background:var(--cyan);opacity:.4}
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column}
+.screen.active{display:flex}
 
-    /* ETA */
-    .eta-display{background:var(--bg2);border:1px solid var(--b1);border-radius:14px;padding:16px}
-    .eta-label{font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);text-align:center;margin-bottom:12px}
-    .eta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-    .eta-block{background:var(--bg3);border:1px solid var(--b1);border-radius:10px;padding:10px 6px;text-align:center}
-    .eta-num{font-family:var(--fd);font-size:26px;font-weight:700;color:var(--cyan);text-shadow:0 0 15px rgba(0,245,255,0.5);line-height:1}
-    .eta-unit{font-size:9px;color:var(--txt3);letter-spacing:1.5px;margin-top:3px}
-    .eta-dist{text-align:center;font-size:12px;color:var(--txt2);margin-top:10px}
+/* ════════════════════════════════════════════════════
+   AUTH — Pantalla de login/registro
+════════════════════════════════════════════════════ */
+#auth-screen{
+  align-items:center;justify-content:center;
+  background:var(--bg0);overflow-y:auto;
+  padding:max(var(--safe-t),20px) 16px max(var(--safe-b),20px);
+}
+.auth-wrap{
+  width:100%;max-width:420px;
+  display:flex;flex-direction:column;align-items:center;gap:28px;
+}
 
-    /* STATS */
-    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .stat-card{background:var(--bg2);border:1px solid var(--b1);border-radius:10px;padding:10px 12px}
-    .stat-lbl{font-size:10px;color:var(--txt3);letter-spacing:1px}
-    .stat-val{font-family:var(--fm);font-size:13px;color:var(--cyan);margin-top:2px}
+/* Logo animado */
+.logo-orbit{
+  width:90px;height:90px;position:relative;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
+}
+.orbit-ring{position:absolute;border-radius:50%;border-style:solid}
+.or1{inset:0;border:2px solid var(--cyan);border-top-color:transparent;
+     animation:orb 8s linear infinite;box-shadow:0 0 24px var(--cy25),inset 0 0 24px var(--cy06)}
+.or2{inset:12px;border:1.5px solid var(--mag);border-bottom-color:transparent;
+     animation:orb 5s linear infinite reverse}
+.or3{inset:23px;border:1px solid var(--cy40);border-left-color:transparent;
+     animation:orb 13s linear infinite}
+@keyframes orb{to{transform:rotate(360deg)}}
+.orbit-core{
+  width:26px;height:26px;background:var(--cyan);border-radius:50%;position:relative;z-index:2;
+  box-shadow:0 0 24px rgba(0,245,255,0.9),0 0 48px rgba(0,245,255,0.4),0 0 80px rgba(0,245,255,0.15);
+  animation:pulse-core 2.5s ease-in-out infinite;
+}
+@keyframes pulse-core{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.85}}
+.brand-name{
+  font-family:var(--fd);font-size:34px;font-weight:900;
+  letter-spacing:8px;color:var(--cyan);line-height:1;text-align:center;
+  text-shadow:0 0 30px rgba(0,245,255,0.5),0 0 60px rgba(0,245,255,0.2),0 0 100px rgba(0,245,255,0.1);
+  animation:flicker 6s infinite;
+}
+@keyframes flicker{0%,89%,91%,93%,95%,100%{opacity:1}90%,92%,94%{opacity:.92}}
+.brand-sub{
+  color:var(--txt3);font-size:11px;letter-spacing:4px;
+  margin-top:8px;text-align:center;text-transform:uppercase;
+}
+.brand-badges{
+  display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;
+}
+.badge{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 10px;background:var(--bg3);border:1px solid var(--b1);
+  border-radius:20px;font-size:10px;color:var(--txt3);
+  font-family:var(--fd);letter-spacing:1px;
+}
+.badge span{color:var(--cyan);font-size:12px}
 
-    /* BOTONES INTERVALO */
-    .interval-btns{display:flex;flex-wrap:wrap;gap:6px}
-    .int-btn{
-      padding:6px 11px;background:var(--bg3);border:1px solid var(--b1);
-      border-radius:6px;color:var(--txt2);font-family:var(--fd);font-size:9px;
-      letter-spacing:1px;cursor:pointer;transition:all .2s;
-    }
-    .int-btn:hover{border-color:var(--cyan);color:var(--cyan)}
-    .int-btn.on{background:rgba(0,245,255,0.1);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(0,245,255,0.15)}
+/* Auth card */
+.auth-card{
+  width:100%;background:rgba(8,20,34,0.92);
+  backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  border:1px solid var(--b1);border-radius:var(--r-xl);overflow:hidden;
+  box-shadow:0 0 0 1px var(--b0),0 24px 64px rgba(0,0,0,0.6),0 0 80px rgba(0,245,255,0.03);
+}
+.auth-tabs{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-bottom:1px solid var(--b1);position:relative;
+}
+.auth-tab{
+  padding:18px;background:none;border:none;
+  color:var(--txt3);font-family:var(--fd);font-size:10px;
+  letter-spacing:2.5px;text-transform:uppercase;cursor:pointer;transition:color .25s;
+}
+.auth-tab.on{color:var(--cyan)}
+.tab-indicator{
+  position:absolute;bottom:0;left:0;width:50%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  box-shadow:0 0 12px var(--cyan);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.auth-body{padding:28px;display:flex;flex-direction:column;gap:14px}
+.auth-hello{color:var(--txt2);font-size:17px;margin-bottom:4px}
+.auth-hello em{font-style:normal;color:var(--cyan)}
 
-    /* INPUTS */
-    .dest-area{
-      width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--b1);
-      border-radius:8px;color:var(--txt);font-family:var(--fb);font-size:13px;
-      resize:vertical;min-height:70px;outline:none;transition:border-color .2s;
-    }
-    .dest-area::placeholder{color:var(--txt3)}
-    .dest-area:focus{border-color:var(--cyan)}
-    .btn-sec{
-      width:100%;padding:11px;background:none;border:1px solid var(--b2);
-      border-radius:8px;color:var(--cyan);font-family:var(--fd);font-size:10px;
-      letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:8px;
-    }
-    .btn-sec:hover{background:var(--cyang)}
-    .btn-sec:disabled{opacity:.4;cursor:not-allowed}
-    .gps-toggle{
-      width:100%;padding:11px;background:none;border:1px solid rgba(0,255,136,0.3);
-      border-radius:8px;color:var(--green);font-family:var(--fd);font-size:10px;
-      letter-spacing:2px;cursor:pointer;transition:all .2s;
-    }
-    .gps-toggle:hover{background:rgba(0,255,136,0.08)}
-    .gps-toggle.off{border-color:var(--b1);color:var(--txt3)}
+/* Inputs */
+.field{position:relative}
+.field-icon{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  color:var(--txt3);pointer-events:none;font-size:15px;z-index:1;line-height:1;
+}
+.nx-inp{
+  width:100%;padding:13px 42px 13px 42px;
+  background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);
+  color:var(--txt0);font-family:var(--fb);font-size:14px;letter-spacing:.3px;
+  outline:none;transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;appearance:none;
+}
+.nx-inp::placeholder{color:var(--txt4)}
+.nx-inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cy06),0 0 20px var(--cy06)}
+.eye-btn{
+  position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--txt3);cursor:pointer;
+  font-size:14px;padding:4px;transition:color .2s;line-height:1;
+}
+.eye-btn:hover{color:var(--cyan)}
+.err-box{
+  display:none;padding:11px 14px;background:rgba(255,51,85,0.07);
+  border:1px solid rgba(255,51,85,0.25);border-radius:var(--r-sm);
+  color:var(--red);font-size:12px;line-height:1.6;
+}
+.btn-prime{
+  width:100%;padding:15px;margin-top:4px;
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--cyan2) 50%,var(--cyan3) 100%);
+  border:none;border-radius:var(--r-md);color:var(--bg0);
+  font-family:var(--fd);font-size:11px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;cursor:pointer;
+  transition:all .25s;
+  box-shadow:0 4px 20px var(--cy25),0 2px 8px rgba(0,0,0,.3);
+  position:relative;overflow:hidden;
+}
+.btn-prime::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.btn-prime:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--cy40),0 4px 12px rgba(0,0,0,.4)}
+.btn-prime:hover::after{opacity:1}
+.btn-prime:active{transform:translateY(0);box-shadow:0 2px 12px var(--cy25)}
+.btn-prime:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.switch-row{text-align:center;color:var(--txt3);font-size:13px}
+.lnk{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:13px;text-decoration:underline;padding:0}
+.lnk:hover{text-shadow:0 0 10px var(--cy40)}
 
-    /* LOG */
-    .notif-log{display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto}
-    .notif-item{
-      padding:8px 10px;background:var(--bg2);border-left:2px solid var(--cyan);
-      border-radius:0 6px 6px 0;font-size:12px;color:var(--txt2);
-    }
-    .notif-item .ni-time{color:var(--txt3);font-size:10px;font-family:var(--fm);margin-bottom:2px}
-    .notif-item.sms{border-left-color:var(--mag)}
-    .notif-item.warn{border-left-color:var(--amber)}
+/* ════════════════════════════════════════════════════
+   APP — Pantalla principal
+════════════════════════════════════════════════════ */
+#app-screen{background:var(--bg0)}
 
-    /* MAP */
-    .map-wrap{flex:1;position:relative;overflow:hidden}
-    #map{width:100%;height:100%;background:var(--bg1)}
-    .leaflet-tile{filter:invert(1) hue-rotate(180deg) saturate(.55) brightness(.8) !important}
-    .leaflet-control-zoom a{background:var(--bg2) !important;color:var(--cyan) !important;border-color:var(--b1) !important}
-    .leaflet-popup-content-wrapper{background:var(--bg2) !important;border:1px solid var(--b2) !important;color:var(--txt) !important;border-radius:10px !important}
-    .leaflet-popup-tip{background:var(--bg2) !important}
+/* NAV */
+.nav{
+  height:calc(var(--nav) + var(--safe-t));
+  padding-top:var(--safe-t);
+  padding-left:calc(16px + var(--safe-l));
+  padding-right:calc(16px + var(--safe-r));
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  background:rgba(2,8,16,0.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--b1);position:relative;z-index:300;
+  box-shadow:0 1px 0 var(--b0),0 4px 24px rgba(0,0,0,.5);
+}
+.nav-brand{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--fd);font-size:14px;font-weight:700;letter-spacing:3px;
+  color:var(--cyan);text-shadow:0 0 15px var(--cy25);
+}
+.nav-orb{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid var(--cyan);background:var(--cy06);
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.nav-orb::before{
+  content:'';width:10px;height:10px;background:var(--cyan);border-radius:50%;
+  box-shadow:0 0 10px var(--cyan);animation:pulse-core 2s ease-in-out infinite;
+}
+.sig-pill{
+  display:flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;
+  font-family:var(--fd);font-size:8.5px;letter-spacing:2px;border:1px solid;transition:all .4s;
+}
+.sig-pill.on{color:var(--grn);border-color:rgba(0,255,136,.35);background:var(--gn06)}
+.sig-pill.off{color:var(--txt3);border-color:var(--b1)}
+.sig-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.sig-pill.on .sig-dot{animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+.nav-r{display:flex;align-items:center;gap:8px}
+.u-chip{
+  display:flex;align-items:center;gap:8px;
+  padding:4px 12px 4px 4px;background:var(--bg3);border:1px solid var(--b1);border-radius:20px;
+}
+.u-av{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:var(--cy10);border:1px solid var(--b2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:11px;color:var(--cyan);font-weight:700;
+}
+.u-name{font-size:12px;color:var(--txt2);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.icon-btn{
+  background:none;border:none;color:var(--txt3);cursor:pointer;
+  width:36px;height:36px;border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;transition:all .2s;flex-shrink:0;
+}
+.icon-btn:hover{color:var(--cyan);background:var(--cy10)}
 
-    /* MAP OVERLAYS */
-    .map-coords{
-      position:absolute;top:12px;left:12px;z-index:500;
-      background:rgba(5,10,20,0.88);backdrop-filter:blur(12px);
-      border:1px solid var(--b1);border-radius:20px;
-      padding:7px 14px;font-family:var(--fm);font-size:11px;color:var(--txt2);
-    }
-    .map-coords span{color:var(--cyan)}
-    .menu-toggle{
-      position:absolute;top:12px;right:12px;z-index:500;
-      background:rgba(5,10,20,0.88);border:1px solid var(--b1);border-radius:8px;
-      color:var(--cyan);width:36px;height:36px;
-      display:flex;align-items:center;justify-content:center;
-      cursor:pointer;font-size:16px;backdrop-filter:blur(12px);
-    }
-    .pulse-wrap{
-      position:absolute;bottom:20px;right:20px;z-index:500;
-      width:44px;height:44px;display:flex;align-items:center;justify-content:center;
-    }
-    .pulse-ring{
-      position:absolute;inset:-6px;border-radius:50%;
-      border:2px solid var(--cyan);opacity:.3;
-      animation:pulseOut 2s ease-out infinite;
-    }
-    .pulse-ring2{animation-delay:.6s;opacity:.15;inset:-14px}
-    @keyframes pulseOut{0%{transform:scale(.7);opacity:.4}100%{transform:scale(1.3);opacity:0}}
-    .pulse-core{
-      width:44px;height:44px;border-radius:50%;background:var(--bg2);
-      border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:18px;
-    }
+/* BODY */
+.app-body{
+  display:flex;flex:1;overflow:hidden;
+  height:calc(100dvh - var(--nav) - var(--safe-t));
+  position:relative;
+}
 
-    /* DESCARGA */
-    .dl-section{padding:14px 16px;border-top:1px solid rgba(0,245,255,0.06)}
-    .dl-title{font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);margin-bottom:10px}
-    .dl-btns{display:flex;gap:8px}
-    .dl-btn{
-      flex:1;padding:9px 6px;background:var(--bg2);border:1px solid var(--b1);
-      border-radius:8px;color:var(--txt2);font-size:11px;cursor:pointer;
-      transition:all .2s;text-align:center;
-    }
-    .dl-btn:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyang)}
-    .dl-icon{font-size:16px;display:block;margin-bottom:3px}
+/* ════════════════════════════════════════════════════
+   SIDEBAR
+════════════════════════════════════════════════════ */
+.sidebar{
+  width:var(--sb);flex-shrink:0;
+  background:rgba(2,6,14,0.97);border-right:1px solid var(--b1);
+  overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;z-index:200;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform;
+  padding-left:var(--safe-l);
+}
+/* Desktop: sidebar visible por defecto */
+@media(min-width:701px){
+  .sidebar.closed{transform:translateX(calc(-1 * var(--sb)));position:absolute;top:0;bottom:0;left:0}
+  .sidebar:not(.closed){transform:none;position:relative}
+}
+/* Mobile: sidebar oculto por defecto, aparece encima del mapa */
+@media(max-width:700px){
+  .sidebar{position:absolute;top:0;bottom:0;left:0;width:min(var(--sb),92vw);transform:translateX(-100%);z-index:250}
+  .sidebar.open{transform:translateX(0);box-shadow:8px 0 40px rgba(0,0,0,.8)}
+}
 
-    /* TOAST */
-    #toast{
-      position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-      background:var(--bg3);border:1px solid var(--b2);border-radius:10px;
-      padding:11px 22px;font-size:13px;color:var(--txt);
-      z-index:9999;transition:opacity .3s;opacity:0;pointer-events:none;white-space:nowrap;
-    }
-    #toast.show{opacity:1}
+.ss{padding:15px 16px;border-bottom:1px solid rgba(0,245,255,0.04)}
+.ss-title{
+  font-family:var(--fd);font-size:8px;letter-spacing:3px;color:var(--txt3);
+  text-transform:uppercase;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.ss-title::before{
+  content:'';width:16px;height:1px;flex-shrink:0;
+  background:linear-gradient(90deg,var(--cyan),transparent);opacity:.5;
+}
 
-    /* SPINNER */
-    .spin{
-      display:inline-block;width:14px;height:14px;
-      border:2px solid rgba(0,0,0,.2);border-top-color:var(--bg0);
-      border-radius:50%;animation:spin .6s linear infinite;
-    }
+/* ETA DISPLAY */
+.eta-box{
+  background:linear-gradient(160deg,var(--bg3),var(--bg4));
+  border:1px solid var(--b1);border-radius:var(--r-lg);padding:18px;
+  position:relative;overflow:hidden;
+}
+.eta-box::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.35;
+}
+.eta-lbl{
+  font-family:var(--fd);font-size:7.5px;letter-spacing:2.5px;color:var(--txt3);
+  text-align:center;margin-bottom:16px;text-transform:uppercase;
+}
+.eta-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.eta-cell{
+  background:rgba(0,0,0,.45);border:1px solid var(--b1);border-radius:var(--r-md);
+  padding:13px 6px;text-align:center;transition:all .3s;
+}
+.eta-cell.hi{border-color:var(--b2);background:var(--cy06);box-shadow:inset 0 0 20px var(--cy06)}
+.eta-n{
+  font-family:var(--fd);font-size:30px;font-weight:800;color:var(--cyan);
+  text-shadow:0 0 24px rgba(0,245,255,.7);line-height:1;letter-spacing:2px;
+}
+.eta-u{font-size:8px;color:var(--txt3);letter-spacing:2px;margin-top:5px;text-transform:uppercase}
+.eta-info{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  border-top:1px solid var(--b0);padding-top:12px;font-size:12px;color:var(--txt2);
+}
 
-    @media(max-width:700px){
-      .sidebar{position:absolute;height:calc(100vh - 54px)}
-      .sidebar:not(.closed){box-shadow:4px 0 30px rgba(0,0,0,.6)}
-      .user-name-sm{display:none}
-    }
-  </style>
+/* STATS */
+.stats-2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.s-card{
+  background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);
+  padding:11px 12px;transition:border-color .2s;
+}
+.s-card:hover{border-color:var(--b2)}
+.s-lbl{font-size:8.5px;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.s-val{font-family:var(--fm);font-size:13px;color:var(--cyan);line-height:1.3;word-break:break-all}
+
+/* INTERVAL BUTTONS */
+.int-wrap{display:flex;flex-wrap:wrap;gap:6px}
+.int-b{
+  padding:6px 11px;background:var(--bg3);border:1px solid var(--b1);
+  border-radius:6px;color:var(--txt3);font-family:var(--fd);font-size:8.5px;
+  letter-spacing:1px;cursor:pointer;transition:all .2s;user-select:none;
+}
+.int-b:hover{border-color:var(--b2);color:var(--txt2)}
+.int-b.on{background:var(--cy06);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 14px var(--cy10)}
+
+/* CONTROLS */
+.dest-ta{
+  width:100%;padding:12px 14px;background:var(--bg3);border:1px solid var(--b1);
+  border-radius:var(--r-md);color:var(--txt0);font-family:var(--fb);font-size:14px;
+  resize:vertical;min-height:76px;outline:none;transition:border-color .2s;
+  -webkit-appearance:none;line-height:1.6;
+}
+.dest-ta::placeholder{color:var(--txt4)}
+.dest-ta:focus{border-color:var(--cyan);box-shadow:0 0 0 2px var(--cy06)}
+.btn-cyan{
+  width:100%;padding:13px;background:none;border:1px solid var(--b2);
+  border-radius:var(--r-md);color:var(--cyan);font-family:var(--fd);
+  font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:9px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-cyan:hover{background:var(--cy06);box-shadow:0 0 24px var(--cy10);border-color:var(--b3)}
+.btn-cyan:disabled{opacity:.4;cursor:not-allowed}
+.btn-grn{
+  width:100%;padding:12px;background:none;border:1px solid rgba(0,255,136,.2);
+  border-radius:var(--r-md);color:var(--grn);font-family:var(--fd);
+  font-size:9.5px;letter-spacing:2px;cursor:pointer;transition:all .2s;
+}
+.btn-grn:hover{background:var(--gn06);border-color:rgba(0,255,136,.4)}
+.btn-grn.off{border-color:var(--b1);color:var(--txt3)}
+.btn-grn.off:hover{border-color:var(--b2);color:var(--txt2)}
+
+/* NOTIF LOG */
+.nlog{display:flex;flex-direction:column;gap:5px;max-height:160px;overflow-y:auto}
+.nlog-item{
+  padding:9px 11px;background:var(--bg3);
+  border-left:2px solid var(--cyan);border-radius:0 var(--r-sm) var(--r-sm) 0;
+  font-size:12px;color:var(--txt2);
+}
+.nlog-item .ni-t{color:var(--txt3);font-size:9.5px;font-family:var(--fm);margin-bottom:3px}
+.nlog-item.m{border-left-color:var(--mag)}
+.nlog-item.e{border-left-color:var(--amb)}
+.nlog-item.g{border-left-color:var(--txt3)}
+
+/* ════════════════════════════════════════════════════
+   INSTALL SECTION — La magia del botón de descarga
+════════════════════════════════════════════════════ */
+.install-section{padding:16px}
+.install-title{
+  font-family:var(--fd);font-size:8px;letter-spacing:3px;
+  color:var(--txt3);margin-bottom:12px;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+}
+.install-title::before{content:'';width:16px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent);opacity:.5}
+
+/* Botón de instalación principal — el centro de atención */
+.install-main-btn{
+  width:100%;padding:16px;margin-bottom:10px;
+  background:linear-gradient(135deg,rgba(0,245,255,0.12) 0%,rgba(0,245,255,0.06) 100%);
+  border:1px solid var(--b2);border-radius:var(--r-lg);
+  cursor:pointer;transition:all .3s;position:relative;overflow:hidden;
+  display:flex;align-items:center;gap:14px;
+}
+.install-main-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--cy15),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.install-main-btn:hover{border-color:var(--cyan);box-shadow:0 0 30px var(--cy15),inset 0 0 30px var(--cy06)}
+.install-main-btn:hover::before{opacity:1}
+.install-main-btn:active{transform:scale(.98)}
+.imb-icon{font-size:28px;flex-shrink:0;position:relative;z-index:1}
+.imb-text{text-align:left;position:relative;z-index:1}
+.imb-title{font-family:var(--fd);font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:2px;margin-bottom:3px}
+.imb-sub{font-size:11px;color:var(--txt2);line-height:1.4}
+.imb-badge{
+  margin-left:auto;padding:4px 10px;background:var(--cy10);
+  border:1px solid var(--b2);border-radius:20px;
+  font-family:var(--fd);font-size:8px;color:var(--cyan);letter-spacing:1px;
+  flex-shrink:0;position:relative;z-index:1;white-space:nowrap;
+}
+
+/* Botones secundarios de plataforma */
+.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.plat-btn{
+  background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);
+  padding:12px 10px;text-align:center;cursor:pointer;transition:all .25s;
+}
+.plat-btn:hover{border-color:var(--b2);background:var(--cy06);transform:translateY(-1px)}
+.plat-btn:active{transform:translateY(0)}
+.pb-icon{font-size:20px;margin-bottom:5px;display:block;line-height:1}
+.pb-name{font-family:var(--fd);font-size:8.5px;letter-spacing:1px;color:var(--txt2);margin-bottom:2px}
+.pb-sub{font-size:10px;color:var(--txt3)}
+
+/* ════════════════════════════════════════════════════
+   MAP
+════════════════════════════════════════════════════ */
+.map-wrap{flex:1;position:relative;overflow:hidden;min-width:0}
+#map{width:100%;height:100%;background:var(--bg1)}
+.leaflet-tile{filter:invert(1) hue-rotate(180deg) saturate(.45) brightness(.72) !important}
+.leaflet-control-zoom{margin-top:12px !important;margin-right:12px !important}
+.leaflet-control-zoom a{
+  background:rgba(2,8,16,.92) !important;backdrop-filter:blur(12px) !important;
+  color:var(--cyan) !important;border-color:var(--b1) !important;
+  width:34px !important;height:34px !important;line-height:34px !important;font-size:16px !important;
+}
+.leaflet-popup-content-wrapper{
+  background:rgba(8,20,34,.96) !important;border:1px solid var(--b2) !important;
+  color:var(--txt1) !important;border-radius:14px !important;
+  backdrop-filter:blur(20px) !important;
+  box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 0 1px var(--b0) !important;
+}
+.leaflet-popup-tip{background:rgba(8,20,34,.96) !important}
+.leaflet-popup-content{font-family:var(--fb);font-size:13px;line-height:1.6;min-width:160px}
+
+/* MAP OVERLAYS */
+.ov{
+  position:absolute;z-index:500;
+  background:rgba(2,8,16,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--b1);border-radius:var(--r-md);
+}
+#ov-coords{
+  top:12px;left:12px;padding:8px 15px;
+  font-family:var(--fm);font-size:11px;color:var(--txt2);
+  display:flex;align-items:center;gap:6px;
+}
+#ov-coords .cl{color:var(--cyan);font-size:8.5px;letter-spacing:1px}
+.fab-menu{
+  position:absolute;top:12px;right:12px;z-index:500;
+  width:40px;height:40px;border-radius:10px;
+  background:rgba(2,8,16,.92);backdrop-filter:blur(16px);
+  border:1px solid var(--b1);color:var(--cyan);font-size:18px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;
+}
+.fab-menu:hover{background:var(--cy10);border-color:var(--b2);box-shadow:0 0 20px var(--cy10)}
+
+/* GPS PULSE */
+.pulse-wrap{
+  position:absolute;bottom:calc(20px + var(--safe-b));right:16px;z-index:500;
+  width:52px;height:52px;display:flex;align-items:center;justify-content:center;
+}
+.pr{position:absolute;border-radius:50%;border:1.5px solid var(--cyan);animation:pranim 2.4s ease-out infinite}
+.pr1{inset:-4px;opacity:.4}
+.pr2{inset:-12px;opacity:.22;animation-delay:.8s}
+.pr3{inset:-22px;opacity:.1;animation-delay:1.6s}
+@keyframes pranim{0%{transform:scale(.6);opacity:.5}100%{transform:scale(1.5);opacity:0}}
+.p-core{
+  width:52px;height:52px;border-radius:50%;
+  background:var(--bg2);border:1px solid var(--b3);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  box-shadow:0 0 24px var(--cy15);
+}
+
+/* MOBILE BOTTOM BAR */
+.mob-bar{
+  display:none;
+  height:calc(56px + var(--safe-b));
+  padding-bottom:var(--safe-b);
+  padding-left:var(--safe-l);padding-right:var(--safe-r);
+  background:rgba(2,8,16,.98);border-top:1px solid var(--b1);
+  grid-template-columns:repeat(4,1fr);align-items:center;
+  flex-shrink:0;position:relative;z-index:250;
+}
+.mb-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:none;border:none;cursor:pointer;padding:8px;transition:all .2s;width:100%;
+}
+.mb-btn .mi{font-size:19px;line-height:1}
+.mb-btn .ml{font-family:var(--fd);font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;transition:color .2s}
+.mb-btn.on .ml,.mb-btn:hover .ml{color:var(--cyan)}
+
+/* OVERLAY CERRAR SIDEBAR EN MOBILE */
+#sb-overlay{
+  display:none;position:absolute;inset:0;z-index:240;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
+}
+
+/* MODAL */
+.modal-wrap{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.modal-wrap.show{opacity:1;pointer-events:all}
+.modal{
+  background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r-xl);
+  padding:28px;max-width:480px;width:100%;
+  box-shadow:0 0 80px rgba(0,0,0,.7),0 0 0 1px var(--b0);
+  transform:translateY(20px);transition:transform .3s;
+}
+.modal-wrap.show .modal{transform:translateY(0)}
+.modal-h{font-family:var(--fd);font-size:12px;letter-spacing:3px;color:var(--cyan);margin-bottom:16px}
+.modal p{color:var(--txt2);font-size:14px;line-height:1.75;margin-bottom:12px}
+.modal code{
+  display:block;background:var(--bg0);border:1px solid var(--b1);border-radius:var(--r-sm);
+  padding:13px;font-family:var(--fm);font-size:12px;color:var(--cyan);
+  margin:10px 0;white-space:pre-wrap;word-break:break-all;line-height:1.7;
+}
+.modal-steps{counter-reset:step;list-style:none;padding:0;margin-bottom:12px}
+.modal-steps li{
+  counter-increment:step;padding:8px 0 8px 32px;position:relative;
+  color:var(--txt2);font-size:14px;border-bottom:1px solid var(--b0);
+}
+.modal-steps li::before{
+  content:counter(step);position:absolute;left:0;top:8px;
+  width:20px;height:20px;border-radius:50%;background:var(--cy10);border:1px solid var(--b2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:9px;color:var(--cyan);font-weight:700;
+  line-height:1;text-align:center;padding-top:5px;
+}
+.modal-close{
+  width:100%;padding:12px;margin-top:16px;background:none;
+  border:1px solid var(--b2);border-radius:var(--r-md);color:var(--cyan);
+  font-family:var(--fd);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;
+}
+.modal-close:hover{background:var(--cy06);box-shadow:0 0 20px var(--cy10)}
+
+/* TOAST */
+#toast{
+  position:fixed;bottom:calc(80px + var(--safe-b));left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r-md);
+  padding:12px 22px;font-size:13px;color:var(--txt1);
+  z-index:9999;transition:opacity .3s,transform .3s;
+  opacity:0;pointer-events:none;max-width:90vw;text-align:center;
+  box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 1px var(--b0);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* SPINNER */
+.spin{
+  display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(0,0,0,.1);border-top-color:var(--bg0);
+  border-radius:50%;animation:orb .7s linear infinite;vertical-align:middle;
+}
+
+/* ════════════ RESPONSIVE ════════════ */
+@media(max-width:700px){
+  .mob-bar{display:grid}
+  .u-name{display:none}
+  .sig-pill{display:none}
+  .brand-name{font-size:26px;letter-spacing:5px}
+  .eta-n{font-size:24px}
+  .app-body{height:calc(100dvh - var(--nav) - var(--safe-t) - 56px - var(--safe-b))}
+}
+@media(max-width:380px){
+  .brand-name{font-size:22px;letter-spacing:4px}
+  .int-b{font-size:8px;padding:5px 8px}
+}
+</style>
 </head>
 <body>
+
 <div id="gridbg"></div>
 <div id="toast"></div>
 
-<!-- ══════ AUTH ══════ -->
+<!-- MODAL ESCRITORIO -->
+<div class="modal-wrap" id="modal-desktop">
+  <div class="modal">
+    <div class="modal-h">VERSIÓN DE ESCRITORIO — ELECTRON</div>
+    <p>Para instalar NEXUS TRACK como app nativa (.exe / .dmg / .AppImage):</p>
+    <ol class="modal-steps">
+      <li>Descarga Node.js desde <strong style="color:var(--cyan)">nodejs.org</strong> e instálalo</li>
+      <li>Descarga el proyecto ZIP desde el botón de arriba</li>
+      <li>Descomprímelo y abre la carpeta en una terminal</li>
+      <li>Ejecuta los siguientes comandos:</li>
+    </ol>
+    <code>npm install
+npm run build:web
+
+# Elige tu plataforma:
+npm run build:win    # → Windows (.exe instalador)
+npm run build:mac    # → Mac (.dmg)
+npm run build:linux  # → Linux (.AppImage)</code>
+    <p style="font-size:12px;color:var(--txt3)">El instalador quedará en <strong style="color:var(--txt2)">dist-electron/</strong> — ejecútalo como cualquier instalador.</p>
+    <button class="modal-close" id="modal-close-desktop">ENTENDIDO ✓</button>
+  </div>
+</div>
+
+<!-- MODAL iOS -->
+<div class="modal-wrap" id="modal-ios">
+  <div class="modal">
+    <div class="modal-h">INSTALAR EN iPHONE / iPAD</div>
+    <p>En iOS no hay prompt automático, pero se instala en 3 pasos:</p>
+    <ol class="modal-steps">
+      <li>Abre esta página en <strong style="color:var(--cyan)">Safari</strong> (no Chrome)</li>
+      <li>Toca el botón <strong style="color:var(--cyan)">Compartir</strong> (cuadro con flecha hacia arriba)</li>
+      <li>Selecciona <strong style="color:var(--cyan)">"Añadir a pantalla de inicio"</strong></li>
+    </ol>
+    <p style="font-size:12px;color:var(--txt3)">La app se instalará como ícono en tu pantalla de inicio, igual que una app de la App Store. Sin costo, sin tienda.</p>
+    <button class="modal-close" id="modal-close-ios">ENTENDIDO ✓</button>
+  </div>
+</div>
+
+<!-- ════════════ AUTH SCREEN ════════════ -->
 <div id="auth-screen" class="screen active">
   <div class="auth-wrap">
-    <div class="brand">
-      <div class="brand-logo"><div class="brand-dot"></div></div>
-      <div class="brand-title">NEXUS TRACK</div>
-      <div class="brand-sub">SISTEMA DE RASTREO GPS EN TIEMPO REAL</div>
+    <!-- BRAND -->
+    <div style="text-align:center">
+      <div class="logo-orbit">
+        <div class="orbit-ring or1"></div>
+        <div class="orbit-ring or2"></div>
+        <div class="orbit-ring or3"></div>
+        <div class="orbit-core"></div>
+      </div>
+      <div class="brand-name">NEXUS TRACK</div>
+      <div class="brand-sub">Sistema de rastreo GPS en tiempo real</div>
+      <div class="brand-badges">
+        <div class="badge"><span>🛰</span> GPS en vivo</div>
+        <div class="badge"><span>🔔</span> Alertas auto</div>
+        <div class="badge"><span>📱</span> Instala gratis</div>
+      </div>
     </div>
+
+    <!-- CARD -->
     <div class="auth-card">
       <div class="auth-tabs">
         <button class="auth-tab on" id="tab-login">Iniciar Sesión</button>
         <button class="auth-tab" id="tab-register">Registrarse</button>
-        <div class="tab-bar" id="tab-bar"></div>
+        <div class="tab-indicator" id="tab-ind"></div>
       </div>
+
       <!-- LOGIN -->
-      <div id="form-login" class="auth-form">
-        <p class="auth-greeting">Bienvenido, <span>operador</span></p>
-        <div class="inp-wrap">
-          <span class="inp-icon">✉</span>
+      <div id="form-login" class="auth-body">
+        <p class="auth-hello">Bienvenido, <em>operador</em></p>
+        <div class="field">
+          <span class="field-icon">✉</span>
           <input class="nx-inp" type="email" id="l-email" placeholder="Correo electrónico" autocomplete="email">
         </div>
-        <div class="inp-wrap">
-          <span class="inp-icon">🔒</span>
+        <div class="field">
+          <span class="field-icon">🔒</span>
           <input class="nx-inp" type="password" id="l-pass" placeholder="Contraseña" autocomplete="current-password">
-          <button class="pw-eye" id="l-eye">👁</button>
+          <button class="eye-btn" id="l-eye">👁</button>
         </div>
-        <p class="err-msg" id="l-err"></p>
-        <button class="btn-primary" id="l-btn">ACCEDER AL SISTEMA</button>
-        <p class="auth-switch">¿Sin cuenta? <button class="lnk" id="go-register">Crear cuenta</button></p>
+        <p class="err-box" id="l-err"></p>
+        <button class="btn-prime" id="l-btn">ACCEDER AL SISTEMA</button>
+        <p class="switch-row">¿Sin cuenta? <button class="lnk" id="go-reg">Registrarse gratis</button></p>
       </div>
+
       <!-- REGISTER -->
-      <div id="form-register" class="auth-form" style="display:none">
-        <p class="auth-greeting">Únete a la red <span>NEXUS</span></p>
-        <div class="inp-wrap">
-          <span class="inp-icon">👤</span>
+      <div id="form-register" class="auth-body" style="display:none">
+        <p class="auth-hello">Únete a la red <em>NEXUS</em></p>
+        <div class="field">
+          <span class="field-icon">👤</span>
           <input class="nx-inp" type="text" id="r-name" placeholder="Nombre completo" autocomplete="name">
         </div>
-        <div class="inp-wrap">
-          <span class="inp-icon">🏷</span>
+        <div class="field">
+          <span class="field-icon">🏷</span>
           <input class="nx-inp" type="text" id="r-nick" placeholder="¿Cómo quieres ser llamado?">
         </div>
-        <div class="inp-wrap">
-          <span class="inp-icon">✉</span>
+        <div class="field">
+          <span class="field-icon">✉</span>
           <input class="nx-inp" type="email" id="r-email" placeholder="Correo electrónico" autocomplete="email">
         </div>
-        <div class="inp-wrap">
-          <span class="inp-icon">📱</span>
-          <input class="nx-inp" type="tel" id="r-phone" placeholder="Celular (ej: +57 300 000 0000)">
+        <div class="field">
+          <span class="field-icon">📱</span>
+          <input class="nx-inp" type="tel" id="r-phone" placeholder="Celular con indicativo: +57 300...">
         </div>
-        <div class="inp-wrap">
-          <span class="inp-icon">🔒</span>
+        <div class="field">
+          <span class="field-icon">🔒</span>
           <input class="nx-inp" type="password" id="r-pass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password">
-          <button class="pw-eye" id="r-eye">👁</button>
+          <button class="eye-btn" id="r-eye">👁</button>
         </div>
-        <p class="err-msg" id="r-err"></p>
-        <button class="btn-primary" id="r-btn">ACTIVAR CUENTA</button>
-        <p class="auth-switch">¿Ya tienes cuenta? <button class="lnk" id="go-login">Iniciar sesión</button></p>
+        <p class="err-box" id="r-err"></p>
+        <button class="btn-prime" id="r-btn">ACTIVAR CUENTA</button>
+        <p class="switch-row">¿Ya tienes cuenta? <button class="lnk" id="go-login">Iniciar sesión</button></p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══════ APP ══════ -->
+<!-- ════════════ APP SCREEN ════════════ -->
 <div id="app-screen" class="screen">
+
+  <!-- NAV -->
   <nav class="nav">
     <div class="nav-brand">
-      <div class="nav-logo-sm"></div>
-      NEXUS<span style="color:var(--txt3);margin:0 4px">·</span>TRACK
+      <div class="nav-orb"></div>
+      <span>NEXUS<span style="opacity:.35;margin:0 3px">·</span>TRACK</span>
     </div>
-    <div class="conn-pill offline" id="conn-pill">
-      <div class="conn-dot"></div>
-      <span id="conn-txt">SIN SEÑAL</span>
+    <div class="sig-pill off" id="sig-pill">
+      <div class="sig-dot"></div>
+      <span id="sig-txt">SIN SEÑAL</span>
     </div>
-    <div class="nav-right">
-      <div class="user-chip">
-        <div class="user-av" id="user-av">?</div>
-        <span class="user-name-sm" id="user-name-sm">—</span>
+    <div class="nav-r">
+      <div class="u-chip">
+        <div class="u-av" id="u-av">?</div>
+        <span class="u-name" id="u-name">—</span>
       </div>
-      <button class="btn-ghost" id="logout-btn" title="Cerrar sesión">⎋</button>
+      <button class="icon-btn" id="logout-btn" title="Cerrar sesión">⎋</button>
     </div>
   </nav>
-  <div class="app-body">
+
+  <div class="app-body" id="app-body">
+    <!-- Overlay para cerrar sidebar en mobile -->
+    <div id="sb-overlay"></div>
+
+    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <div class="s-section">
-        <div class="s-title">Dispositivo GPS</div>
-        <select class="nx-inp" id="device-select" style="padding-left:12px">
-          <option value="device_01">Tracker Principal #01</option>
-          <option value="device_02">Tracker Secundario #02</option>
-          <option value="mobile_gps">Dispositivo Móvil</option>
+
+      <!-- DISPOSITIVO -->
+      <div class="ss">
+        <div class="ss-title">Dispositivo GPS</div>
+        <select class="nx-inp" id="device-sel" style="padding-left:13px;cursor:pointer;padding-right:8px">
+          <option value="device_01">🚛 Tracker Principal #01</option>
+          <option value="device_02">📦 Tracker Secundario #02</option>
+          <option value="mobile_gps">📱 Dispositivo Móvil</option>
+          <option value="custom">⚙️ Personalizado...</option>
         </select>
-        <button class="gps-toggle off" id="gps-btn" style="margin-top:8px">📡 USAR MI UBICACIÓN</button>
-      </div>
-      <div class="s-section">
-        <div class="s-title">Calcular Destino</div>
-        <textarea class="dest-area" id="dest-input" placeholder="Ej: Calle 72 #10-34, Bogotá, Colombia&#10;o cualquier dirección del mundo"></textarea>
-        <button class="btn-sec" id="calc-btn">🔍 CALCULAR ETA</button>
-      </div>
-      <div class="s-section">
-        <div class="s-title">Tiempo Estimado</div>
-        <div class="eta-display">
-          <div class="eta-label">TIEMPO DE LLEGADA ESTIMADO</div>
-          <div class="eta-grid">
-            <div class="eta-block"><div class="eta-num" id="eta-d">--</div><div class="eta-unit">DÍAS</div></div>
-            <div class="eta-block"><div class="eta-num" id="eta-h">--</div><div class="eta-unit">HORAS</div></div>
-            <div class="eta-block"><div class="eta-num" id="eta-m">--</div><div class="eta-unit">MINS</div></div>
+        <div id="custom-id-wrap" style="display:none;margin-top:8px">
+          <div class="field">
+            <span class="field-icon">📡</span>
+            <input class="nx-inp" type="text" id="custom-device-id" placeholder="ID del dispositivo en Firebase">
           </div>
-          <div class="eta-dist" id="eta-dist">Distancia: — km</div>
         </div>
+        <button class="btn-grn off" id="gps-btn" style="margin-top:9px">
+          📡 USAR MI UBICACIÓN GPS
+        </button>
       </div>
-      <div class="s-section">
-        <div class="s-title">Datos en Vivo</div>
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-lbl">VELOCIDAD</div><div class="stat-val" id="s-speed">-- km/h</div></div>
-          <div class="stat-card"><div class="stat-lbl">ACTUALIZADO</div><div class="stat-val" id="s-upd">--:--:--</div></div>
-          <div class="stat-card"><div class="stat-lbl">LATITUD</div><div class="stat-val" id="s-lat">--</div></div>
-          <div class="stat-card"><div class="stat-lbl">LONGITUD</div><div class="stat-val" id="s-lng">--</div></div>
-        </div>
+
+      <!-- DESTINO -->
+      <div class="ss">
+        <div class="ss-title">Destino</div>
+        <textarea class="dest-ta" id="dest-inp"
+          placeholder="Escribe cualquier dirección del mundo&#10;Ej: Calle 72 #10-34, Bogotá&#10;o: El Dorado Airport, Colombia"></textarea>
+        <button class="btn-cyan" id="calc-btn">
+          🔍 CALCULAR RUTA Y ETA
+        </button>
       </div>
-      <div class="s-section">
-        <div class="s-title">Frecuencia de Alertas</div>
-        <div class="interval-btns" id="interval-btns">
-          <button class="int-btn" data-ms="300000">5 min</button>
-          <button class="int-btn" data-ms="600000">10 min</button>
-          <button class="int-btn" data-ms="1800000">30 min</button>
-          <button class="int-btn on" data-ms="3600000">1 hora</button>
-          <button class="int-btn" data-ms="21600000">6 horas</button>
-          <button class="int-btn" data-ms="86400000">1 día</button>
-        </div>
-        <p style="font-size:11px;color:var(--txt3);margin-top:8px" id="notif-info">Alertas cada 1 hora.</p>
-      </div>
-      <div class="s-section">
-        <div class="s-title">Historial de Alertas</div>
-        <div class="notif-log" id="notif-log">
-          <div class="notif-item warn">
-            <div class="ni-time">Sin eventos aún</div>
-            Las notificaciones aparecerán aquí
+
+      <!-- ETA -->
+      <div class="ss">
+        <div class="ss-title">Tiempo Estimado de Llegada</div>
+        <div class="eta-box">
+          <div class="eta-lbl">ETA calculado en tiempo real</div>
+          <div class="eta-row">
+            <div class="eta-cell" id="ec-d"><div class="eta-n" id="eta-d">--</div><div class="eta-u">Días</div></div>
+            <div class="eta-cell" id="ec-h"><div class="eta-n" id="eta-h">--</div><div class="eta-u">Horas</div></div>
+            <div class="eta-cell" id="ec-m"><div class="eta-n" id="eta-m">--</div><div class="eta-u">Mins</div></div>
+          </div>
+          <div class="eta-info">
+            <span>📏</span><span id="eta-info">Sin destino calculado aún</span>
           </div>
         </div>
       </div>
-      <div class="dl-section">
-        <div class="dl-title">Instalar como App</div>
-        <div class="dl-btns">
-          <div class="dl-btn" id="pwa-btn"><span class="dl-icon">📱</span>Móvil / PC</div>
-          <div class="dl-btn" id="desktop-btn"><span class="dl-icon">🖥</span>Escritorio</div>
+
+      <!-- STATS -->
+      <div class="ss">
+        <div class="ss-title">Datos GPS en Vivo</div>
+        <div class="stats-2">
+          <div class="s-card"><div class="s-lbl">Velocidad</div><div class="s-val" id="s-spd">-- km/h</div></div>
+          <div class="s-card"><div class="s-lbl">Actualizado</div><div class="s-val" id="s-upd">--:--:--</div></div>
+          <div class="s-card"><div class="s-lbl">Latitud</div><div class="s-val" id="s-lat">--</div></div>
+          <div class="s-card"><div class="s-lbl">Longitud</div><div class="s-val" id="s-lng">--</div></div>
+          <div class="s-card"><div class="s-lbl">Rumbo</div><div class="s-val" id="s-hdg">--°</div></div>
+          <div class="s-card"><div class="s-lbl">Precisión</div><div class="s-val" id="s-acc">-- m</div></div>
         </div>
       </div>
+
+      <!-- NOTIFICACIONES -->
+      <div class="ss">
+        <div class="ss-title">Frecuencia de Alertas</div>
+        <div class="int-wrap" id="int-wrap">
+          <button class="int-b" data-ms="300000" data-lbl="5 minutos">5 min</button>
+          <button class="int-b" data-ms="600000" data-lbl="10 minutos">10 min</button>
+          <button class="int-b" data-ms="1800000" data-lbl="30 minutos">30 min</button>
+          <button class="int-b on" data-ms="3600000" data-lbl="1 hora">1 hora</button>
+          <button class="int-b" data-ms="10800000" data-lbl="3 horas">3 hrs</button>
+          <button class="int-b" data-ms="21600000" data-lbl="6 horas">6 hrs</button>
+          <button class="int-b" data-ms="43200000" data-lbl="12 horas">12 hrs</button>
+          <button class="int-b" data-ms="86400000" data-lbl="1 día">1 día</button>
+        </div>
+        <p style="font-size:11px;color:var(--txt3);margin-top:10px;line-height:1.6">
+          🔔 Notificación del navegador cada <span id="int-lbl" style="color:var(--txt2)">1 hora</span>.<br>
+          <span style="color:var(--txt4)">SMS + email requieren activar el backend Python.</span>
+        </p>
+      </div>
+
+      <!-- LOG -->
+      <div class="ss">
+        <div class="ss-title">Historial de Alertas</div>
+        <div class="nlog" id="nlog">
+          <div class="nlog-item g">
+            <div class="ni-t">Esperando eventos</div>
+            Las alertas aparecerán aquí
+          </div>
+        </div>
+      </div>
+
+      <!-- INSTALAR APP -->
+      <div class="install-section">
+        <div class="install-title">Instalar Aplicación</div>
+
+        <!-- BOTÓN PRINCIPAL DE INSTALACIÓN -->
+        <div class="install-main-btn" id="install-main">
+          <span class="imb-icon">⬇️</span>
+          <div class="imb-text">
+            <div class="imb-title">INSTALAR NEXUS TRACK</div>
+            <div class="imb-sub">Toca aquí — se instala automáticamente<br>en tu dispositivo sin App Store</div>
+          </div>
+          <span class="imb-badge">GRATIS</span>
+        </div>
+
+        <!-- PLATAFORMAS ESPECÍFICAS -->
+        <div class="platform-grid">
+          <div class="plat-btn" id="btn-android">
+            <span class="pb-icon">🤖</span>
+            <div class="pb-name">Android</div>
+            <div class="pb-sub">Chrome → Instalar</div>
+          </div>
+          <div class="plat-btn" id="btn-ios">
+            <span class="pb-icon"></span>
+            <div class="pb-name">iPhone / iPad</div>
+            <div class="pb-sub">Safari → Compartir</div>
+          </div>
+          <div class="plat-btn" id="btn-windows">
+            <span class="pb-icon">🪟</span>
+            <div class="pb-name">Windows</div>
+            <div class="pb-sub">Chrome → Instalar</div>
+          </div>
+          <div class="plat-btn" id="btn-desktop-app">
+            <span class="pb-icon">🖥</span>
+            <div class="pb-name">App Nativa</div>
+            <div class="pb-sub">.exe / .dmg / .AppImage</div>
+          </div>
+        </div>
+      </div>
+
     </aside>
+
+    <!-- MAP -->
     <div class="map-wrap">
       <div id="map"></div>
-      <div class="map-coords">
-        <span>LAT</span> <span id="mc-lat">4.71100</span>
-        &nbsp;|&nbsp;
-        <span>LNG</span> <span id="mc-lng">-74.07200</span>
+      <div class="ov" id="ov-coords">
+        <span class="cl">LAT</span>&nbsp;<span id="ov-lat">—</span>
+        &nbsp;<span style="color:var(--txt4)">·</span>&nbsp;
+        <span class="cl">LNG</span>&nbsp;<span id="ov-lng">—</span>
       </div>
-      <div class="menu-toggle" id="menu-toggle">☰</div>
+      <div class="fab-menu" id="fab-menu">☰</div>
       <div class="pulse-wrap" id="pulse-wrap" style="display:none">
-        <div class="pulse-ring"></div>
-        <div class="pulse-ring pulse-ring2"></div>
-        <div class="pulse-core">🛰</div>
+        <div class="pr pr1"></div><div class="pr pr2"></div><div class="pr pr3"></div>
+        <div class="p-core">🛰</div>
       </div>
     </div>
   </div>
+
+  <!-- MOBILE BAR -->
+  <div class="mob-bar" id="mob-bar">
+    <button class="mb-btn on" id="mb-map"><span class="mi">🗺</span><span class="ml">Mapa</span></button>
+    <button class="mb-btn" id="mb-eta"><span class="mi">⏱</span><span class="ml">ETA</span></button>
+    <button class="mb-btn" id="mb-gps"><span class="mi">📡</span><span class="ml">GPS</span></button>
+    <button class="mb-btn" id="mb-instalar"><span class="mi">⬇️</span><span class="ml">Instalar</span></button>
+  </div>
 </div>
 
-<!-- Leaflet primero (no módulo) -->
+<!-- Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- Firebase como módulo ES -->
-<script type="module">
-import { initializeApp }
-  from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-         signOut, onAuthStateChanged }
-  from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-import { getDatabase, ref, set, get, onValue, off }
-  from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js';
+<!-- PWA Manifest (inline, sin servidor) -->
+<script>
+(function(){
+  const manifest={
+    name:"NEXUS TRACK",short_name:"NexusTrack",
+    description:"Sistema profesional de rastreo GPS en tiempo real",
+    start_url:window.location.href,
+    display:"standalone",orientation:"any",
+    theme_color:"#00f5ff",background_color:"#020810",
+    icons:[
+      {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23020810'/%3E%3Ccircle cx='256' cy='256' r='200' stroke='%2300f5ff' stroke-width='8' fill='none' opacity='.25'/%3E%3Ccircle cx='256' cy='256' r='130' stroke='%2300f5ff' stroke-width='5' fill='none' opacity='.4'/%3E%3Ccircle cx='256' cy='256' r='60' fill='%2300f5ff'/%3E%3Ccircle cx='256' cy='256' r='28' fill='%23020810'/%3E%3C/svg%3E",
+       sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}
+    ]
+  };
+  const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+  document.getElementById('manifest-link').href=URL.createObjectURL(blob);
+})();
+</script>
 
-/* ══════════════════════════════════════
-   CONFIGURACIÓN FIREBASE — ya con tus datos
-══════════════════════════════════════ */
-const firebaseConfig = {
-  apiKey:            "AIzaSyALrMB-ClSDDERZzfXWSv4aoxRgpOBySHE",
-  authDomain:        "app-gps-aea26.firebaseapp.com",
-  databaseURL:       "https://app-gps-aea26-default-rtdb.firebaseio.com",
-  projectId:         "app-gps-aea26",
-  storageBucket:     "app-gps-aea26.firebasestorage.app",
-  messagingSenderId: "621904055732",
-  appId:             "1:621904055732:web:a8a3ebb58034c4d88376e1"
+<!-- FIREBASE + APP LOGIC -->
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,
+       signOut,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+import{getDatabase,ref,set,get,onValue,off,push}
+  from'https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js';
+
+/* ── FIREBASE CONFIG ─────────────────────────────── */
+const fbApp=initializeApp({
+  apiKey:"AIzaSyALrMB-ClSDDERZzfXWSv4aoxRgpOBySHE",
+  authDomain:"app-gps-aea26.firebaseapp.com",
+  databaseURL:"https://app-gps-aea26-default-rtdb.firebaseio.com",
+  projectId:"app-gps-aea26",
+  storageBucket:"app-gps-aea26.firebasestorage.app",
+  messagingSenderId:"621904055732",
+  appId:"1:621904055732:web:a8a3ebb58034c4d88376e1"
+});
+const auth=getAuth(fbApp),db=getDatabase(fbApp);
+
+/* ── ESTADO ──────────────────────────────────────── */
+let user=null,profile=null,deviceId='device_01';
+let gpsM=null,destM=null,routeL=null,accCircle=null;
+let watchId=null,notifTimer=null,activeRef=null;
+let notifMs=3600000,lastLoc=null,lastETA=null,lastDest=null,deferredInstall=null;
+const isMob=()=>window.innerWidth<=700;
+
+/* ── MAP ─────────────────────────────────────────── */
+const map=L.map('map',{zoomControl:true,attributionControl:false}).setView([4.711,-74.072],12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.control.attribution({prefix:''}).addTo(map);
+
+function mkPin(color,size=40){
+  return L.divIcon({
+    html:`<div style="width:${size}px;height:${size}px;background:${color};
+      border:3px solid rgba(255,255,255,.9);border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);
+      box-shadow:0 0 18px ${color}bb,0 4px 14px rgba(0,0,0,.6)"></div>`,
+    iconSize:[size,size],iconAnchor:[size/2,size],className:''
+  });
+}
+
+/* ── HELPERS ─────────────────────────────────────── */
+const $=id=>document.getElementById(id);
+const showEl=(id,v='block')=>{$(id).style.display=v};
+const hideEl=id=>{$(id).style.display='none'};
+
+function toast(msg,dur=3500){
+  const e=$('toast');
+  e.textContent=msg;e.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t=setTimeout(()=>e.classList.remove('show'),dur);
+}
+
+function showErr(id,msg){const e=$(id);e.textContent=msg;e.style.display='block'}
+function hideErr(id){$(id).style.display='none'}
+function pad(n){return String(Math.max(0,Math.floor(n))).padStart(2,'0')}
+
+function haversine(la1,lo1,la2,lo2){
+  const R=6371,dL=(la2-la1)*Math.PI/180,dG=(lo2-lo1)*Math.PI/180;
+  const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dG/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function fbErr(code){
+  return({
+    'auth/user-not-found':'Usuario no encontrado',
+    'auth/wrong-password':'Contraseña incorrecta',
+    'auth/email-already-in-use':'Este correo ya está registrado',
+    'auth/weak-password':'Contraseña mínimo 6 caracteres',
+    'auth/invalid-email':'Correo electrónico inválido',
+    'auth/invalid-credential':'Correo o contraseña incorrectos',
+    'auth/too-many-requests':'Demasiados intentos. Espera un momento.',
+    'auth/operation-not-allowed':'⚠️ Activa Email/Password: Firebase → Authentication → Sign-in method',
+    'auth/configuration-not-found':'⚠️ Activa Email/Password: Firebase → Authentication → Sign-in method',
+    'auth/network-request-failed':'Sin conexión a internet'
+  }[code])||'Error: '+code;
+}
+
+/* ── AUTH TABS ───────────────────────────────────── */
+function switchTab(t){
+  const l=t==='login';
+  $('tab-login').classList.toggle('on',l);
+  $('tab-register').classList.toggle('on',!l);
+  $('tab-ind').style.transform=l?'translateX(0)':'translateX(100%)';
+  $('form-login').style.display=l?'flex':'none';
+  $('form-register').style.display=l?'none':'flex';
+}
+$('tab-login').onclick=()=>switchTab('login');
+$('tab-register').onclick=()=>switchTab('register');
+$('go-reg').onclick=()=>switchTab('register');
+$('go-login').onclick=()=>switchTab('login');
+
+/* ── TOGGLE PASSWORD ─────────────────────────────── */
+function togglePw(inp,btn){
+  const i=$(inp),b=$(btn);
+  i.type=i.type==='password'?'text':'password';
+  b.textContent=i.type==='password'?'👁':'🙈';
+}
+$('l-eye').onclick=()=>togglePw('l-pass','l-eye');
+$('r-eye').onclick=()=>togglePw('r-pass','r-eye');
+
+/* ── REGISTER ────────────────────────────────────── */
+$('r-btn').onclick=async()=>{
+  const n=$('r-name').value.trim(),k=$('r-nick').value.trim(),
+        e=$('r-email').value.trim(),p=$('r-phone').value.trim(),
+        w=$('r-pass').value,btn=$('r-btn');
+  hideErr('r-err');
+  if(!n||!k||!e||!p||!w)return showErr('r-err','Completa todos los campos');
+  if(w.length<6)return showErr('r-err','Contraseña mínimo 6 caracteres');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Creando cuenta...';
+  try{
+    const c=await createUserWithEmailAndPassword(auth,e,w);
+    await set(ref(db,`users/${c.user.uid}`),{
+      uid:c.user.uid,email:e,fullName:n,displayName:k,phone:p,
+      createdAt:new Date().toISOString(),notificationsEnabled:true,role:'user'
+    });
+    toast('✅ ¡Bienvenido '+k+'! Cuenta creada.');
+  }catch(err){
+    console.error(err.code,err.message);
+    showErr('r-err',fbErr(err.code));
+    btn.disabled=false;btn.textContent='ACTIVAR CUENTA';
+  }
 };
 
-const fbApp = initializeApp(firebaseConfig);
-const auth  = getAuth(fbApp);
-const db    = getDatabase(fbApp);
-
-/* ══════════════════════════════════════
-   ESTADO GLOBAL
-══════════════════════════════════════ */
-let currentUser  = null;
-let userProfile  = null;
-let deviceId     = 'device_01';
-let gpsMarker    = null;
-let destMarker   = null;
-let routeLine    = null;
-let browserWatchId = null;
-let notifTimer   = null;
-let notifInterval = 3600000;
-let lastLocation = null;
-let lastETA      = null;
-let lastDest     = null;
-let deferredInstall = null;
-let activeRef    = null;
-
-/* ══════════════════════════════════════
-   MAPA LEAFLET
-══════════════════════════════════════ */
-const map = L.map('map', { zoomControl: true }).setView([4.711, -74.072], 12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap'
-}).addTo(map);
-
-function mkIcon(color, size = 36) {
-  return L.divIcon({
-    html: `<div style="width:${size}px;height:${size}px;background:${color};border:3px solid #fff;
-            border-radius:50% 50% 50% 0;transform:rotate(-45deg);
-            box-shadow:0 0 12px ${color}88"></div>`,
-    iconSize: [size, size], iconAnchor: [size / 2, size], className: ''
-  });
-}
-
-/* ══════════════════════════════════════
-   TOAST
-══════════════════════════════════════ */
-let toastT;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastT);
-  toastT = setTimeout(() => el.classList.remove('show'), 3500);
-}
-
-function showErr(id, msg) {
-  const el = document.getElementById(id);
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-function hideErr(id) {
-  document.getElementById(id).style.display = 'none';
-}
-
-/* ══════════════════════════════════════
-   FIREBASE ERROR MESSAGES
-══════════════════════════════════════ */
-function fbErr(code) {
-  const m = {
-    'auth/user-not-found':          'Usuario no encontrado',
-    'auth/wrong-password':          'Contraseña incorrecta',
-    'auth/email-already-in-use':    'Este correo ya está registrado',
-    'auth/weak-password':           'Contraseña muy débil (mínimo 6 caracteres)',
-    'auth/invalid-email':           'Correo electrónico inválido',
-    'auth/invalid-credential':      'Correo o contraseña incorrectos',
-    'auth/too-many-requests':       'Demasiados intentos. Espera un momento.',
-    'auth/operation-not-allowed':   '⚠️ Activa Email/Password en Firebase → Authentication → Sign-in method',
-    'auth/configuration-not-found': '⚠️ Activa Email/Password en Firebase → Authentication → Sign-in method',
-    'auth/network-request-failed':  'Sin conexión a internet. Verifica tu red.',
-  };
-  return m[code] || `Error: ${code}`;
-}
-
-/* ══════════════════════════════════════
-   AUTH TABS — sin onclick en HTML
-══════════════════════════════════════ */
-function switchTab(tab) {
-  const isLogin = tab === 'login';
-  document.getElementById('tab-login').classList.toggle('on', isLogin);
-  document.getElementById('tab-register').classList.toggle('on', !isLogin);
-  document.getElementById('tab-bar').style.transform = isLogin ? 'translateX(0)' : 'translateX(100%)';
-  document.getElementById('form-login').style.display    = isLogin ? 'flex' : 'none';
-  document.getElementById('form-register').style.display = isLogin ? 'none'  : 'flex';
-}
-
-document.getElementById('tab-login').addEventListener('click',    () => switchTab('login'));
-document.getElementById('tab-register').addEventListener('click', () => switchTab('register'));
-document.getElementById('go-register').addEventListener('click',  () => switchTab('register'));
-document.getElementById('go-login').addEventListener('click',     () => switchTab('login'));
-
-/* ══════════════════════════════════════
-   MOSTRAR / OCULTAR CONTRASEÑA
-══════════════════════════════════════ */
-function togglePw(inputId, btnId) {
-  const inp = document.getElementById(inputId);
-  const btn = document.getElementById(btnId);
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
-}
-document.getElementById('l-eye').addEventListener('click', () => togglePw('l-pass', 'l-eye'));
-document.getElementById('r-eye').addEventListener('click', () => togglePw('r-pass', 'r-eye'));
-
-/* ══════════════════════════════════════
-   REGISTRO
-══════════════════════════════════════ */
-document.getElementById('r-btn').addEventListener('click', async () => {
-  const name  = document.getElementById('r-name').value.trim();
-  const nick  = document.getElementById('r-nick').value.trim();
-  const email = document.getElementById('r-email').value.trim();
-  const phone = document.getElementById('r-phone').value.trim();
-  const pass  = document.getElementById('r-pass').value;
-  const btn   = document.getElementById('r-btn');
-
-  hideErr('r-err');
-  if (!name || !nick || !email || !phone || !pass)
-    return showErr('r-err', 'Completa todos los campos');
-  if (pass.length < 6)
-    return showErr('r-err', 'La contraseña debe tener mínimo 6 caracteres');
-
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Creando cuenta...';
-
-  try {
-    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-    await set(ref(db, `users/${cred.user.uid}`), {
-      uid: cred.user.uid, email, fullName: name,
-      displayName: nick, phone,
-      createdAt: new Date().toISOString(),
-      notificationsEnabled: true
-    });
-    toast('✅ ¡Cuenta creada! Bienvenido, ' + nick);
-  } catch (e) {
-    console.error('Error registro:', e.code, e.message);
-    showErr('r-err', fbErr(e.code));
-    btn.disabled = false;
-    btn.textContent = 'ACTIVAR CUENTA';
-  }
-});
-
-/* ══════════════════════════════════════
-   LOGIN
-══════════════════════════════════════ */
-document.getElementById('l-btn').addEventListener('click', async () => {
-  const email = document.getElementById('l-email').value.trim();
-  const pass  = document.getElementById('l-pass').value;
-  const btn   = document.getElementById('l-btn');
-
+/* ── LOGIN ───────────────────────────────────────── */
+$('l-btn').onclick=async()=>{
+  const e=$('l-email').value.trim(),w=$('l-pass').value,btn=$('l-btn');
   hideErr('l-err');
-  if (!email || !pass)
-    return showErr('l-err', 'Completa todos los campos');
-
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Verificando...';
-
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    toast('👋 ¡Bienvenido de vuelta!');
-  } catch (e) {
-    console.error('Error login:', e.code, e.message);
-    showErr('l-err', fbErr(e.code));
-    btn.disabled = false;
-    btn.textContent = 'ACCEDER AL SISTEMA';
+  if(!e||!w)return showErr('l-err','Completa todos los campos');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Verificando...';
+  try{
+    await signInWithEmailAndPassword(auth,e,w);
+  }catch(err){
+    console.error(err.code,err.message);
+    showErr('l-err',fbErr(err.code));
+    btn.disabled=false;btn.textContent='ACCEDER AL SISTEMA';
   }
-});
+};
+$('l-pass').onkeydown=e=>{if(e.key==='Enter')$('l-btn').click()};
 
-/* También login con Enter */
-document.getElementById('l-pass').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('l-btn').click();
-});
-
-/* ══════════════════════════════════════
-   LOGOUT
-══════════════════════════════════════ */
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  stopNotifTimer();
-  if (browserWatchId) navigator.geolocation.clearWatch(browserWatchId);
-  if (activeRef) off(activeRef);
+/* ── LOGOUT ──────────────────────────────────────── */
+$('logout-btn').onclick=async()=>{
+  stopTimer();
+  if(watchId){navigator.geolocation.clearWatch(watchId);watchId=null;}
+  if(activeRef){off(activeRef);activeRef=null;}
   await signOut(auth);
   toast('Sesión cerrada');
-});
+};
 
-/* ══════════════════════════════════════
-   AUTH STATE — detecta si el usuario está logueado
-══════════════════════════════════════ */
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    currentUser = user;
-    try {
-      const snap = await get(ref(db, `users/${user.uid}`));
-      if (snap.exists()) userProfile = snap.val();
-    } catch (e) { /* sin perfil aún */ }
-    showApp();
-  } else {
-    currentUser = null;
-    userProfile = null;
-    showAuth();
+/* ── AUTH STATE ──────────────────────────────────── */
+onAuthStateChanged(auth,async u=>{
+  if(u){
+    user=u;
+    try{const s=await get(ref(db,`users/${u.uid}`));if(s.exists())profile=s.val();}catch{}
+    enterApp();
+  }else{
+    user=null;profile=null;
+    $('auth-screen').classList.add('active');
+    $('app-screen').classList.remove('active');
   }
 });
 
-function showAuth() {
-  document.getElementById('auth-screen').classList.add('active');
-  document.getElementById('app-screen').classList.remove('active');
+function enterApp(){
+  $('auth-screen').classList.remove('active');
+  $('app-screen').classList.add('active');
+  const k=profile?.displayName||user?.email?.split('@')[0]||'?';
+  $('u-av').textContent=k[0].toUpperCase();
+  $('u-name').textContent=k;
+  // En desktop abre sidebar por defecto
+  if(!isMob())$('sidebar').classList.remove('closed');
+  startDevice(deviceId);
+  setTimeout(()=>map.invalidateSize(),300);
+  if(Notification.permission==='default')setTimeout(()=>Notification.requestPermission(),2000);
 }
 
-function showApp() {
-  document.getElementById('auth-screen').classList.remove('active');
-  document.getElementById('app-screen').classList.add('active');
-  const nick = userProfile?.displayName || currentUser?.email?.split('@')[0] || '?';
-  document.getElementById('user-av').textContent  = nick[0].toUpperCase();
-  document.getElementById('user-name-sm').textContent = nick;
-  startDeviceListener(deviceId);
-  setTimeout(() => map.invalidateSize(), 200);
-  if (Notification.permission === 'default') {
-    setTimeout(() => Notification.requestPermission(), 2000);
-  }
-}
-
-/* ══════════════════════════════════════
-   GPS — ESCUCHAR FIREBASE EN TIEMPO REAL
-══════════════════════════════════════ */
-function startDeviceListener(id) {
-  if (activeRef) off(activeRef);
-  activeRef = ref(db, `devices/${id}/location`);
-  onValue(activeRef, (snap) => {
-    if (!snap.exists()) return;
-    const d = snap.val();
-    updateGPS(d.lat, d.lng, d.speed || 0, d.timestamp);
+/* ── GPS DEVICE LISTENER (Firebase Realtime DB) ──
+   Compatible con: GPS físicos, apps móviles,
+   trackers con SIM, cualquier dispositivo que
+   escriba lat/lng en esta ruta de Firebase.
+*/
+function startDevice(id){
+  if(activeRef)off(activeRef);
+  activeRef=ref(db,`devices/${id}/location`);
+  onValue(activeRef,snap=>{
+    if(!snap.exists())return;
+    const d=snap.val();
+    if(typeof d.lat==='number'&&typeof d.lng==='number')
+      updateGPS(d.lat,d.lng,d.speed||0,d.heading||0,d.accuracy||0,d.timestamp);
   });
 }
 
-document.getElementById('device-select').addEventListener('change', function () {
-  deviceId = this.value;
-  startDeviceListener(deviceId);
-});
-
-function updateGPS(lat, lng, speed, timestamp) {
-  lastLocation = { lat, lng, speed, timestamp };
-
-  /* Marcador GPS */
-  if (!gpsMarker) {
-    gpsMarker = L.marker([lat, lng], { icon: mkIcon('#00f5ff') }).addTo(map);
-    gpsMarker.bindPopup(`<b style="color:#00f5ff">📡 GPS Activo</b>`);
-    map.flyTo([lat, lng], 13, { duration: 1.2 });
-  } else {
-    gpsMarker.setLatLng([lat, lng]);
+$('device-sel').onchange=function(){
+  if(this.value==='custom'){
+    showEl('custom-id-wrap','block');
+  }else{
+    hideEl('custom-id-wrap');
+    deviceId=this.value;
+    startDevice(deviceId);
   }
+};
+$('custom-device-id').onkeydown=function(e){
+  if(e.key==='Enter'&&this.value.trim()){
+    deviceId=this.value.trim();
+    startDevice(deviceId);
+    toast('📡 Escuchando: '+deviceId);
+  }
+};
 
-  /* Actualizar UI */
-  document.getElementById('mc-lat').textContent = lat.toFixed(5);
-  document.getElementById('mc-lng').textContent = lng.toFixed(5);
-  document.getElementById('s-lat').textContent  = lat.toFixed(5);
-  document.getElementById('s-lng').textContent  = lng.toFixed(5);
-  document.getElementById('s-speed').textContent = `${(speed * 3.6).toFixed(0)} km/h`;
-  document.getElementById('s-upd').textContent   = new Date().toLocaleTimeString('es-CO');
+function updateGPS(lat,lng,spd,hdg,acc,ts){
+  lastLoc={lat,lng,speed:spd,heading:hdg,accuracy:acc,timestamp:ts};
+  const pos=[lat,lng];
 
-  /* Pill de conexión */
-  const pill = document.getElementById('conn-pill');
-  pill.className = 'conn-pill online';
-  document.getElementById('conn-txt').textContent = 'SEÑAL ACTIVA';
-  document.getElementById('pulse-wrap').style.display = 'flex';
+  if(!gpsM){
+    gpsM=L.marker(pos,{icon:mkPin('#00f5ff',42)}).addTo(map);
+    map.flyTo(pos,14,{duration:1.5,easeLinearity:.4});
+  }else{
+    gpsM.setLatLng(pos);
+  }
+  gpsM.bindPopup(`
+    <b style="color:#00f5ff;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">
+      📡 GPS ACTIVO
+    </b><br>
+    <span style="color:#7a9cc4">
+      Vel: <b style="color:#e8f4ff">${(spd*3.6).toFixed(1)} km/h</b><br>
+      Rumbo: <b style="color:#e8f4ff">${Math.round(hdg)}°</b><br>
+      Precisión: <b style="color:#e8f4ff">±${Math.round(acc)} m</b><br>
+      <span style="color:#3d5a7a;font-size:11px">${new Date(ts||Date.now()).toLocaleString('es-CO')}</span>
+    </span>
+  `);
 
-  /* Recalcular ETA si hay destino */
-  if (lastDest) calcETAFromCoords(lat, lng, lastDest.lat, lastDest.lng, lastDest.name);
+  // UI update
+  $('ov-lat').textContent=lat.toFixed(6);
+  $('ov-lng').textContent=lng.toFixed(6);
+  $('s-lat').textContent=lat.toFixed(6);
+  $('s-lng').textContent=lng.toFixed(6);
+  $('s-spd').textContent=`${(spd*3.6).toFixed(1)} km/h`;
+  $('s-upd').textContent=new Date().toLocaleTimeString('es-CO');
+  $('s-hdg').textContent=`${Math.round(hdg)}°`;
+  $('s-acc').textContent=`±${Math.round(acc)} m`;
+
+  // Señal
+  const p=$('sig-pill');p.className='sig-pill on';$('sig-txt').textContent='SEÑAL ACTIVA';
+  $('pulse-wrap').style.display='flex';
+
+  // Auto-recalcular ETA
+  if(lastDest)doCalc(lat,lng,lastDest.lat,lastDest.lng,lastDest.name);
 }
 
-/* ══════════════════════════════════════
-   GPS DEL NAVEGADOR (tu dispositivo)
-══════════════════════════════════════ */
-document.getElementById('gps-btn').addEventListener('click', () => {
-  const btn = document.getElementById('gps-btn');
-  if (browserWatchId) {
-    navigator.geolocation.clearWatch(browserWatchId);
-    browserWatchId = null;
-    btn.className = 'gps-toggle off';
-    btn.textContent = '📡 USAR MI UBICACIÓN';
-    toast('GPS del dispositivo desactivado');
-    return;
+/* ── GPS NAVEGADOR (este dispositivo = GPS real) ── */
+$('gps-btn').onclick=()=>{
+  const btn=$('gps-btn');
+  if(watchId){
+    navigator.geolocation.clearWatch(watchId);watchId=null;
+    btn.className='btn-grn off';btn.textContent='📡 USAR MI UBICACIÓN GPS';
+    toast('GPS del dispositivo desactivado');return;
   }
-  if (!navigator.geolocation)
-    return toast('❌ Tu dispositivo no soporta GPS');
-
-  browserWatchId = navigator.geolocation.watchPosition(
-    async (pos) => {
-      const { latitude: lat, longitude: lng, speed } = pos.coords;
-      await set(ref(db, `devices/${deviceId}/location`), {
-        lat, lng, speed: speed || 0,
-        accuracy: pos.coords.accuracy,
-        timestamp: new Date().toISOString()
+  if(!navigator.geolocation)return toast('❌ GPS no disponible en este dispositivo');
+  toast('🔍 Buscando señal GPS del dispositivo...');
+  watchId=navigator.geolocation.watchPosition(
+    async pos=>{
+      const{latitude:lat,longitude:lng,speed,accuracy,heading}=pos.coords;
+      await set(ref(db,`devices/${deviceId}/location`),{
+        lat,lng,speed:speed||0,heading:heading||0,accuracy:accuracy||0,
+        source:'browser',timestamp:new Date().toISOString()
       });
     },
-    (e) => toast('⚠ Error GPS: ' + e.message),
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 4000 }
+    err=>{toast('⚠ GPS: '+err.message);},
+    {enableHighAccuracy:true,timeout:15000,maximumAge:2000}
   );
-  btn.className = 'gps-toggle';
-  btn.textContent = '🔴 DETENER MI GPS';
-  toast('✅ Usando GPS de este dispositivo');
-});
+  btn.className='btn-grn';btn.textContent='🔴 DETENER MI GPS';
+  toast('✅ Enviando tu GPS a Firebase en tiempo real');
+};
 
-/* ══════════════════════════════════════
-   CALCULAR ETA
-══════════════════════════════════════ */
-document.getElementById('calc-btn').addEventListener('click', async () => {
-  const addr = document.getElementById('dest-input').value.trim();
-  if (!addr)         return toast('⚠ Ingresa una dirección destino');
-  if (!lastLocation) return toast('⚠ Esperando señal GPS...');
-
-  const btn = document.getElementById('calc-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Buscando dirección...';
-
-  try {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`;
-    const res  = await fetch(url, { headers: { 'Accept-Language': 'es' } });
-    const data = await res.json();
-
-    if (!data.length) {
-      toast('❌ Dirección no encontrada. Sé más específico.');
-      return;
-    }
-    const dLat = parseFloat(data[0].lat);
-    const dLng = parseFloat(data[0].lon);
-    const name = data[0].display_name;
-
-    lastDest = { lat: dLat, lng: dLng, name };
-    calcETAFromCoords(lastLocation.lat, lastLocation.lng, dLat, dLng, name);
+/* ── CALCULAR ETA ────────────────────────────────── */
+$('calc-btn').onclick=async()=>{
+  const addr=$('dest-inp').value.trim(),btn=$('calc-btn');
+  if(!addr)return toast('⚠ Escribe una dirección destino');
+  if(!lastLoc)return toast('⚠ Activa el GPS primero');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Buscando dirección...';
+  try{
+    const r=await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`,
+      {headers:{'Accept-Language':'es','User-Agent':'NexusTrack/2.0'}}
+    );
+    const d=await r.json();
+    if(!d.length){toast('❌ Dirección no encontrada. Sé más específico.');return;}
+    const dLat=parseFloat(d[0].lat),dLng=parseFloat(d[0].lon),name=d[0].display_name;
+    lastDest={lat:dLat,lng:dLng,name};
+    doCalc(lastLoc.lat,lastLoc.lng,dLat,dLng,name);
     toast('✅ Ruta calculada correctamente');
-  } catch (e) {
-    toast('❌ Error de red: ' + e.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '🔍 CALCULAR ETA';
-  }
-});
+  }catch(err){toast('❌ Error de red: '+err.message);}
+  finally{btn.disabled=false;btn.innerHTML='🔍 CALCULAR RUTA Y ETA';}
+};
 
-function calcETAFromCoords(oLat, oLng, dLat, dLng, destName) {
-  const dist  = haversine(oLat, oLng, dLat, dLng);
-  const spd   = (lastLocation?.speed > 0.5) ? lastLocation.speed * 3.6 : 45;
-  const totalS = Math.round((dist / spd) * 3600);
-  const days   = Math.floor(totalS / 86400);
-  const hrs    = Math.floor((totalS % 86400) / 3600);
-  const mins   = Math.floor((totalS % 3600) / 60);
+function doCalc(oLa,oLn,dLa,dLn,name){
+  const dist=haversine(oLa,oLn,dLa,dLn);
+  const spd=(lastLoc?.speed>0.5)?lastLoc.speed*3.6:45;
+  const secs=Math.round((dist/spd)*3600);
+  const days=Math.floor(secs/86400),hrs=Math.floor((secs%86400)/3600),mins=Math.floor((secs%3600)/60);
+  lastETA={days,hours:hrs,minutes:mins,dist,speed:spd};
 
-  lastETA = { days, hours: hrs, minutes: mins, dist };
+  $('eta-d').textContent=pad(days);$('eta-h').textContent=pad(hrs);$('eta-m').textContent=pad(mins);
+  $('eta-info').textContent=`${dist.toFixed(2)} km · ${spd.toFixed(0)} km/h promedio`;
 
-  document.getElementById('eta-d').textContent    = pad(days);
-  document.getElementById('eta-h').textContent    = pad(hrs);
-  document.getElementById('eta-m').textContent    = pad(mins);
-  document.getElementById('eta-dist').textContent = `Distancia: ${dist.toFixed(2)} km`;
+  ['ec-d','ec-h','ec-m'].forEach(id=>$(id).classList.remove('hi'));
+  if(days>0)$('ec-d').classList.add('hi');
+  else if(hrs>0)$('ec-h').classList.add('hi');
+  else $('ec-m').classList.add('hi');
 
-  /* Marcador destino */
-  if (destMarker) map.removeLayer(destMarker);
-  destMarker = L.marker([dLat, dLng], { icon: mkIcon('#ff00aa') }).addTo(map);
-  destMarker.bindPopup(`<b style="color:#ff00aa">📍 Destino</b><br>${destName.slice(0, 60)}`);
+  // Marcador destino
+  if(destM)map.removeLayer(destM);
+  destM=L.marker([dLa,dLn],{icon:mkPin('#ff00aa',38)}).addTo(map);
+  destM.bindPopup(`
+    <b style="color:#ff00aa;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">
+      📍 DESTINO
+    </b><br>
+    <span style="color:#7a9cc4;font-size:12px">${name.slice(0,80)}</span>
+  `);
 
-  /* Línea de ruta */
-  if (routeLine) map.removeLayer(routeLine);
-  routeLine = L.polyline([[oLat, oLng], [dLat, dLng]], {
-    color: '#00f5ff', weight: 2.5, opacity: .8, dashArray: '8 5'
+  // Círculo precisión
+  if(accCircle)map.removeLayer(accCircle);
+  accCircle=L.circle([oLa,oLn],{
+    radius:Math.max(lastLoc?.accuracy||200,100),
+    color:'#00f5ff',fillColor:'#00f5ff',fillOpacity:0.04,weight:1,dashArray:'4 4'
   }).addTo(map);
-  map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
 
-  /* Reiniciar timer de notificaciones */
-  restartNotifTimer();
+  // Línea ruta
+  if(routeL)map.removeLayer(routeL);
+  routeL=L.polyline([[oLa,oLn],[dLa,dLn]],{
+    color:'#00f5ff',weight:2.5,opacity:.75,dashArray:'12 7'
+  }).addTo(map);
+  map.fitBounds(routeL.getBounds(),{padding:[60,60]});
+
+  // Guardar en Firebase
+  if(user)set(ref(db,`deliveries/${user.uid}_active`),{
+    device_id:deviceId,destination_address:name,
+    destination:{lat:dLa,lng:dLn},
+    origin:{lat:oLa,lng:oLn},
+    eta:lastETA,updated_at:new Date().toISOString(),status:'in_transit'
+  }).catch(()=>{});
+
+  restartTimer();
 }
 
-/* ══════════════════════════════════════
-   NOTIFICACIONES
-══════════════════════════════════════ */
-document.getElementById('interval-btns').addEventListener('click', (e) => {
-  const btn = e.target.closest('.int-btn');
-  if (!btn) return;
-  document.querySelectorAll('.int-btn').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  notifInterval = parseInt(btn.dataset.ms);
-  const label = btn.textContent;
-  document.getElementById('notif-info').textContent = `Alertas cada ${label}.`;
-  restartNotifTimer();
-  toast(`🔔 Alertas configuradas cada ${label}`);
-});
+/* ── NOTIFICACIONES ──────────────────────────────── */
+$('int-wrap').onclick=e=>{
+  const b=e.target.closest('.int-b');if(!b)return;
+  document.querySelectorAll('.int-b').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');notifMs=parseInt(b.dataset.ms);
+  $('int-lbl').textContent=b.dataset.lbl;
+  restartTimer();toast('🔔 Alertas cada '+b.dataset.lbl);
+};
 
-function restartNotifTimer() {
-  stopNotifTimer();
-  if (!lastETA) return;
-  notifTimer = setInterval(sendNotification, notifInterval);
-}
-function stopNotifTimer() {
-  if (notifTimer) { clearInterval(notifTimer); notifTimer = null; }
-}
+function restartTimer(){stopTimer();if(lastETA)notifTimer=setInterval(doNotif,notifMs);}
+function stopTimer(){if(notifTimer){clearInterval(notifTimer);notifTimer=null;}}
 
-function sendNotification() {
-  if (!lastETA || !userProfile) return;
-  const { days, hours, minutes, dist } = lastETA;
+function doNotif(){
+  if(!lastETA||!profile)return;
+  const{days,hours,minutes,dist}=lastETA;
 
-  /* Notificación del navegador */
-  if (Notification.permission === 'granted') {
-    new Notification('🛰 NEXUS TRACK — Actualización ETA', {
-      body: `Tu envío llega en ${days}d ${hours}h ${minutes}m | ${dist.toFixed(1)} km restantes`,
-      icon: ''
+  // Notificación navegador
+  if(Notification.permission==='granted'){
+    new Notification('🛰 NEXUS TRACK',{
+      body:`Envío llega en ${days>0?days+'d ':''}${hours>0?hours+'h ':''}${minutes}min | ${dist.toFixed(1)}km`,
+      icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="%23020810" stroke="%2300f5ff" stroke-width="2"/><circle cx="32" cy="32" r="12" fill="%2300f5ff"/></svg>'
     });
   }
 
-  /* Log en pantalla */
-  addNotifLog('email', `ETA: ${days}d ${hours}h ${minutes}m — ${dist.toFixed(1)} km`);
+  addLog('e',`ETA: ${pad(days)}d ${pad(hours)}h ${pad(minutes)}m — ${dist.toFixed(1)} km`);
 
-  /* Guardar en Firebase */
-  if (currentUser) {
-    set(ref(db, `notifications/${currentUser.uid}/${Date.now()}`), {
-      eta: lastETA, dest: lastDest?.name || '', sentAt: new Date().toISOString()
-    }).catch(() => {});
-  }
+  // Guardar en Firebase para que el backend Python procese y envíe SMS+email
+  if(user)push(ref(db,`pending_notifications/${user.uid}`),{
+    type:'eta_update',eta:lastETA,
+    destination:lastDest?.name||'',
+    user_email:profile.email||'',
+    user_phone:profile.phone||'',
+    user_name:profile.displayName||'',
+    sent_at:new Date().toISOString(),processed:false
+  }).catch(()=>{});
 }
 
-function addNotifLog(type, msg) {
-  const log  = document.getElementById('notif-log');
-  const item = document.createElement('div');
-  item.className = `notif-item ${type}`;
-  item.innerHTML = `<div class="ni-time">${new Date().toLocaleTimeString('es-CO')}</div>${msg}`;
-  if (log.children.length === 1 && log.firstElementChild.classList.contains('warn')) {
-    log.innerHTML = '';
-  }
+function addLog(type,msg){
+  const log=$('nlog');
+  const item=document.createElement('div');
+  item.className=`nlog-item ${type}`;
+  item.innerHTML=`<div class="ni-t">${new Date().toLocaleTimeString('es-CO')}</div>${msg}`;
+  if(log.children.length===1&&log.firstElementChild.classList.contains('g'))log.innerHTML='';
   log.prepend(item);
-  if (log.children.length > 12) log.lastChild.remove();
+  if(log.children.length>20)log.lastChild.remove();
 }
 
-/* ══════════════════════════════════════
-   SIDEBAR TOGGLE
-══════════════════════════════════════ */
-document.getElementById('menu-toggle').addEventListener('click', () => {
-  document.getElementById('sidebar').classList.toggle('closed');
-  setTimeout(() => map.invalidateSize(), 310);
-});
-
-/* ══════════════════════════════════════
-   INSTALAR PWA
-══════════════════════════════════════ */
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredInstall = e;
-});
-document.getElementById('pwa-btn').addEventListener('click', () => {
-  if (deferredInstall) {
-    deferredInstall.prompt();
-    deferredInstall.userChoice.then(c => {
-      if (c.outcome === 'accepted') toast('✅ App instalada');
-      deferredInstall = null;
-    });
-  } else {
-    toast('ℹ En Chrome: menú ⋮ → "Instalar aplicación"');
+/* ── SIDEBAR ─────────────────────────────────────── */
+$('fab-menu').onclick=toggleSB;
+function toggleSB(){
+  const sb=$('sidebar');
+  if(isMob()){
+    const opening=!sb.classList.contains('open');
+    sb.classList.toggle('open',opening);
+    $('sb-overlay').style.display=opening?'block':'none';
+  }else{
+    sb.classList.toggle('closed');
   }
+  setTimeout(()=>map.invalidateSize(),360);
+}
+$('sb-overlay').onclick=()=>{
+  $('sidebar').classList.remove('open');
+  $('sb-overlay').style.display='none';
+  setTimeout(()=>map.invalidateSize(),360);
+};
+
+/* ── MOBILE BAR ──────────────────────────────────── */
+function setMob(id){document.querySelectorAll('.mb-btn').forEach(b=>b.classList.remove('on'));$(id)?.classList.add('on')}
+$('mb-map').onclick=()=>{
+  $('sidebar').classList.remove('open');$('sb-overlay').style.display='none';
+  setTimeout(()=>map.invalidateSize(),360);setMob('mb-map');
+};
+$('mb-eta').onclick=()=>{
+  toggleSB();setMob('mb-eta');
+  setTimeout(()=>$('ec-h')?.scrollIntoView({behavior:'smooth',block:'center'}),400);
+};
+$('mb-gps').onclick=()=>{$('gps-btn').click();setMob('mb-gps')};
+$('mb-instalar').onclick=()=>{triggerInstall();setMob('mb-instalar')};
+
+/* ── INSTALACIÓN PWA (el corazón del feature) ────── */
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredInstall=e;
+  // Destacar el botón de instalación
+  $('install-main').style.borderColor='var(--cyan)';
+  $('install-main').style.boxShadow='0 0 30px var(--cy15)';
+  toast('✅ App lista para instalar — toca el botón ⬇️',4000);
 });
-document.getElementById('desktop-btn').addEventListener('click', () => {
-  toast('ℹ Para escritorio: descarga el ZIP del proyecto y ejecuta npm run build:win/mac');
+window.addEventListener('appinstalled',()=>{
+  toast('🎉 ¡NEXUS TRACK instalado correctamente!',5000);
+  addLog('e','App instalada en el dispositivo');
 });
 
-/* ══════════════════════════════════════
-   UTILIDADES
-══════════════════════════════════════ */
-function haversine(lat1, lng1, lat2, lng2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 +
-    Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+function triggerInstall(){
+  if(deferredInstall){
+    // Chrome/Android/Windows: prompt automático
+    deferredInstall.prompt();
+    deferredInstall.userChoice.then(r=>{
+      if(r.outcome==='accepted'){toast('🎉 ¡Instalando NEXUS TRACK...',4000);}
+      else{toast('Instalación cancelada');}
+      deferredInstall=null;
+    });
+  }else{
+    // Detectar plataforma y dar instrucciones
+    const ua=navigator.userAgent;
+    if(/iPad|iPhone|iPod/.test(ua)){showModal('modal-ios');}
+    else if(/android/i.test(ua)){toast('ℹ En Chrome: toca los 3 puntos ⋮ → "Agregar a pantalla de inicio"',5000);}
+    else{toast('ℹ En Chrome: toca los 3 puntos ⋮ → "Instalar NEXUS TRACK"',5000);}
+  }
 }
 
-function pad(n) { return String(Math.max(0, Math.floor(n))).padStart(2, '0'); }
+$('install-main').onclick=triggerInstall;
+$('btn-android').onclick=()=>toast('ℹ Chrome → menú ⋮ → "Agregar a pantalla de inicio"',5000);
+$('btn-ios').onclick=()=>showModal('modal-ios');
+$('btn-windows').onclick=()=>{
+  if(deferredInstall)triggerInstall();
+  else toast('ℹ Chrome → menú ⋮ → "Instalar NEXUS TRACK"',5000);
+};
+$('btn-desktop-app').onclick=()=>showModal('modal-desktop');
 
+/* ── MODALES ─────────────────────────────────────── */
+function showModal(id){$(id).classList.add('show')}
+function hideModal(id){$(id).classList.remove('show')}
+$('modal-close-desktop').onclick=()=>hideModal('modal-desktop');
+$('modal-close-ios').onclick=()=>hideModal('modal-ios');
+$('modal-desktop').onclick=e=>{if(e.target===$('modal-desktop'))hideModal('modal-desktop')};
+$('modal-ios').onclick=e=>{if(e.target===$('modal-ios'))hideModal('modal-ios')};
 </script>
 </body>
 </html>
