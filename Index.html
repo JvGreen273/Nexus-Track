@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#00f5ff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>NEXUS TRACK</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg0:#020810; --bg1:#050a14; --bg2:#0a1628; --bg3:#0f1e38;
+      --cyan:#00f5ff; --cyan2:#00c4cc; --cyang:rgba(0,245,255,0.10);
+      --mag:#ff00aa; --green:#00ff88; --amber:#ffaa00; --red:#ff3355;
+      --txt:#e8f4ff; --txt2:#7a9cc4; --txt3:#3d5a7a;
+      --b1:rgba(0,245,255,0.10); --b2:rgba(0,245,255,0.35);
+      --fd:'Orbitron',sans-serif; --fb:'Rajdhani',sans-serif; --fm:'Share Tech Mono',monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden}
+    body{font-family:var(--fb);background:var(--bg0);color:var(--txt);font-size:15px}
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:var(--bg1)}
+    ::-webkit-scrollbar-thumb{background:var(--cyan2);border-radius:2px}
+
+    /* GRID BG */
+    #gridbg{
+      position:fixed;inset:0;pointer-events:none;z-index:0;
+      background-image:linear-gradient(rgba(0,245,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.025) 1px,transparent 1px);
+      background-size:48px 48px;
+    }
+
+    /* SCREENS */
+    .screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column}
+    .screen.active{display:flex}
+
+    /* ══ AUTH ══ */
+    #auth-screen{align-items:center;justify-content:center;background:var(--bg0)}
+    .auth-wrap{width:100%;max-width:440px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:28px}
+    .brand{text-align:center}
+    .brand-logo{
+      width:70px;height:70px;margin:0 auto 16px;position:relative;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .brand-logo::before,.brand-logo::after{
+      content:'';position:absolute;inset:0;border-radius:50%;border-style:solid;
+    }
+    .brand-logo::before{
+      border:2px solid var(--cyan);
+      box-shadow:0 0 20px rgba(0,245,255,0.3),inset 0 0 20px rgba(0,245,255,0.05);
+      animation:spin 7s linear infinite;border-top-color:transparent;
+    }
+    .brand-logo::after{
+      inset:10px;border:1.5px solid var(--mag);
+      animation:spin 4s linear infinite reverse;border-bottom-color:transparent;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .brand-dot{
+      width:24px;height:24px;background:var(--cyan);border-radius:50%;
+      box-shadow:0 0 18px rgba(0,245,255,0.8);position:relative;z-index:2;
+    }
+    .brand-title{
+      font-family:var(--fd);font-size:30px;font-weight:900;
+      letter-spacing:6px;color:var(--cyan);
+      text-shadow:0 0 30px rgba(0,245,255,0.4);line-height:1;
+    }
+    .brand-sub{color:var(--txt3);font-size:12px;letter-spacing:2px;margin-top:6px}
+    .auth-card{
+      width:100%;background:rgba(10,22,40,0.85);
+      backdrop-filter:blur(24px);border:1px solid var(--b1);border-radius:18px;overflow:hidden;
+    }
+    .auth-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--b1);position:relative}
+    .auth-tab{
+      padding:16px;background:none;border:none;color:var(--txt3);
+      font-family:var(--fd);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+      cursor:pointer;transition:color .2s;
+    }
+    .auth-tab.on{color:var(--cyan)}
+    .tab-bar{
+      position:absolute;bottom:0;left:0;width:50%;height:2px;
+      background:linear-gradient(90deg,var(--cyan),var(--cyan2));
+      box-shadow:0 0 10px rgba(0,245,255,0.6);
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .auth-form{padding:28px;display:flex;flex-direction:column;gap:14px}
+    .auth-greeting{color:var(--txt2);font-size:16px}
+    .auth-greeting span{color:var(--cyan)}
+    .inp-wrap{position:relative}
+    .inp-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none;font-size:14px}
+    .nx-inp{
+      width:100%;padding:12px 14px 12px 38px;
+      background:var(--bg3);border:1px solid var(--b1);border-radius:8px;
+      color:var(--txt);font-family:var(--fb);font-size:14px;outline:none;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    .nx-inp::placeholder{color:var(--txt3)}
+    .nx-inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,245,255,0.08)}
+    .pw-eye{
+      position:absolute;right:12px;top:50%;transform:translateY(-50%);
+      background:none;border:none;color:var(--txt3);cursor:pointer;font-size:14px;transition:color .2s;
+    }
+    .pw-eye:hover{color:var(--cyan)}
+    .btn-primary{
+      width:100%;padding:13px;
+      background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+      border:none;border-radius:8px;color:var(--bg0);
+      font-family:var(--fd);font-size:11px;font-weight:700;
+      letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .2s;
+    }
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,245,255,0.35)}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+    .auth-switch{text-align:center;color:var(--txt3);font-size:13px}
+    .lnk{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:13px;text-decoration:underline}
+    .err-msg{
+      color:var(--red);font-size:12px;text-align:center;
+      display:none;padding:8px;background:rgba(255,51,85,0.08);
+      border:1px solid rgba(255,51,85,0.3);border-radius:6px;
+    }
+
+    /* ══ NAV ══ */
+    .nav{
+      height:54px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+      padding:0 18px;background:rgba(5,10,20,0.92);backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--b1);position:relative;z-index:200;
+    }
+    .nav-brand{
+      display:flex;align-items:center;gap:10px;font-family:var(--fd);
+      font-size:15px;font-weight:700;letter-spacing:3px;color:var(--cyan);
+    }
+    .nav-logo-sm{
+      width:30px;height:30px;border-radius:50%;border:1.5px solid var(--cyan);
+      display:flex;align-items:center;justify-content:center;background:rgba(0,245,255,0.06);
+    }
+    .nav-logo-sm::before{content:'';width:10px;height:10px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan)}
+    .conn-pill{
+      display:flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;
+      font-family:var(--fd);font-size:9px;letter-spacing:2px;border:1px solid;transition:all .3s;
+    }
+    .conn-pill.online{color:var(--green);border-color:var(--green);background:rgba(0,255,136,0.06)}
+    .conn-pill.offline{color:var(--txt3);border-color:var(--b1)}
+    .conn-dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+    .conn-pill.online .conn-dot{animation:blink 2s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .nav-right{display:flex;align-items:center;gap:10px}
+    .user-chip{
+      display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;
+      background:var(--bg2);border:1px solid var(--b1);border-radius:20px;
+    }
+    .user-av{
+      width:26px;height:26px;border-radius:50%;background:rgba(0,245,255,0.12);
+      border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;
+      font-family:var(--fd);font-size:11px;color:var(--cyan);
+    }
+    .user-name-sm{font-size:12px;color:var(--txt2)}
+    .btn-ghost{
+      background:none;border:none;color:var(--txt3);cursor:pointer;
+      padding:7px;border-radius:6px;font-size:15px;transition:all .2s;
+    }
+    .btn-ghost:hover{color:var(--cyan);background:var(--cyang)}
+
+    /* ══ APP BODY ══ */
+    .app-body{display:flex;flex:1;overflow:hidden;height:calc(100vh - 54px)}
+
+    /* ══ SIDEBAR ══ */
+    .sidebar{
+      width:310px;flex-shrink:0;background:rgba(5,10,20,0.92);
+      border-right:1px solid var(--b1);overflow-y:auto;overflow-x:hidden;
+      display:flex;flex-direction:column;z-index:100;
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .sidebar.closed{transform:translateX(-100%);position:absolute;height:calc(100vh - 54px)}
+    .s-section{padding:16px;border-bottom:1px solid rgba(0,245,255,0.06)}
+    .s-title{
+      font-family:var(--fd);font-size:9px;letter-spacing:2.5px;
+      color:var(--txt3);text-transform:uppercase;margin-bottom:12px;
+      display:flex;align-items:center;gap:6px;
+    }
+    .s-title::before{content:'';width:12px;height:1px;background:var(--cyan);opacity:.4}
+
+    /* ETA */
+    .eta-display{background:var(--bg2);border:1px solid var(--b1);border-radius:14px;padding:16px}
+    .eta-label{font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);text-align:center;margin-bottom:12px}
+    .eta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .eta-block{background:var(--bg3);border:1px solid var(--b1);border-radius:10px;padding:10px 6px;text-align:center}
+    .eta-num{font-family:var(--fd);font-size:26px;font-weight:700;color:var(--cyan);text-shadow:0 0 15px rgba(0,245,255,0.5);line-height:1}
+    .eta-unit{font-size:9px;color:var(--txt3);letter-spacing:1.5px;margin-top:3px}
+    .eta-dist{text-align:center;font-size:12px;color:var(--txt2);margin-top:10px}
+
+    /* STATS */
+    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .stat-card{background:var(--bg2);border:1px solid var(--b1);border-radius:10px;padding:10px 12px}
+    .stat-lbl{font-size:10px;color:var(--txt3);letter-spacing:1px}
+    .stat-val{font-family:var(--fm);font-size:13px;color:var(--cyan);margin-top:2px}
+
+    /* BOTONES INTERVALO */
+    .interval-btns{display:flex;flex-wrap:wrap;gap:6px}
+    .int-btn{
+      padding:6px 11px;background:var(--bg3);border:1px solid var(--b1);
+      border-radius:6px;color:var(--txt2);font-family:var(--fd);font-size:9px;
+      letter-spacing:1px;cursor:pointer;transition:all .2s;
+    }
+    .int-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+    .int-btn.on{background:rgba(0,245,255,0.1);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 10px rgba(0,245,255,0.15)}
+
+    /* INPUTS */
+    .dest-area{
+      width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--b1);
+      border-radius:8px;color:var(--txt);font-family:var(--fb);font-size:13px;
+      resize:vertical;min-height:70px;outline:none;transition:border-color .2s;
+    }
+    .dest-area::placeholder{color:var(--txt3)}
+    .dest-area:focus{border-color:var(--cyan)}
+    .btn-sec{
+      width:100%;padding:11px;background:none;border:1px solid var(--b2);
+      border-radius:8px;color:var(--cyan);font-family:var(--fd);font-size:10px;
+      letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:8px;
+    }
+    .btn-sec:hover{background:var(--cyang)}
+    .btn-sec:disabled{opacity:.4;cursor:not-allowed}
+    .gps-toggle{
+      width:100%;padding:11px;background:none;border:1px solid rgba(0,255,136,0.3);
+      border-radius:8px;color:var(--green);font-family:var(--fd);font-size:10px;
+      letter-spacing:2px;cursor:pointer;transition:all .2s;
+    }
+    .gps-toggle:hover{background:rgba(0,255,136,0.08)}
+    .gps-toggle.off{border-color:var(--b1);color:var(--txt3)}
+
+    /* LOG */
+    .notif-log{display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto}
+    .notif-item{
+      padding:8px 10px;background:var(--bg2);border-left:2px solid var(--cyan);
+      border-radius:0 6px 6px 0;font-size:12px;color:var(--txt2);
+    }
+    .notif-item .ni-time{color:var(--txt3);font-size:10px;font-family:var(--fm);margin-bottom:2px}
+    .notif-item.sms{border-left-color:var(--mag)}
+    .notif-item.warn{border-left-color:var(--amber)}
+
+    /* MAP */
+    .map-wrap{flex:1;position:relative;overflow:hidden}
+    #map{width:100%;height:100%;background:var(--bg1)}
+    .leaflet-tile{filter:invert(1) hue-rotate(180deg) saturate(.55) brightness(.8) !important}
+    .leaflet-control-zoom a{background:var(--bg2) !important;color:var(--cyan) !important;border-color:var(--b1) !important}
+    .leaflet-popup-content-wrapper{background:var(--bg2) !important;border:1px solid var(--b2) !important;color:var(--txt) !important;border-radius:10px !important}
+    .leaflet-popup-tip{background:var(--bg2) !important}
+
+    /* MAP OVERLAYS */
+    .map-coords{
+      position:absolute;top:12px;left:12px;z-index:500;
+      background:rgba(5,10,20,0.88);backdrop-filter:blur(12px);
+      border:1px solid var(--b1);border-radius:20px;
+      padding:7px 14px;font-family:var(--fm);font-size:11px;color:var(--txt2);
+    }
+    .map-coords span{color:var(--cyan)}
+    .menu-toggle{
+      position:absolute;top:12px;right:12px;z-index:500;
+      background:rgba(5,10,20,0.88);border:1px solid var(--b1);border-radius:8px;
+      color:var(--cyan);width:36px;height:36px;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;font-size:16px;backdrop-filter:blur(12px);
+    }
+    .pulse-wrap{
+      position:absolute;bottom:20px;right:20px;z-index:500;
+      width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+    }
+    .pulse-ring{
+      position:absolute;inset:-6px;border-radius:50%;
+      border:2px solid var(--cyan);opacity:.3;
+      animation:pulseOut 2s ease-out infinite;
+    }
+    .pulse-ring2{animation-delay:.6s;opacity:.15;inset:-14px}
+    @keyframes pulseOut{0%{transform:scale(.7);opacity:.4}100%{transform:scale(1.3);opacity:0}}
+    .pulse-core{
+      width:44px;height:44px;border-radius:50%;background:var(--bg2);
+      border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:18px;
+    }
+
+    /* DESCARGA */
+    .dl-section{padding:14px 16px;border-top:1px solid rgba(0,245,255,0.06)}
+    .dl-title{font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);margin-bottom:10px}
+    .dl-btns{display:flex;gap:8px}
+    .dl-btn{
+      flex:1;padding:9px 6px;background:var(--bg2);border:1px solid var(--b1);
+      border-radius:8px;color:var(--txt2);font-size:11px;cursor:pointer;
+      transition:all .2s;text-align:center;
+    }
+    .dl-btn:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyang)}
+    .dl-icon{font-size:16px;display:block;margin-bottom:3px}
+
+    /* TOAST */
+    #toast{
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      background:var(--bg3);border:1px solid var(--b2);border-radius:10px;
+      padding:11px 22px;font-size:13px;color:var(--txt);
+      z-index:9999;transition:opacity .3s;opacity:0;pointer-events:none;white-space:nowrap;
+    }
+    #toast.show{opacity:1}
+
+    /* SPINNER */
+    .spin{
+      display:inline-block;width:14px;height:14px;
+      border:2px solid rgba(0,0,0,.2);border-top-color:var(--bg0);
+      border-radius:50%;animation:spin .6s linear infinite;
+    }
+
+    @media(max-width:700px){
+      .sidebar{position:absolute;height:calc(100vh - 54px)}
+      .sidebar:not(.closed){box-shadow:4px 0 30px rgba(0,0,0,.6)}
+      .user-name-sm{display:none}
+    }
+  </style>
+</head>
+<body>
+<div id="gridbg"></div>
+<div id="toast"></div>
+
+<!-- ══════ AUTH ══════ -->
+<div id="auth-screen" class="screen active">
+  <div class="auth-wrap">
+    <div class="brand">
+      <div class="brand-logo"><div class="brand-dot"></div></div>
+      <div class="brand-title">NEXUS TRACK</div>
+      <div class="brand-sub">SISTEMA DE RASTREO GPS EN TIEMPO REAL</div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab on" id="tab-login">Iniciar Sesión</button>
+        <button class="auth-tab" id="tab-register">Registrarse</button>
+        <div class="tab-bar" id="tab-bar"></div>
+      </div>
+      <!-- LOGIN -->
+      <div id="form-login" class="auth-form">
+        <p class="auth-greeting">Bienvenido, <span>operador</span></p>
+        <div class="inp-wrap">
+          <span class="inp-icon">✉</span>
+          <input class="nx-inp" type="email" id="l-email" placeholder="Correo electrónico" autocomplete="email">
+        </div>
+        <div class="inp-wrap">
+          <span class="inp-icon">🔒</span>
+          <input class="nx-inp" type="password" id="l-pass" placeholder="Contraseña" autocomplete="current-password">
+          <button class="pw-eye" id="l-eye">👁</button>
+        </div>
+        <p class="err-msg" id="l-err"></p>
+        <button class="btn-primary" id="l-btn">ACCEDER AL SISTEMA</button>
+        <p class="auth-switch">¿Sin cuenta? <button class="lnk" id="go-register">Crear cuenta</button></p>
+      </div>
+      <!-- REGISTER -->
+      <div id="form-register" class="auth-form" style="display:none">
+        <p class="auth-greeting">Únete a la red <span>NEXUS</span></p>
+        <div class="inp-wrap">
+          <span class="inp-icon">👤</span>
+          <input class="nx-inp" type="text" id="r-name" placeholder="Nombre completo" autocomplete="name">
+        </div>
+        <div class="inp-wrap">
+          <span class="inp-icon">🏷</span>
+          <input class="nx-inp" type="text" id="r-nick" placeholder="¿Cómo quieres ser llamado?">
+        </div>
+        <div class="inp-wrap">
+          <span class="inp-icon">✉</span>
+          <input class="nx-inp" type="email" id="r-email" placeholder="Correo electrónico" autocomplete="email">
+        </div>
+        <div class="inp-wrap">
+          <span class="inp-icon">📱</span>
+          <input class="nx-inp" type="tel" id="r-phone" placeholder="Celular (ej: +57 300 000 0000)">
+        </div>
+        <div class="inp-wrap">
+          <span class="inp-icon">🔒</span>
+          <input class="nx-inp" type="password" id="r-pass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password">
+          <button class="pw-eye" id="r-eye">👁</button>
+        </div>
+        <p class="err-msg" id="r-err"></p>
+        <button class="btn-primary" id="r-btn">ACTIVAR CUENTA</button>
+        <p class="auth-switch">¿Ya tienes cuenta? <button class="lnk" id="go-login">Iniciar sesión</button></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ APP ══════ -->
+<div id="app-screen" class="screen">
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo-sm"></div>
+      NEXUS<span style="color:var(--txt3);margin:0 4px">·</span>TRACK
+    </div>
+    <div class="conn-pill offline" id="conn-pill">
+      <div class="conn-dot"></div>
+      <span id="conn-txt">SIN SEÑAL</span>
+    </div>
+    <div class="nav-right">
+      <div class="user-chip">
+        <div class="user-av" id="user-av">?</div>
+        <span class="user-name-sm" id="user-name-sm">—</span>
+      </div>
+      <button class="btn-ghost" id="logout-btn" title="Cerrar sesión">⎋</button>
+    </div>
+  </nav>
+  <div class="app-body">
+    <aside class="sidebar" id="sidebar">
+      <div class="s-section">
+        <div class="s-title">Dispositivo GPS</div>
+        <select class="nx-inp" id="device-select" style="padding-left:12px">
+          <option value="device_01">Tracker Principal #01</option>
+          <option value="device_02">Tracker Secundario #02</option>
+          <option value="mobile_gps">Dispositivo Móvil</option>
+        </select>
+        <button class="gps-toggle off" id="gps-btn" style="margin-top:8px">📡 USAR MI UBICACIÓN</button>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Calcular Destino</div>
+        <textarea class="dest-area" id="dest-input" placeholder="Ej: Calle 72 #10-34, Bogotá, Colombia&#10;o cualquier dirección del mundo"></textarea>
+        <button class="btn-sec" id="calc-btn">🔍 CALCULAR ETA</button>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Tiempo Estimado</div>
+        <div class="eta-display">
+          <div class="eta-label">TIEMPO DE LLEGADA ESTIMADO</div>
+          <div class="eta-grid">
+            <div class="eta-block"><div class="eta-num" id="eta-d">--</div><div class="eta-unit">DÍAS</div></div>
+            <div class="eta-block"><div class="eta-num" id="eta-h">--</div><div class="eta-unit">HORAS</div></div>
+            <div class="eta-block"><div class="eta-num" id="eta-m">--</div><div class="eta-unit">MINS</div></div>
+          </div>
+          <div class="eta-dist" id="eta-dist">Distancia: — km</div>
+        </div>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Datos en Vivo</div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-lbl">VELOCIDAD</div><div class="stat-val" id="s-speed">-- km/h</div></div>
+          <div class="stat-card"><div class="stat-lbl">ACTUALIZADO</div><div class="stat-val" id="s-upd">--:--:--</div></div>
+          <div class="stat-card"><div class="stat-lbl">LATITUD</div><div class="stat-val" id="s-lat">--</div></div>
+          <div class="stat-card"><div class="stat-lbl">LONGITUD</div><div class="stat-val" id="s-lng">--</div></div>
+        </div>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Frecuencia de Alertas</div>
+        <div class="interval-btns" id="interval-btns">
+          <button class="int-btn" data-ms="300000">5 min</button>
+          <button class="int-btn" data-ms="600000">10 min</button>
+          <button class="int-btn" data-ms="1800000">30 min</button>
+          <button class="int-btn on" data-ms="3600000">1 hora</button>
+          <button class="int-btn" data-ms="21600000">6 horas</button>
+          <button class="int-btn" data-ms="86400000">1 día</button>
+        </div>
+        <p style="font-size:11px;color:var(--txt3);margin-top:8px" id="notif-info">Alertas cada 1 hora.</p>
+      </div>
+      <div class="s-section">
+        <div class="s-title">Historial de Alertas</div>
+        <div class="notif-log" id="notif-log">
+          <div class="notif-item warn">
+            <div class="ni-time">Sin eventos aún</div>
+            Las notificaciones aparecerán aquí
+          </div>
+        </div>
+      </div>
+      <div class="dl-section">
+        <div class="dl-title">Instalar como App</div>
+        <div class="dl-btns">
+          <div class="dl-btn" id="pwa-btn"><span class="dl-icon">📱</span>Móvil / PC</div>
+          <div class="dl-btn" id="desktop-btn"><span class="dl-icon">🖥</span>Escritorio</div>
+        </div>
+      </div>
+    </aside>
+    <div class="map-wrap">
+      <div id="map"></div>
+      <div class="map-coords">
+        <span>LAT</span> <span id="mc-lat">4.71100</span>
+        &nbsp;|&nbsp;
+        <span>LNG</span> <span id="mc-lng">-74.07200</span>
+      </div>
+      <div class="menu-toggle" id="menu-toggle">☰</div>
+      <div class="pulse-wrap" id="pulse-wrap" style="display:none">
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring pulse-ring2"></div>
+        <div class="pulse-core">🛰</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Leaflet primero (no módulo) -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Firebase como módulo ES -->
+<script type="module">
+import { initializeApp }
+  from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+         signOut, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+import { getDatabase, ref, set, get, onValue, off }
+  from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js';
+
+/* ══════════════════════════════════════
+   CONFIGURACIÓN FIREBASE — ya con tus datos
+══════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey:            "AIzaSyALrMB-ClSDDERZzfXWSv4aoxRgpOBySHE",
+  authDomain:        "app-gps-aea26.firebaseapp.com",
+  databaseURL:       "https://app-gps-aea26-default-rtdb.firebaseio.com",
+  projectId:         "app-gps-aea26",
+  storageBucket:     "app-gps-aea26.firebasestorage.app",
+  messagingSenderId: "621904055732",
+  appId:             "1:621904055732:web:a8a3ebb58034c4d88376e1"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const auth  = getAuth(fbApp);
+const db    = getDatabase(fbApp);
+
+/* ══════════════════════════════════════
+   ESTADO GLOBAL
+══════════════════════════════════════ */
+let currentUser  = null;
+let userProfile  = null;
+let deviceId     = 'device_01';
+let gpsMarker    = null;
+let destMarker   = null;
+let routeLine    = null;
+let browserWatchId = null;
+let notifTimer   = null;
+let notifInterval = 3600000;
+let lastLocation = null;
+let lastETA      = null;
+let lastDest     = null;
+let deferredInstall = null;
+let activeRef    = null;
+
+/* ══════════════════════════════════════
+   MAPA LEAFLET
+══════════════════════════════════════ */
+const map = L.map('map', { zoomControl: true }).setView([4.711, -74.072], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap'
+}).addTo(map);
+
+function mkIcon(color, size = 36) {
+  return L.divIcon({
+    html: `<div style="width:${size}px;height:${size}px;background:${color};border:3px solid #fff;
+            border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+            box-shadow:0 0 12px ${color}88"></div>`,
+    iconSize: [size, size], iconAnchor: [size / 2, size], className: ''
+  });
+}
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+let toastT;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideErr(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+/* ══════════════════════════════════════
+   FIREBASE ERROR MESSAGES
+══════════════════════════════════════ */
+function fbErr(code) {
+  const m = {
+    'auth/user-not-found':          'Usuario no encontrado',
+    'auth/wrong-password':          'Contraseña incorrecta',
+    'auth/email-already-in-use':    'Este correo ya está registrado',
+    'auth/weak-password':           'Contraseña muy débil (mínimo 6 caracteres)',
+    'auth/invalid-email':           'Correo electrónico inválido',
+    'auth/invalid-credential':      'Correo o contraseña incorrectos',
+    'auth/too-many-requests':       'Demasiados intentos. Espera un momento.',
+    'auth/operation-not-allowed':   '⚠️ Activa Email/Password en Firebase → Authentication → Sign-in method',
+    'auth/configuration-not-found': '⚠️ Activa Email/Password en Firebase → Authentication → Sign-in method',
+    'auth/network-request-failed':  'Sin conexión a internet. Verifica tu red.',
+  };
+  return m[code] || `Error: ${code}`;
+}
+
+/* ══════════════════════════════════════
+   AUTH TABS — sin onclick en HTML
+══════════════════════════════════════ */
+function switchTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('tab-login').classList.toggle('on', isLogin);
+  document.getElementById('tab-register').classList.toggle('on', !isLogin);
+  document.getElementById('tab-bar').style.transform = isLogin ? 'translateX(0)' : 'translateX(100%)';
+  document.getElementById('form-login').style.display    = isLogin ? 'flex' : 'none';
+  document.getElementById('form-register').style.display = isLogin ? 'none'  : 'flex';
+}
+
+document.getElementById('tab-login').addEventListener('click',    () => switchTab('login'));
+document.getElementById('tab-register').addEventListener('click', () => switchTab('register'));
+document.getElementById('go-register').addEventListener('click',  () => switchTab('register'));
+document.getElementById('go-login').addEventListener('click',     () => switchTab('login'));
+
+/* ══════════════════════════════════════
+   MOSTRAR / OCULTAR CONTRASEÑA
+══════════════════════════════════════ */
+function togglePw(inputId, btnId) {
+  const inp = document.getElementById(inputId);
+  const btn = document.getElementById(btnId);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+document.getElementById('l-eye').addEventListener('click', () => togglePw('l-pass', 'l-eye'));
+document.getElementById('r-eye').addEventListener('click', () => togglePw('r-pass', 'r-eye'));
+
+/* ══════════════════════════════════════
+   REGISTRO
+══════════════════════════════════════ */
+document.getElementById('r-btn').addEventListener('click', async () => {
+  const name  = document.getElementById('r-name').value.trim();
+  const nick  = document.getElementById('r-nick').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const phone = document.getElementById('r-phone').value.trim();
+  const pass  = document.getElementById('r-pass').value;
+  const btn   = document.getElementById('r-btn');
+
+  hideErr('r-err');
+  if (!name || !nick || !email || !phone || !pass)
+    return showErr('r-err', 'Completa todos los campos');
+  if (pass.length < 6)
+    return showErr('r-err', 'La contraseña debe tener mínimo 6 caracteres');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Creando cuenta...';
+
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await set(ref(db, `users/${cred.user.uid}`), {
+      uid: cred.user.uid, email, fullName: name,
+      displayName: nick, phone,
+      createdAt: new Date().toISOString(),
+      notificationsEnabled: true
+    });
+    toast('✅ ¡Cuenta creada! Bienvenido, ' + nick);
+  } catch (e) {
+    console.error('Error registro:', e.code, e.message);
+    showErr('r-err', fbErr(e.code));
+    btn.disabled = false;
+    btn.textContent = 'ACTIVAR CUENTA';
+  }
+});
+
+/* ══════════════════════════════════════
+   LOGIN
+══════════════════════════════════════ */
+document.getElementById('l-btn').addEventListener('click', async () => {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const btn   = document.getElementById('l-btn');
+
+  hideErr('l-err');
+  if (!email || !pass)
+    return showErr('l-err', 'Completa todos los campos');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Verificando...';
+
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    toast('👋 ¡Bienvenido de vuelta!');
+  } catch (e) {
+    console.error('Error login:', e.code, e.message);
+    showErr('l-err', fbErr(e.code));
+    btn.disabled = false;
+    btn.textContent = 'ACCEDER AL SISTEMA';
+  }
+});
+
+/* También login con Enter */
+document.getElementById('l-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('l-btn').click();
+});
+
+/* ══════════════════════════════════════
+   LOGOUT
+══════════════════════════════════════ */
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  stopNotifTimer();
+  if (browserWatchId) navigator.geolocation.clearWatch(browserWatchId);
+  if (activeRef) off(activeRef);
+  await signOut(auth);
+  toast('Sesión cerrada');
+});
+
+/* ══════════════════════════════════════
+   AUTH STATE — detecta si el usuario está logueado
+══════════════════════════════════════ */
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    try {
+      const snap = await get(ref(db, `users/${user.uid}`));
+      if (snap.exists()) userProfile = snap.val();
+    } catch (e) { /* sin perfil aún */ }
+    showApp();
+  } else {
+    currentUser = null;
+    userProfile = null;
+    showAuth();
+  }
+});
+
+function showAuth() {
+  document.getElementById('auth-screen').classList.add('active');
+  document.getElementById('app-screen').classList.remove('active');
+}
+
+function showApp() {
+  document.getElementById('auth-screen').classList.remove('active');
+  document.getElementById('app-screen').classList.add('active');
+  const nick = userProfile?.displayName || currentUser?.email?.split('@')[0] || '?';
+  document.getElementById('user-av').textContent  = nick[0].toUpperCase();
+  document.getElementById('user-name-sm').textContent = nick;
+  startDeviceListener(deviceId);
+  setTimeout(() => map.invalidateSize(), 200);
+  if (Notification.permission === 'default') {
+    setTimeout(() => Notification.requestPermission(), 2000);
+  }
+}
+
+/* ══════════════════════════════════════
+   GPS — ESCUCHAR FIREBASE EN TIEMPO REAL
+══════════════════════════════════════ */
+function startDeviceListener(id) {
+  if (activeRef) off(activeRef);
+  activeRef = ref(db, `devices/${id}/location`);
+  onValue(activeRef, (snap) => {
+    if (!snap.exists()) return;
+    const d = snap.val();
+    updateGPS(d.lat, d.lng, d.speed || 0, d.timestamp);
+  });
+}
+
+document.getElementById('device-select').addEventListener('change', function () {
+  deviceId = this.value;
+  startDeviceListener(deviceId);
+});
+
+function updateGPS(lat, lng, speed, timestamp) {
+  lastLocation = { lat, lng, speed, timestamp };
+
+  /* Marcador GPS */
+  if (!gpsMarker) {
+    gpsMarker = L.marker([lat, lng], { icon: mkIcon('#00f5ff') }).addTo(map);
+    gpsMarker.bindPopup(`<b style="color:#00f5ff">📡 GPS Activo</b>`);
+    map.flyTo([lat, lng], 13, { duration: 1.2 });
+  } else {
+    gpsMarker.setLatLng([lat, lng]);
+  }
+
+  /* Actualizar UI */
+  document.getElementById('mc-lat').textContent = lat.toFixed(5);
+  document.getElementById('mc-lng').textContent = lng.toFixed(5);
+  document.getElementById('s-lat').textContent  = lat.toFixed(5);
+  document.getElementById('s-lng').textContent  = lng.toFixed(5);
+  document.getElementById('s-speed').textContent = `${(speed * 3.6).toFixed(0)} km/h`;
+  document.getElementById('s-upd').textContent   = new Date().toLocaleTimeString('es-CO');
+
+  /* Pill de conexión */
+  const pill = document.getElementById('conn-pill');
+  pill.className = 'conn-pill online';
+  document.getElementById('conn-txt').textContent = 'SEÑAL ACTIVA';
+  document.getElementById('pulse-wrap').style.display = 'flex';
+
+  /* Recalcular ETA si hay destino */
+  if (lastDest) calcETAFromCoords(lat, lng, lastDest.lat, lastDest.lng, lastDest.name);
+}
+
+/* ══════════════════════════════════════
+   GPS DEL NAVEGADOR (tu dispositivo)
+══════════════════════════════════════ */
+document.getElementById('gps-btn').addEventListener('click', () => {
+  const btn = document.getElementById('gps-btn');
+  if (browserWatchId) {
+    navigator.geolocation.clearWatch(browserWatchId);
+    browserWatchId = null;
+    btn.className = 'gps-toggle off';
+    btn.textContent = '📡 USAR MI UBICACIÓN';
+    toast('GPS del dispositivo desactivado');
+    return;
+  }
+  if (!navigator.geolocation)
+    return toast('❌ Tu dispositivo no soporta GPS');
+
+  browserWatchId = navigator.geolocation.watchPosition(
+    async (pos) => {
+      const { latitude: lat, longitude: lng, speed } = pos.coords;
+      await set(ref(db, `devices/${deviceId}/location`), {
+        lat, lng, speed: speed || 0,
+        accuracy: pos.coords.accuracy,
+        timestamp: new Date().toISOString()
+      });
+    },
+    (e) => toast('⚠ Error GPS: ' + e.message),
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 4000 }
+  );
+  btn.className = 'gps-toggle';
+  btn.textContent = '🔴 DETENER MI GPS';
+  toast('✅ Usando GPS de este dispositivo');
+});
+
+/* ══════════════════════════════════════
+   CALCULAR ETA
+══════════════════════════════════════ */
+document.getElementById('calc-btn').addEventListener('click', async () => {
+  const addr = document.getElementById('dest-input').value.trim();
+  if (!addr)         return toast('⚠ Ingresa una dirección destino');
+  if (!lastLocation) return toast('⚠ Esperando señal GPS...');
+
+  const btn = document.getElementById('calc-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Buscando dirección...';
+
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`;
+    const res  = await fetch(url, { headers: { 'Accept-Language': 'es' } });
+    const data = await res.json();
+
+    if (!data.length) {
+      toast('❌ Dirección no encontrada. Sé más específico.');
+      return;
+    }
+    const dLat = parseFloat(data[0].lat);
+    const dLng = parseFloat(data[0].lon);
+    const name = data[0].display_name;
+
+    lastDest = { lat: dLat, lng: dLng, name };
+    calcETAFromCoords(lastLocation.lat, lastLocation.lng, dLat, dLng, name);
+    toast('✅ Ruta calculada correctamente');
+  } catch (e) {
+    toast('❌ Error de red: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔍 CALCULAR ETA';
+  }
+});
+
+function calcETAFromCoords(oLat, oLng, dLat, dLng, destName) {
+  const dist  = haversine(oLat, oLng, dLat, dLng);
+  const spd   = (lastLocation?.speed > 0.5) ? lastLocation.speed * 3.6 : 45;
+  const totalS = Math.round((dist / spd) * 3600);
+  const days   = Math.floor(totalS / 86400);
+  const hrs    = Math.floor((totalS % 86400) / 3600);
+  const mins   = Math.floor((totalS % 3600) / 60);
+
+  lastETA = { days, hours: hrs, minutes: mins, dist };
+
+  document.getElementById('eta-d').textContent    = pad(days);
+  document.getElementById('eta-h').textContent    = pad(hrs);
+  document.getElementById('eta-m').textContent    = pad(mins);
+  document.getElementById('eta-dist').textContent = `Distancia: ${dist.toFixed(2)} km`;
+
+  /* Marcador destino */
+  if (destMarker) map.removeLayer(destMarker);
+  destMarker = L.marker([dLat, dLng], { icon: mkIcon('#ff00aa') }).addTo(map);
+  destMarker.bindPopup(`<b style="color:#ff00aa">📍 Destino</b><br>${destName.slice(0, 60)}`);
+
+  /* Línea de ruta */
+  if (routeLine) map.removeLayer(routeLine);
+  routeLine = L.polyline([[oLat, oLng], [dLat, dLng]], {
+    color: '#00f5ff', weight: 2.5, opacity: .8, dashArray: '8 5'
+  }).addTo(map);
+  map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
+
+  /* Reiniciar timer de notificaciones */
+  restartNotifTimer();
+}
+
+/* ══════════════════════════════════════
+   NOTIFICACIONES
+══════════════════════════════════════ */
+document.getElementById('interval-btns').addEventListener('click', (e) => {
+  const btn = e.target.closest('.int-btn');
+  if (!btn) return;
+  document.querySelectorAll('.int-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  notifInterval = parseInt(btn.dataset.ms);
+  const label = btn.textContent;
+  document.getElementById('notif-info').textContent = `Alertas cada ${label}.`;
+  restartNotifTimer();
+  toast(`🔔 Alertas configuradas cada ${label}`);
+});
+
+function restartNotifTimer() {
+  stopNotifTimer();
+  if (!lastETA) return;
+  notifTimer = setInterval(sendNotification, notifInterval);
+}
+function stopNotifTimer() {
+  if (notifTimer) { clearInterval(notifTimer); notifTimer = null; }
+}
+
+function sendNotification() {
+  if (!lastETA || !userProfile) return;
+  const { days, hours, minutes, dist } = lastETA;
+
+  /* Notificación del navegador */
+  if (Notification.permission === 'granted') {
+    new Notification('🛰 NEXUS TRACK — Actualización ETA', {
+      body: `Tu envío llega en ${days}d ${hours}h ${minutes}m | ${dist.toFixed(1)} km restantes`,
+      icon: ''
+    });
+  }
+
+  /* Log en pantalla */
+  addNotifLog('email', `ETA: ${days}d ${hours}h ${minutes}m — ${dist.toFixed(1)} km`);
+
+  /* Guardar en Firebase */
+  if (currentUser) {
+    set(ref(db, `notifications/${currentUser.uid}/${Date.now()}`), {
+      eta: lastETA, dest: lastDest?.name || '', sentAt: new Date().toISOString()
+    }).catch(() => {});
+  }
+}
+
+function addNotifLog(type, msg) {
+  const log  = document.getElementById('notif-log');
+  const item = document.createElement('div');
+  item.className = `notif-item ${type}`;
+  item.innerHTML = `<div class="ni-time">${new Date().toLocaleTimeString('es-CO')}</div>${msg}`;
+  if (log.children.length === 1 && log.firstElementChild.classList.contains('warn')) {
+    log.innerHTML = '';
+  }
+  log.prepend(item);
+  if (log.children.length > 12) log.lastChild.remove();
+}
+
+/* ══════════════════════════════════════
+   SIDEBAR TOGGLE
+══════════════════════════════════════ */
+document.getElementById('menu-toggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('closed');
+  setTimeout(() => map.invalidateSize(), 310);
+});
+
+/* ══════════════════════════════════════
+   INSTALAR PWA
+══════════════════════════════════════ */
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstall = e;
+});
+document.getElementById('pwa-btn').addEventListener('click', () => {
+  if (deferredInstall) {
+    deferredInstall.prompt();
+    deferredInstall.userChoice.then(c => {
+      if (c.outcome === 'accepted') toast('✅ App instalada');
+      deferredInstall = null;
+    });
+  } else {
+    toast('ℹ En Chrome: menú ⋮ → "Instalar aplicación"');
+  }
+});
+document.getElementById('desktop-btn').addEventListener('click', () => {
+  toast('ℹ Para escritorio: descarga el ZIP del proyecto y ejecuta npm run build:win/mac');
+});
+
+/* ══════════════════════════════════════
+   UTILIDADES
+══════════════════════════════════════ */
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 +
+    Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function pad(n) { return String(Math.max(0, Math.floor(n))).padStart(2, '0'); }
+
+</script>
+</body>
+</html>
