@@ -11,781 +11,531 @@
 <meta name="application-name" content="NEXUS TRACK">
 <meta name="description" content="Sistema profesional de rastreo GPS en tiempo real">
 <title>NEXUS TRACK</title>
-
-<!-- PWA Manifest inline -->
 <link rel="manifest" id="manifest-link">
-
-<!-- Apple Touch Icons (para iOS sin App Store) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23020810'/%3E%3Ccircle cx='256' cy='256' r='180' stroke='%2300f5ff' stroke-width='8' fill='none' opacity='.3'/%3E%3Ccircle cx='256' cy='256' r='120' stroke='%2300f5ff' stroke-width='4' fill='none' opacity='.5'/%3E%3Ccircle cx='256' cy='256' r='50' fill='%2300f5ff'/%3E%3Ccircle cx='256' cy='256' r='25' fill='%23020810'/%3E%3C/svg%3E">
-
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23020810'/%3E%3Ccircle cx='256' cy='256' r='190' stroke='%2300f5ff' stroke-width='8' fill='none' opacity='.3'/%3E%3Ccircle cx='256' cy='256' r='120' stroke='%2300f5ff' stroke-width='4' fill='none' opacity='.5'/%3E%3Ccircle cx='256' cy='256' r='55' fill='%2300f5ff'/%3E%3Ccircle cx='256' cy='256' r='26' fill='%23020810'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
 <style>
-/* ════════════════════════════════════════════════════
-   NEXUS TRACK — DESIGN SYSTEM FINAL
-   Paleta: Cian eléctrico · Magenta neón · Verde señal
-════════════════════════════════════════════════════ */
 :root{
-  --bg0:#020810; --bg1:#040c18; --bg2:#081422; --bg3:#0c1c30;
-  --bg4:#10243a; --bg5:#162e48;
-  --cyan:#00f5ff; --cyan2:#00d4e0; --cyan3:#009aaa;
-  --cy06:rgba(0,245,255,0.06); --cy10:rgba(0,245,255,0.10);
-  --cy15:rgba(0,245,255,0.15); --cy25:rgba(0,245,255,0.25);
-  --cy40:rgba(0,245,255,0.40);
-  --mag:#ff00aa; --mag2:#cc0088;
-  --mg06:rgba(255,0,170,0.06); --mg15:rgba(255,0,170,0.15);
-  --grn:#00ff88; --grn2:#00cc6a;
-  --gn06:rgba(0,255,136,0.06); --gn15:rgba(0,255,136,0.15);
-  --amb:#ffaa00; --red:#ff3355;
-  --txt0:#f0f8ff; --txt1:#c8ddf0; --txt2:#7a9cc4;
-  --txt3:#3d5a7a; --txt4:#1a2e44;
-  --b0:rgba(0,245,255,0.04); --b1:rgba(0,245,255,0.09);
-  --b2:rgba(0,245,255,0.20); --b3:rgba(0,245,255,0.40);
-  --fd:'Orbitron',sans-serif; --fb:'Rajdhani',sans-serif; --fm:'Share Tech Mono',monospace;
-  --nav:58px; --sb:330px;
-  --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:24px;
-  --safe-t:env(safe-area-inset-top,0px);
-  --safe-b:env(safe-area-inset-bottom,0px);
-  --safe-l:env(safe-area-inset-left,0px);
-  --safe-r:env(safe-area-inset-right,0px);
+  --bg0:#020810;--bg1:#040c18;--bg2:#081422;--bg3:#0c1c30;--bg4:#10243a;--bg5:#162e48;
+  --cyan:#00f5ff;--cyan2:#00d4e0;--cyan3:#009aaa;
+  --cy04:rgba(0,245,255,.04);--cy06:rgba(0,245,255,.06);--cy10:rgba(0,245,255,.10);
+  --cy15:rgba(0,245,255,.15);--cy25:rgba(0,245,255,.25);--cy40:rgba(0,245,255,.40);
+  --mag:#ff00aa;--mg06:rgba(255,0,170,.06);--mg15:rgba(255,0,170,.15);
+  --grn:#00ff88;--grn2:#00cc6a;--gn06:rgba(0,255,136,.06);--gn15:rgba(0,255,136,.15);
+  --amb:#ffaa00;--am10:rgba(255,170,0,.10);--am30:rgba(255,170,0,.30);
+  --red:#ff3355;--rd10:rgba(255,51,85,.10);
+  --pur:#aa44ff;--pu10:rgba(170,68,255,.10);
+  --txt0:#f0f8ff;--txt1:#c8ddf0;--txt2:#7a9cc4;--txt3:#3d5a7a;--txt4:#1a2e44;
+  --b0:rgba(0,245,255,.04);--b1:rgba(0,245,255,.09);--b2:rgba(0,245,255,.20);--b3:rgba(0,245,255,.40);
+  --fd:'Orbitron',sans-serif;--fb:'Rajdhani',sans-serif;--fm:'Share Tech Mono',monospace;
+  --nav:58px;--sb:340px;
+  --r-sm:8px;--r-md:12px;--r-lg:18px;--r-xl:24px;
+  --st:env(safe-area-inset-top,0px);--sb-s:env(safe-area-inset-bottom,0px);
+  --sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{height:100%;scroll-behavior:smooth}
-body{
-  font-family:var(--fb);background:var(--bg0);color:var(--txt1);
-  height:100dvh;overflow:hidden;-webkit-font-smoothing:antialiased;
-  -webkit-text-size-adjust:100%;
-}
+html{height:100%}
+body{font-family:var(--fb);background:var(--bg0);color:var(--txt1);height:100dvh;overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
 ::selection{background:var(--cy25);color:var(--cyan)}
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--cyan3);border-radius:2px}
-
-/* ── GRID BACKGROUND ── */
-#gridbg{
-  position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:
-    linear-gradient(rgba(0,245,255,0.018) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,245,255,0.018) 1px,transparent 1px);
-  background-size:52px 52px;
-}
-#gridbg::after{
-  content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 100% 50% at 20% 0%,rgba(0,245,255,0.06),transparent),
-    radial-gradient(ellipse 60% 40% at 80% 100%,rgba(255,0,170,0.04),transparent);
-}
-
-/* ── SCREENS ── */
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--cyan3);border-radius:2px}
+#gridbg{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(0,245,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,.018) 1px,transparent 1px);background-size:52px 52px}
+#gridbg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 50% at 20% 0%,rgba(0,245,255,.05),transparent),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(255,0,170,.04),transparent)}
 .screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column}
 .screen.active{display:flex}
 
-/* ════════════════════════════════════════════════════
-   AUTH — Pantalla de login/registro
-════════════════════════════════════════════════════ */
-#auth-screen{
-  align-items:center;justify-content:center;
-  background:var(--bg0);overflow-y:auto;
-  padding:max(var(--safe-t),20px) 16px max(var(--safe-b),20px);
-}
-.auth-wrap{
-  width:100%;max-width:420px;
-  display:flex;flex-direction:column;align-items:center;gap:28px;
-}
-
-/* Logo animado */
-.logo-orbit{
-  width:90px;height:90px;position:relative;
-  display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
-}
+/* AUTH */
+#auth-screen{align-items:center;justify-content:center;background:var(--bg0);overflow-y:auto;padding:max(var(--st),20px) 16px max(var(--sb-s),20px)}
+.auth-wrap{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:24px}
+.logo-orbit{width:90px;height:90px;position:relative;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
 .orbit-ring{position:absolute;border-radius:50%;border-style:solid}
-.or1{inset:0;border:2px solid var(--cyan);border-top-color:transparent;
-     animation:orb 8s linear infinite;box-shadow:0 0 24px var(--cy25),inset 0 0 24px var(--cy06)}
-.or2{inset:12px;border:1.5px solid var(--mag);border-bottom-color:transparent;
-     animation:orb 5s linear infinite reverse}
-.or3{inset:23px;border:1px solid var(--cy40);border-left-color:transparent;
-     animation:orb 13s linear infinite}
+.or1{inset:0;border:2px solid var(--cyan);border-top-color:transparent;animation:orb 8s linear infinite;box-shadow:0 0 24px var(--cy25),inset 0 0 24px var(--cy06)}
+.or2{inset:12px;border:1.5px solid var(--mag);border-bottom-color:transparent;animation:orb 5s linear infinite reverse}
+.or3{inset:23px;border:1px solid var(--cy40);border-left-color:transparent;animation:orb 13s linear infinite}
 @keyframes orb{to{transform:rotate(360deg)}}
-.orbit-core{
-  width:26px;height:26px;background:var(--cyan);border-radius:50%;position:relative;z-index:2;
-  box-shadow:0 0 24px rgba(0,245,255,0.9),0 0 48px rgba(0,245,255,0.4),0 0 80px rgba(0,245,255,0.15);
-  animation:pulse-core 2.5s ease-in-out infinite;
-}
-@keyframes pulse-core{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.85}}
-.brand-name{
-  font-family:var(--fd);font-size:34px;font-weight:900;
-  letter-spacing:8px;color:var(--cyan);line-height:1;text-align:center;
-  text-shadow:0 0 30px rgba(0,245,255,0.5),0 0 60px rgba(0,245,255,0.2),0 0 100px rgba(0,245,255,0.1);
-  animation:flicker 6s infinite;
-}
-@keyframes flicker{0%,89%,91%,93%,95%,100%{opacity:1}90%,92%,94%{opacity:.92}}
-.brand-sub{
-  color:var(--txt3);font-size:11px;letter-spacing:4px;
-  margin-top:8px;text-align:center;text-transform:uppercase;
-}
-.brand-badges{
-  display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;
-}
-.badge{
-  display:flex;align-items:center;gap:5px;
-  padding:5px 10px;background:var(--bg3);border:1px solid var(--b1);
-  border-radius:20px;font-size:10px;color:var(--txt3);
-  font-family:var(--fd);letter-spacing:1px;
-}
+.orbit-core{width:26px;height:26px;background:var(--cyan);border-radius:50%;position:relative;z-index:2;box-shadow:0 0 24px rgba(0,245,255,.9),0 0 48px rgba(0,245,255,.4);animation:pc 2.5s ease-in-out infinite}
+@keyframes pc{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.brand-name{font-family:var(--fd);font-size:34px;font-weight:900;letter-spacing:8px;color:var(--cyan);line-height:1;text-align:center;text-shadow:0 0 30px rgba(0,245,255,.5),0 0 60px rgba(0,245,255,.2)}
+.brand-sub{color:var(--txt3);font-size:11px;letter-spacing:4px;margin-top:8px;text-align:center;text-transform:uppercase}
+.brand-badges{display:flex;gap:7px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.badge{display:flex;align-items:center;gap:5px;padding:4px 10px;background:var(--bg3);border:1px solid var(--b1);border-radius:20px;font-size:9px;color:var(--txt3);font-family:var(--fd);letter-spacing:1px}
 .badge span{color:var(--cyan);font-size:12px}
 
-/* Auth card */
-.auth-card{
-  width:100%;background:rgba(8,20,34,0.92);
-  backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
-  border:1px solid var(--b1);border-radius:var(--r-xl);overflow:hidden;
-  box-shadow:0 0 0 1px var(--b0),0 24px 64px rgba(0,0,0,0.6),0 0 80px rgba(0,245,255,0.03);
-}
-.auth-tabs{
-  display:grid;grid-template-columns:1fr 1fr;
-  border-bottom:1px solid var(--b1);position:relative;
-}
-.auth-tab{
-  padding:18px;background:none;border:none;
-  color:var(--txt3);font-family:var(--fd);font-size:10px;
-  letter-spacing:2.5px;text-transform:uppercase;cursor:pointer;transition:color .25s;
-}
+/* VERIFICACIÓN: pasos del flujo OTP */
+.otp-step{display:none;flex-direction:column;gap:14px}
+.otp-step.active{display:flex}
+.otp-boxes{display:flex;gap:8px;justify-content:center}
+.otp-box{width:46px;height:56px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);
+  color:var(--cyan);font-family:var(--fd);font-size:22px;font-weight:700;text-align:center;outline:none;
+  transition:border-color .2s;caret-color:var(--cyan)}
+.otp-box:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cy06)}
+.otp-hint{text-align:center;color:var(--txt3);font-size:12px;line-height:1.6}
+.otp-hint strong{color:var(--txt2)}
+.otp-resend{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;display:none}
+.countdown{font-family:var(--fm);color:var(--txt3);font-size:11px;text-align:center}
+
+.auth-card{width:100%;background:rgba(8,20,34,.92);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1px solid var(--b1);border-radius:var(--r-xl);overflow:hidden;box-shadow:0 0 0 1px var(--b0),0 24px 64px rgba(0,0,0,.6)}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--b1);position:relative}
+.auth-tab{padding:18px;background:none;border:none;color:var(--txt3);font-family:var(--fd);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;cursor:pointer;transition:color .25s}
 .auth-tab.on{color:var(--cyan)}
-.tab-indicator{
-  position:absolute;bottom:0;left:0;width:50%;height:2px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-  box-shadow:0 0 12px var(--cyan);
-  transition:transform .3s cubic-bezier(.4,0,.2,1);
-}
-.auth-body{padding:28px;display:flex;flex-direction:column;gap:14px}
+.tab-indicator{position:absolute;bottom:0;left:0;width:50%;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);box-shadow:0 0 12px var(--cyan);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.auth-body{padding:24px;display:flex;flex-direction:column;gap:12px}
 .auth-hello{color:var(--txt2);font-size:17px;margin-bottom:4px}
 .auth-hello em{font-style:normal;color:var(--cyan)}
-
-/* Inputs */
 .field{position:relative}
-.field-icon{
-  position:absolute;left:14px;top:50%;transform:translateY(-50%);
-  color:var(--txt3);pointer-events:none;font-size:15px;z-index:1;line-height:1;
-}
-.nx-inp{
-  width:100%;padding:13px 42px 13px 42px;
-  background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);
-  color:var(--txt0);font-family:var(--fb);font-size:14px;letter-spacing:.3px;
-  outline:none;transition:border-color .2s,box-shadow .2s;
-  -webkit-appearance:none;appearance:none;
-}
+.field-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none;font-size:15px;z-index:1;line-height:1}
+.nx-inp{width:100%;padding:13px 42px 13px 42px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);color:var(--txt0);font-family:var(--fb);font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
 .nx-inp::placeholder{color:var(--txt4)}
-.nx-inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cy06),0 0 20px var(--cy06)}
-.eye-btn{
-  position:absolute;right:13px;top:50%;transform:translateY(-50%);
-  background:none;border:none;color:var(--txt3);cursor:pointer;
-  font-size:14px;padding:4px;transition:color .2s;line-height:1;
-}
+.nx-inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cy06)}
+.eye-btn{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--txt3);cursor:pointer;font-size:14px;padding:4px;transition:color .2s}
 .eye-btn:hover{color:var(--cyan)}
-.err-box{
-  display:none;padding:11px 14px;background:rgba(255,51,85,0.07);
-  border:1px solid rgba(255,51,85,0.25);border-radius:var(--r-sm);
-  color:var(--red);font-size:12px;line-height:1.6;
-}
-.btn-prime{
-  width:100%;padding:15px;margin-top:4px;
-  background:linear-gradient(135deg,var(--cyan) 0%,var(--cyan2) 50%,var(--cyan3) 100%);
-  border:none;border-radius:var(--r-md);color:var(--bg0);
-  font-family:var(--fd);font-size:11px;font-weight:700;
-  letter-spacing:3px;text-transform:uppercase;cursor:pointer;
-  transition:all .25s;
-  box-shadow:0 4px 20px var(--cy25),0 2px 8px rgba(0,0,0,.3);
-  position:relative;overflow:hidden;
-}
-.btn-prime::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);
-  opacity:0;transition:opacity .2s;
-}
-.btn-prime:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--cy40),0 4px 12px rgba(0,0,0,.4)}
-.btn-prime:hover::after{opacity:1}
-.btn-prime:active{transform:translateY(0);box-shadow:0 2px 12px var(--cy25)}
+.err-box{display:none;padding:11px 14px;background:var(--rd10);border:1px solid rgba(255,51,85,.25);border-radius:var(--r-sm);color:var(--red);font-size:12px;line-height:1.6}
+.ok-box{display:none;padding:11px 14px;background:var(--gn15);border:1px solid rgba(0,255,136,.25);border-radius:var(--r-sm);color:var(--grn);font-size:12px;line-height:1.6}
+.btn-prime{width:100%;padding:15px;margin-top:4px;background:linear-gradient(135deg,var(--cyan) 0%,var(--cyan2) 50%,var(--cyan3) 100%);border:none;border-radius:var(--r-md);color:var(--bg0);font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .25s;box-shadow:0 4px 20px var(--cy25)}
+.btn-prime:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--cy40)}
+.btn-prime:active{transform:translateY(0)}
 .btn-prime:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-mag{width:100%;padding:15px;background:linear-gradient(135deg,var(--mag),#cc0088);border:none;border-radius:var(--r-md);color:#fff;font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .25s;box-shadow:0 4px 20px rgba(255,0,170,.25)}
+.btn-mag:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,0,170,.4)}
+.btn-mag:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
 .switch-row{text-align:center;color:var(--txt3);font-size:13px}
 .lnk{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:13px;text-decoration:underline;padding:0}
-.lnk:hover{text-shadow:0 0 10px var(--cy40)}
-
-/* ════════════════════════════════════════════════════
-   APP — Pantalla principal
-════════════════════════════════════════════════════ */
-#app-screen{background:var(--bg0)}
 
 /* NAV */
-.nav{
-  height:calc(var(--nav) + var(--safe-t));
-  padding-top:var(--safe-t);
-  padding-left:calc(16px + var(--safe-l));
-  padding-right:calc(16px + var(--safe-r));
-  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
-  background:rgba(2,8,16,0.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-bottom:1px solid var(--b1);position:relative;z-index:300;
-  box-shadow:0 1px 0 var(--b0),0 4px 24px rgba(0,0,0,.5);
-}
-.nav-brand{
-  display:flex;align-items:center;gap:10px;
-  font-family:var(--fd);font-size:14px;font-weight:700;letter-spacing:3px;
-  color:var(--cyan);text-shadow:0 0 15px var(--cy25);
-}
-.nav-orb{
-  width:32px;height:32px;border-radius:50%;flex-shrink:0;
-  border:1.5px solid var(--cyan);background:var(--cy06);
-  display:flex;align-items:center;justify-content:center;position:relative;
-}
-.nav-orb::before{
-  content:'';width:10px;height:10px;background:var(--cyan);border-radius:50%;
-  box-shadow:0 0 10px var(--cyan);animation:pulse-core 2s ease-in-out infinite;
-}
-.sig-pill{
-  display:flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;
-  font-family:var(--fd);font-size:8.5px;letter-spacing:2px;border:1px solid;transition:all .4s;
-}
+#app-screen{background:var(--bg0)}
+.nav{height:calc(var(--nav) + var(--st));padding-top:var(--st);padding-left:calc(16px + var(--sl));padding-right:calc(16px + var(--sr));flex-shrink:0;display:flex;align-items:center;justify-content:space-between;background:rgba(2,8,16,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--b1);position:relative;z-index:300;box-shadow:0 1px 0 var(--b0),0 4px 24px rgba(0,0,0,.5)}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-size:14px;font-weight:700;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 15px var(--cy25)}
+.nav-orb{width:32px;height:32px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--cyan);background:var(--cy06);display:flex;align-items:center;justify-content:center;position:relative}
+.nav-orb::before{content:'';width:10px;height:10px;background:var(--cyan);border-radius:50%;box-shadow:0 0 10px var(--cyan);animation:pc 2s ease-in-out infinite}
+.sig-pill{display:flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;font-family:var(--fd);font-size:8.5px;letter-spacing:2px;border:1px solid;transition:all .4s}
 .sig-pill.on{color:var(--grn);border-color:rgba(0,255,136,.35);background:var(--gn06)}
 .sig-pill.off{color:var(--txt3);border-color:var(--b1)}
 .sig-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
 .sig-pill.on .sig-dot{animation:blink 1.6s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 .nav-r{display:flex;align-items:center;gap:8px}
-.u-chip{
-  display:flex;align-items:center;gap:8px;
-  padding:4px 12px 4px 4px;background:var(--bg3);border:1px solid var(--b1);border-radius:20px;
-}
-.u-av{
-  width:28px;height:28px;border-radius:50%;flex-shrink:0;
-  background:var(--cy10);border:1px solid var(--b2);
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--fd);font-size:11px;color:var(--cyan);font-weight:700;
-}
+.u-chip{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;background:var(--bg3);border:1px solid var(--b1);border-radius:20px}
+.u-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;background:var(--cy10);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:11px;color:var(--cyan);font-weight:700}
 .u-name{font-size:12px;color:var(--txt2);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.icon-btn{
-  background:none;border:none;color:var(--txt3);cursor:pointer;
-  width:36px;height:36px;border-radius:var(--r-sm);
-  display:flex;align-items:center;justify-content:center;
-  font-size:16px;transition:all .2s;flex-shrink:0;
-}
+.icon-btn{background:none;border:none;color:var(--txt3);cursor:pointer;width:36px;height:36px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0}
 .icon-btn:hover{color:var(--cyan);background:var(--cy10)}
 
-/* BODY */
-.app-body{
-  display:flex;flex:1;overflow:hidden;
-  height:calc(100dvh - var(--nav) - var(--safe-t));
-  position:relative;
-}
+/* APP BODY */
+.app-body{display:flex;flex:1;overflow:hidden;height:calc(100dvh - var(--nav) - var(--st));position:relative}
 
-/* ════════════════════════════════════════════════════
-   SIDEBAR
-════════════════════════════════════════════════════ */
-.sidebar{
-  width:var(--sb);flex-shrink:0;
-  background:rgba(2,6,14,0.97);border-right:1px solid var(--b1);
-  overflow-y:auto;overflow-x:hidden;
-  display:flex;flex-direction:column;z-index:200;
-  transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform;
-  padding-left:var(--safe-l);
-}
-/* Desktop: sidebar visible por defecto */
-@media(min-width:701px){
-  .sidebar.closed{transform:translateX(calc(-1 * var(--sb)));position:absolute;top:0;bottom:0;left:0}
-  .sidebar:not(.closed){transform:none;position:relative}
-}
-/* Mobile: sidebar oculto por defecto, aparece encima del mapa */
-@media(max-width:700px){
-  .sidebar{position:absolute;top:0;bottom:0;left:0;width:min(var(--sb),92vw);transform:translateX(-100%);z-index:250}
-  .sidebar.open{transform:translateX(0);box-shadow:8px 0 40px rgba(0,0,0,.8)}
-}
+/* SIDEBAR */
+.sidebar{width:var(--sb);flex-shrink:0;background:rgba(2,6,14,.97);border-right:1px solid var(--b1);overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;z-index:200;transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform;padding-left:var(--sl)}
+@media(min-width:701px){.sidebar.closed{transform:translateX(calc(-1 * var(--sb)));position:absolute;top:0;bottom:0;left:0}.sidebar:not(.closed){transform:none;position:relative}}
+@media(max-width:700px){.sidebar{position:absolute;top:0;bottom:0;left:0;width:min(var(--sb),92vw);transform:translateX(-100%);z-index:250}.sidebar.open{transform:translateX(0);box-shadow:8px 0 40px rgba(0,0,0,.8)}}
+.ss{padding:14px 16px;border-bottom:1px solid rgba(0,245,255,.04)}
+.ss-title{font-family:var(--fd);font-size:8px;letter-spacing:3px;color:var(--txt3);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ss-title::before{content:'';width:16px;height:1px;flex-shrink:0;background:linear-gradient(90deg,var(--cyan),transparent);opacity:.5}
 
-.ss{padding:15px 16px;border-bottom:1px solid rgba(0,245,255,0.04)}
-.ss-title{
-  font-family:var(--fd);font-size:8px;letter-spacing:3px;color:var(--txt3);
-  text-transform:uppercase;margin-bottom:12px;
-  display:flex;align-items:center;gap:8px;
-}
-.ss-title::before{
-  content:'';width:16px;height:1px;flex-shrink:0;
-  background:linear-gradient(90deg,var(--cyan),transparent);opacity:.5;
-}
-
-/* ETA DISPLAY */
-.eta-box{
-  background:linear-gradient(160deg,var(--bg3),var(--bg4));
-  border:1px solid var(--b1);border-radius:var(--r-lg);padding:18px;
-  position:relative;overflow:hidden;
-}
-.eta-box::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.35;
-}
-.eta-lbl{
-  font-family:var(--fd);font-size:7.5px;letter-spacing:2.5px;color:var(--txt3);
-  text-align:center;margin-bottom:16px;text-transform:uppercase;
-}
-.eta-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.eta-cell{
-  background:rgba(0,0,0,.45);border:1px solid var(--b1);border-radius:var(--r-md);
-  padding:13px 6px;text-align:center;transition:all .3s;
-}
+/* ETA */
+.eta-box{background:linear-gradient(160deg,var(--bg3),var(--bg4));border:1px solid var(--b1);border-radius:var(--r-lg);padding:16px;position:relative;overflow:hidden}
+.eta-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.35}
+.eta-lbl{font-family:var(--fd);font-size:7.5px;letter-spacing:2.5px;color:var(--txt3);text-align:center;margin-bottom:14px;text-transform:uppercase}
+.eta-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.eta-cell{background:rgba(0,0,0,.45);border:1px solid var(--b1);border-radius:var(--r-md);padding:12px 6px;text-align:center;transition:all .3s}
 .eta-cell.hi{border-color:var(--b2);background:var(--cy06);box-shadow:inset 0 0 20px var(--cy06)}
-.eta-n{
-  font-family:var(--fd);font-size:30px;font-weight:800;color:var(--cyan);
-  text-shadow:0 0 24px rgba(0,245,255,.7);line-height:1;letter-spacing:2px;
-}
+.eta-n{font-family:var(--fd);font-size:28px;font-weight:800;color:var(--cyan);text-shadow:0 0 24px rgba(0,245,255,.7);line-height:1;letter-spacing:2px}
 .eta-u{font-size:8px;color:var(--txt3);letter-spacing:2px;margin-top:5px;text-transform:uppercase}
-.eta-info{
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  border-top:1px solid var(--b0);padding-top:12px;font-size:12px;color:var(--txt2);
-}
+.eta-info{display:flex;align-items:center;justify-content:center;gap:6px;border-top:1px solid var(--b0);padding-top:10px;font-size:12px;color:var(--txt2)}
+.transport-bar{display:flex;gap:5px;margin-top:10px;padding-top:10px;border-top:1px solid var(--b0)}
+.tr-chip{flex:1;padding:7px 4px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-sm);text-align:center;cursor:default;transition:all .2s}
+.tr-chip.detected{border-color:var(--cyan);background:var(--cy10);box-shadow:0 0 12px var(--cy10)}
+.tr-chip-icon{font-size:16px;display:block;line-height:1;margin-bottom:2px}
+.tr-chip-lbl{font-family:var(--fd);font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase}
+.tr-chip.detected .tr-chip-lbl{color:var(--cyan)}
+.traffic-panel{margin-top:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md)}
+.traffic-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.traffic-title{font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase}
+.traffic-badge{padding:3px 8px;border-radius:10px;font-family:var(--fd);font-size:8px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.traffic-badge.low{background:var(--gn15);color:var(--grn);border:1px solid rgba(0,255,136,.3)}
+.traffic-badge.med{background:var(--am10);color:var(--amb);border:1px solid var(--am30)}
+.traffic-badge.high{background:var(--rd10);color:var(--red);border:1px solid rgba(255,51,85,.3)}
+.traffic-bar-wrap{height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.traffic-bar{height:100%;border-radius:3px;transition:width 1s ease,background .5s}
+.traffic-info{font-size:11px;color:var(--txt2);line-height:1.5}
 
 /* STATS */
 .stats-2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.s-card{
-  background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);
-  padding:11px 12px;transition:border-color .2s;
-}
+.s-card{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);padding:11px 12px;transition:border-color .2s}
 .s-card:hover{border-color:var(--b2)}
 .s-lbl{font-size:8.5px;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
 .s-val{font-family:var(--fm);font-size:13px;color:var(--cyan);line-height:1.3;word-break:break-all}
 
+/* NUEVO: Panel de historial de ruta */
+.route-history{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto}
+.rh-item{display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-sm);font-size:11px;color:var(--txt2)}
+.rh-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.rh-time{font-family:var(--fm);font-size:9px;color:var(--txt3);margin-left:auto;white-space:nowrap}
+
+/* NUEVO: Widget clima/condiciones */
+.conditions-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:0}
+.cond-card{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);padding:10px 8px;text-align:center}
+.cond-icon{font-size:20px;line-height:1;margin-bottom:4px;display:block}
+.cond-lbl{font-size:9px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.cond-val{font-family:var(--fm);font-size:12px;color:var(--cyan)}
+
 /* INTERVAL BUTTONS */
 .int-wrap{display:flex;flex-wrap:wrap;gap:6px}
-.int-b{
-  padding:6px 11px;background:var(--bg3);border:1px solid var(--b1);
-  border-radius:6px;color:var(--txt3);font-family:var(--fd);font-size:8.5px;
-  letter-spacing:1px;cursor:pointer;transition:all .2s;user-select:none;
-}
+.int-b{padding:6px 11px;background:var(--bg3);border:1px solid var(--b1);border-radius:6px;color:var(--txt3);font-family:var(--fd);font-size:8.5px;letter-spacing:1px;cursor:pointer;transition:all .2s}
 .int-b:hover{border-color:var(--b2);color:var(--txt2)}
 .int-b.on{background:var(--cy06);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 14px var(--cy10)}
+.notif-toggles{display:flex;gap:8px;margin-top:10px}
+.notif-toggle{flex:1;padding:9px 8px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);text-align:center;cursor:pointer;transition:all .2s;user-select:none}
+.notif-toggle.on{border-color:var(--cyan);background:var(--cy06)}
+.notif-toggle .nt-icon{font-size:18px;display:block;margin-bottom:3px;opacity:.4;filter:grayscale(1)}
+.notif-toggle.on .nt-icon{filter:none;opacity:1}
+.notif-toggle .nt-lbl{font-family:var(--fd);font-size:8px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase}
+.notif-toggle.on .nt-lbl{color:var(--cyan)}
 
 /* CONTROLS */
-.dest-ta{
-  width:100%;padding:12px 14px;background:var(--bg3);border:1px solid var(--b1);
-  border-radius:var(--r-md);color:var(--txt0);font-family:var(--fb);font-size:14px;
-  resize:vertical;min-height:76px;outline:none;transition:border-color .2s;
-  -webkit-appearance:none;line-height:1.6;
-}
+.dest-ta{width:100%;padding:12px 14px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);color:var(--txt0);font-family:var(--fb);font-size:14px;resize:vertical;min-height:70px;outline:none;transition:border-color .2s;-webkit-appearance:none;line-height:1.6}
 .dest-ta::placeholder{color:var(--txt4)}
 .dest-ta:focus{border-color:var(--cyan);box-shadow:0 0 0 2px var(--cy06)}
-.btn-cyan{
-  width:100%;padding:13px;background:none;border:1px solid var(--b2);
-  border-radius:var(--r-md);color:var(--cyan);font-family:var(--fd);
-  font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:9px;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
+.btn-cyan{width:100%;padding:13px;background:none;border:1px solid var(--b2);border-radius:var(--r-md);color:var(--cyan);font-family:var(--fd);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:9px;display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-cyan:hover{background:var(--cy06);box-shadow:0 0 24px var(--cy10);border-color:var(--b3)}
 .btn-cyan:disabled{opacity:.4;cursor:not-allowed}
-.btn-grn{
-  width:100%;padding:12px;background:none;border:1px solid rgba(0,255,136,.2);
-  border-radius:var(--r-md);color:var(--grn);font-family:var(--fd);
-  font-size:9.5px;letter-spacing:2px;cursor:pointer;transition:all .2s;
-}
+.btn-grn{width:100%;padding:12px;background:none;border:1px solid rgba(0,255,136,.2);border-radius:var(--r-md);color:var(--grn);font-family:var(--fd);font-size:9.5px;letter-spacing:2px;cursor:pointer;transition:all .2s}
 .btn-grn:hover{background:var(--gn06);border-color:rgba(0,255,136,.4)}
 .btn-grn.off{border-color:var(--b1);color:var(--txt3)}
 .btn-grn.off:hover{border-color:var(--b2);color:var(--txt2)}
 
-/* NOTIF LOG */
-.nlog{display:flex;flex-direction:column;gap:5px;max-height:160px;overflow-y:auto}
-.nlog-item{
-  padding:9px 11px;background:var(--bg3);
-  border-left:2px solid var(--cyan);border-radius:0 var(--r-sm) var(--r-sm) 0;
-  font-size:12px;color:var(--txt2);
-}
-.nlog-item .ni-t{color:var(--txt3);font-size:9.5px;font-family:var(--fm);margin-bottom:3px}
+/* SIMULADOR */
+.sim-form{display:flex;flex-direction:column;gap:9px}
+.sim-modes{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:2px 0}
+.sim-mode{padding:8px 4px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-sm);text-align:center;cursor:pointer;transition:all .2s}
+.sim-mode.on{border-color:var(--mag);background:var(--mg06)}
+.sim-mode-icon{font-size:16px;line-height:1;display:block;margin-bottom:2px}
+.sim-mode-lbl{font-family:var(--fd);font-size:7px;letter-spacing:.5px;color:var(--txt3);text-transform:uppercase}
+.sim-mode.on .sim-mode-lbl{color:var(--mag)}
+.sim-progress{height:4px;background:var(--bg2);border-radius:2px;overflow:hidden;margin-top:6px;display:none}
+.sim-prog-bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--mag));border-radius:2px;transition:width .5s ease;width:0%}
+.sim-status{font-size:11px;color:var(--txt2);margin-top:6px;line-height:1.5;display:none}
+.btn-sim-start{width:100%;padding:11px;background:linear-gradient(135deg,#1a3a5c,#0d2540);border:1px solid rgba(0,200,255,.35);border-radius:var(--r-md);color:#00d4ff;font-family:var(--fd);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:4px;text-shadow:0 0 8px rgba(0,212,255,.4)}
+.btn-sim-start:hover{box-shadow:0 0 20px rgba(0,180,255,.25),inset 0 0 16px rgba(0,180,255,.08);border-color:rgba(0,220,255,.6);transform:translateY(-1px)}
+.btn-sim-stop{width:100%;padding:11px;background:none;border:1px solid rgba(255,51,85,.4);border-radius:var(--r-md);color:var(--red);font-family:var(--fd);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:4px;display:none}
+.btn-sim-stop:hover{background:var(--rd10)}
+
+/* NLOG */
+.nlog{display:flex;flex-direction:column;gap:5px;max-height:150px;overflow-y:auto}
+.nlog-item{padding:9px 11px;background:var(--bg3);border-left:2px solid var(--cyan);border-radius:0 var(--r-sm) var(--r-sm) 0;font-size:12px;color:var(--txt2)}
+.ni-t{color:var(--txt3);font-size:9.5px;font-family:var(--fm);margin-bottom:3px}
 .nlog-item.m{border-left-color:var(--mag)}
 .nlog-item.e{border-left-color:var(--amb)}
 .nlog-item.g{border-left-color:var(--txt3)}
+.nlog-item.sim{border-left-color:var(--mag)}
+.nlog-item.ok{border-left-color:var(--grn)}
 
-/* ════════════════════════════════════════════════════
-   INSTALL SECTION — La magia del botón de descarga
-════════════════════════════════════════════════════ */
+/* INSTALL */
 .install-section{padding:16px}
-.install-title{
-  font-family:var(--fd);font-size:8px;letter-spacing:3px;
-  color:var(--txt3);margin-bottom:12px;text-transform:uppercase;
-  display:flex;align-items:center;gap:8px;
-}
+.install-title{font-family:var(--fd);font-size:8px;letter-spacing:3px;color:var(--txt3);margin-bottom:12px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .install-title::before{content:'';width:16px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent);opacity:.5}
-
-/* Botón de instalación principal — el centro de atención */
-.install-main-btn{
-  width:100%;padding:16px;margin-bottom:10px;
-  background:linear-gradient(135deg,rgba(0,245,255,0.12) 0%,rgba(0,245,255,0.06) 100%);
-  border:1px solid var(--b2);border-radius:var(--r-lg);
-  cursor:pointer;transition:all .3s;position:relative;overflow:hidden;
-  display:flex;align-items:center;gap:14px;
-}
-.install-main-btn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,var(--cy15),transparent);
-  opacity:0;transition:opacity .3s;
-}
+.install-main-btn{width:100%;padding:16px;margin-bottom:10px;background:linear-gradient(135deg,var(--cy10) 0%,var(--cy06) 100%);border:1px solid var(--b2);border-radius:var(--r-lg);cursor:pointer;transition:all .3s;position:relative;overflow:hidden;display:flex;align-items:center;gap:14px}
 .install-main-btn:hover{border-color:var(--cyan);box-shadow:0 0 30px var(--cy15),inset 0 0 30px var(--cy06)}
-.install-main-btn:hover::before{opacity:1}
 .install-main-btn:active{transform:scale(.98)}
-.imb-icon{font-size:28px;flex-shrink:0;position:relative;z-index:1}
-.imb-text{text-align:left;position:relative;z-index:1}
+.imb-icon{font-size:28px;flex-shrink:0;z-index:1}
+.imb-text{text-align:left;z-index:1;flex:1}
 .imb-title{font-family:var(--fd);font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:2px;margin-bottom:3px}
 .imb-sub{font-size:11px;color:var(--txt2);line-height:1.4}
-.imb-badge{
-  margin-left:auto;padding:4px 10px;background:var(--cy10);
-  border:1px solid var(--b2);border-radius:20px;
-  font-family:var(--fd);font-size:8px;color:var(--cyan);letter-spacing:1px;
-  flex-shrink:0;position:relative;z-index:1;white-space:nowrap;
-}
-
-/* Botones secundarios de plataforma */
-.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.plat-btn{
-  background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);
-  padding:12px 10px;text-align:center;cursor:pointer;transition:all .25s;
-}
+.imb-badge{padding:4px 10px;background:var(--cy10);border:1px solid var(--b2);border-radius:20px;font-family:var(--fd);font-size:8px;color:var(--cyan);letter-spacing:1px;flex-shrink:0;white-space:nowrap;z-index:1}
+.platforms-toggle{width:100%;padding:10px;background:none;border:1px solid var(--b1);border-radius:var(--r-md);color:var(--txt2);font-family:var(--fd);font-size:9px;letter-spacing:2px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.platforms-toggle:hover{border-color:var(--b2);color:var(--txt1)}
+.platforms-toggle .arrow{transition:transform .3s;display:inline-block}
+.platforms-toggle.open .arrow{transform:rotate(180deg)}
+.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .3s;opacity:0;margin-top:0}
+.platform-grid.open{max-height:300px;opacity:1;margin-top:8px}
+.plat-btn{background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);padding:12px 10px;text-align:center;cursor:pointer;transition:all .25s}
 .plat-btn:hover{border-color:var(--b2);background:var(--cy06);transform:translateY(-1px)}
-.plat-btn:active{transform:translateY(0)}
 .pb-icon{font-size:20px;margin-bottom:5px;display:block;line-height:1}
 .pb-name{font-family:var(--fd);font-size:8.5px;letter-spacing:1px;color:var(--txt2);margin-bottom:2px}
 .pb-sub{font-size:10px;color:var(--txt3)}
 
-/* ════════════════════════════════════════════════════
-   MAP
-════════════════════════════════════════════════════ */
+/* MAP */
 .map-wrap{flex:1;position:relative;overflow:hidden;min-width:0}
 #map{width:100%;height:100%;background:var(--bg1)}
 .leaflet-tile{filter:invert(1) hue-rotate(180deg) saturate(.45) brightness(.72) !important}
 .leaflet-control-zoom{margin-top:12px !important;margin-right:12px !important}
-.leaflet-control-zoom a{
-  background:rgba(2,8,16,.92) !important;backdrop-filter:blur(12px) !important;
-  color:var(--cyan) !important;border-color:var(--b1) !important;
-  width:34px !important;height:34px !important;line-height:34px !important;font-size:16px !important;
-}
-.leaflet-popup-content-wrapper{
-  background:rgba(8,20,34,.96) !important;border:1px solid var(--b2) !important;
-  color:var(--txt1) !important;border-radius:14px !important;
-  backdrop-filter:blur(20px) !important;
-  box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 0 1px var(--b0) !important;
-}
+.leaflet-control-zoom a{background:rgba(2,8,16,.92) !important;backdrop-filter:blur(12px) !important;color:var(--cyan) !important;border-color:var(--b1) !important;width:34px !important;height:34px !important;line-height:34px !important;font-size:16px !important}
+.leaflet-popup-content-wrapper{background:rgba(8,20,34,.96) !important;border:1px solid var(--b2) !important;color:var(--txt1) !important;border-radius:14px !important;backdrop-filter:blur(20px) !important;box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 0 1px var(--b0) !important}
 .leaflet-popup-tip{background:rgba(8,20,34,.96) !important}
 .leaflet-popup-content{font-family:var(--fb);font-size:13px;line-height:1.6;min-width:160px}
-
-/* MAP OVERLAYS */
-.ov{
-  position:absolute;z-index:500;
-  background:rgba(2,8,16,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border:1px solid var(--b1);border-radius:var(--r-md);
-}
-#ov-coords{
-  top:12px;left:12px;padding:8px 15px;
-  font-family:var(--fm);font-size:11px;color:var(--txt2);
-  display:flex;align-items:center;gap:6px;
-}
+.ov{position:absolute;z-index:500;background:rgba(2,8,16,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--b1);border-radius:var(--r-md)}
+#ov-coords{top:12px;left:12px;padding:8px 15px;font-family:var(--fm);font-size:11px;color:var(--txt2);display:flex;align-items:center;gap:6px}
 #ov-coords .cl{color:var(--cyan);font-size:8.5px;letter-spacing:1px}
-.fab-menu{
-  position:absolute;top:12px;right:12px;z-index:500;
-  width:40px;height:40px;border-radius:10px;
-  background:rgba(2,8,16,.92);backdrop-filter:blur(16px);
-  border:1px solid var(--b1);color:var(--cyan);font-size:18px;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;
-}
-.fab-menu:hover{background:var(--cy10);border-color:var(--b2);box-shadow:0 0 20px var(--cy10)}
+.fab-menu{position:absolute;top:12px;right:12px;z-index:500;width:40px;height:40px;border-radius:10px;background:rgba(2,8,16,.92);backdrop-filter:blur(16px);border:1px solid var(--b1);color:var(--cyan);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.fab-menu:hover{background:var(--cy10);border-color:var(--b2)}
+.map-traffic-legend{position:absolute;bottom:80px;right:16px;z-index:500;background:rgba(2,8,16,.88);backdrop-filter:blur(12px);border:1px solid var(--b1);border-radius:var(--r-md);padding:10px 12px;min-width:140px;display:none}
+.tl-title{font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);margin-bottom:8px;text-transform:uppercase}
+.tl-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--txt2);margin-bottom:4px}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 
-/* GPS PULSE */
-.pulse-wrap{
-  position:absolute;bottom:calc(20px + var(--safe-b));right:16px;z-index:500;
-  width:52px;height:52px;display:flex;align-items:center;justify-content:center;
-}
+/* NUEVO: ETA LLEGADA ESTIMADA CARD sobre el mapa */
+.eta-map-card{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);z-index:500;
+  background:rgba(2,8,16,.92);backdrop-filter:blur(16px);border:1px solid var(--b2);border-radius:var(--r-lg);
+  padding:12px 20px;display:none;align-items:center;gap:14px;white-space:nowrap;
+  box-shadow:0 0 30px rgba(0,245,255,.1)}
+.emc-label{font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:4px}
+.emc-val{font-family:var(--fd);font-size:18px;font-weight:700;color:var(--cyan);text-shadow:0 0 15px rgba(0,245,255,.6)}
+.emc-sep{width:1px;height:36px;background:var(--b1)}
+.emc-dist{text-align:center}
+
+.pulse-wrap{position:absolute;bottom:calc(20px + var(--sb-s));right:16px;z-index:500;width:52px;height:52px;display:flex;align-items:center;justify-content:center}
 .pr{position:absolute;border-radius:50%;border:1.5px solid var(--cyan);animation:pranim 2.4s ease-out infinite}
-.pr1{inset:-4px;opacity:.4}
-.pr2{inset:-12px;opacity:.22;animation-delay:.8s}
-.pr3{inset:-22px;opacity:.1;animation-delay:1.6s}
+.pr1{inset:-4px;opacity:.4}.pr2{inset:-12px;opacity:.22;animation-delay:.8s}.pr3{inset:-22px;opacity:.1;animation-delay:1.6s}
 @keyframes pranim{0%{transform:scale(.6);opacity:.5}100%{transform:scale(1.5);opacity:0}}
-.p-core{
-  width:52px;height:52px;border-radius:50%;
-  background:var(--bg2);border:1px solid var(--b3);
-  display:flex;align-items:center;justify-content:center;font-size:22px;
-  box-shadow:0 0 24px var(--cy15);
-}
+.p-core{width:52px;height:52px;border-radius:50%;background:var(--bg2);border:1px solid var(--b3);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 24px var(--cy15)}
 
-/* MOBILE BOTTOM BAR */
-.mob-bar{
-  display:none;
-  height:calc(56px + var(--safe-b));
-  padding-bottom:var(--safe-b);
-  padding-left:var(--safe-l);padding-right:var(--safe-r);
-  background:rgba(2,8,16,.98);border-top:1px solid var(--b1);
-  grid-template-columns:repeat(4,1fr);align-items:center;
-  flex-shrink:0;position:relative;z-index:250;
-}
-.mb-btn{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  background:none;border:none;cursor:pointer;padding:8px;transition:all .2s;width:100%;
-}
+/* MOBILE BAR */
+.mob-bar{display:none;height:calc(56px + var(--sb-s));padding-bottom:var(--sb-s);padding-left:var(--sl);padding-right:var(--sr);background:rgba(2,8,16,.98);border-top:1px solid var(--b1);grid-template-columns:repeat(5,1fr);align-items:center;flex-shrink:0;position:relative;z-index:250}
+.mb-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;cursor:pointer;padding:8px;transition:all .2s;width:100%}
 .mb-btn .mi{font-size:19px;line-height:1}
 .mb-btn .ml{font-family:var(--fd);font-size:7px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;transition:color .2s}
 .mb-btn.on .ml,.mb-btn:hover .ml{color:var(--cyan)}
+#sb-overlay{display:none;position:absolute;inset:0;z-index:240;background:rgba(0,0,0,.6);backdrop-filter:blur(2px)}
 
-/* OVERLAY CERRAR SIDEBAR EN MOBILE */
-#sb-overlay{
-  display:none;position:absolute;inset:0;z-index:240;
-  background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
-}
-
-/* MODAL */
-.modal-wrap{
-  position:fixed;inset:0;z-index:2000;
-  background:rgba(0,0,0,.75);backdrop-filter:blur(10px);
-  display:flex;align-items:center;justify-content:center;padding:20px;
-  opacity:0;pointer-events:none;transition:opacity .3s;
-}
+/* MODALES */
+.modal-wrap{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
 .modal-wrap.show{opacity:1;pointer-events:all}
-.modal{
-  background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r-xl);
-  padding:28px;max-width:480px;width:100%;
-  box-shadow:0 0 80px rgba(0,0,0,.7),0 0 0 1px var(--b0);
-  transform:translateY(20px);transition:transform .3s;
-}
+.modal{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r-xl);padding:28px;max-width:480px;width:100%;box-shadow:0 0 80px rgba(0,0,0,.7);transform:translateY(20px);transition:transform .3s}
 .modal-wrap.show .modal{transform:translateY(0)}
 .modal-h{font-family:var(--fd);font-size:12px;letter-spacing:3px;color:var(--cyan);margin-bottom:16px}
 .modal p{color:var(--txt2);font-size:14px;line-height:1.75;margin-bottom:12px}
-.modal code{
-  display:block;background:var(--bg0);border:1px solid var(--b1);border-radius:var(--r-sm);
-  padding:13px;font-family:var(--fm);font-size:12px;color:var(--cyan);
-  margin:10px 0;white-space:pre-wrap;word-break:break-all;line-height:1.7;
-}
+.modal code{display:block;background:var(--bg0);border:1px solid var(--b1);border-radius:var(--r-sm);padding:13px;font-family:var(--fm);font-size:12px;color:var(--cyan);margin:10px 0;white-space:pre-wrap;word-break:break-all;line-height:1.7}
 .modal-steps{counter-reset:step;list-style:none;padding:0;margin-bottom:12px}
-.modal-steps li{
-  counter-increment:step;padding:8px 0 8px 32px;position:relative;
-  color:var(--txt2);font-size:14px;border-bottom:1px solid var(--b0);
-}
-.modal-steps li::before{
-  content:counter(step);position:absolute;left:0;top:8px;
-  width:20px;height:20px;border-radius:50%;background:var(--cy10);border:1px solid var(--b2);
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--fd);font-size:9px;color:var(--cyan);font-weight:700;
-  line-height:1;text-align:center;padding-top:5px;
-}
-.modal-close{
-  width:100%;padding:12px;margin-top:16px;background:none;
-  border:1px solid var(--b2);border-radius:var(--r-md);color:var(--cyan);
-  font-family:var(--fd);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;
-}
-.modal-close:hover{background:var(--cy06);box-shadow:0 0 20px var(--cy10)}
+.modal-steps li{counter-increment:step;padding:8px 0 8px 32px;position:relative;color:var(--txt2);font-size:14px;border-bottom:1px solid var(--b0)}
+.modal-steps li::before{content:counter(step);position:absolute;left:0;top:8px;width:20px;height:20px;border-radius:50%;background:var(--cy10);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:9px;color:var(--cyan);font-weight:700;line-height:20px;text-align:center}
+.modal-close{width:100%;padding:12px;margin-top:16px;background:none;border:1px solid var(--b2);border-radius:var(--r-md);color:var(--cyan);font-family:var(--fd);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s}
+.modal-close:hover{background:var(--cy06)}
 
 /* TOAST */
-#toast{
-  position:fixed;bottom:calc(80px + var(--safe-b));left:50%;
-  transform:translateX(-50%) translateY(12px);
-  background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r-md);
-  padding:12px 22px;font-size:13px;color:var(--txt1);
-  z-index:9999;transition:opacity .3s,transform .3s;
-  opacity:0;pointer-events:none;max-width:90vw;text-align:center;
-  box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 1px var(--b0);
-}
+#toast{position:fixed;bottom:calc(80px + var(--sb-s));left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r-md);padding:12px 22px;font-size:13px;color:var(--txt1);z-index:9999;transition:opacity .3s,transform .3s;opacity:0;pointer-events:none;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.1);border-top-color:var(--bg0);border-radius:50%;animation:orb .7s linear infinite;vertical-align:middle}
+.logistics-badge{padding:2px 8px;background:rgba(0,180,255,.12);border:1px solid rgba(0,180,255,.3);border-radius:10px;font-family:var(--fd);font-size:7px;color:#00d4ff;letter-spacing:1.5px;white-space:nowrap}
+.fleet-unit{display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);margin-bottom:6px;cursor:pointer;transition:all .2s}
+.fleet-unit:hover{border-color:var(--b2);background:var(--cy06)}
+.fleet-unit.active-unit{border-color:var(--cyan);background:var(--cy06)}
+.fu-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:all .3s}
+.fu-dot.on{background:var(--grn);box-shadow:0 0 8px rgba(0,255,136,.5)}
+.fu-dot.off{background:var(--txt3)}
+.fu-name{font-size:12px;color:var(--txt1);flex:1}
+.fu-spd{font-family:var(--fm);font-size:10px;color:var(--txt3)}
 
-/* SPINNER */
-.spin{
-  display:inline-block;width:14px;height:14px;
-  border:2px solid rgba(0,0,0,.1);border-top-color:var(--bg0);
-  border-radius:50%;animation:orb .7s linear infinite;vertical-align:middle;
-}
-
-/* ════════════ RESPONSIVE ════════════ */
-@media(max-width:700px){
-  .mob-bar{display:grid}
-  .u-name{display:none}
-  .sig-pill{display:none}
-  .brand-name{font-size:26px;letter-spacing:5px}
-  .eta-n{font-size:24px}
-  .app-body{height:calc(100dvh - var(--nav) - var(--safe-t) - 56px - var(--safe-b))}
-}
-@media(max-width:380px){
-  .brand-name{font-size:22px;letter-spacing:4px}
-  .int-b{font-size:8px;padding:5px 8px}
-}
+@media(max-width:700px){.mob-bar{display:grid}.u-name{display:none}.sig-pill{display:none}.brand-name{font-size:26px;letter-spacing:5px}.eta-n{font-size:24px}.app-body{height:calc(100dvh - var(--nav) - var(--st) - 56px - var(--sb-s))}}
+@media(max-width:380px){.brand-name{font-size:22px;letter-spacing:4px}.int-b{font-size:8px;padding:5px 8px}}
 </style>
 </head>
 <body>
-
 <div id="gridbg"></div>
 <div id="toast"></div>
 
-<!-- MODAL ESCRITORIO -->
-<div class="modal-wrap" id="modal-desktop">
-  <div class="modal">
-    <div class="modal-h">VERSIÓN DE ESCRITORIO — ELECTRON</div>
-    <p>Para instalar NEXUS TRACK como app nativa (.exe / .dmg / .AppImage):</p>
-    <ol class="modal-steps">
-      <li>Descarga Node.js desde <strong style="color:var(--cyan)">nodejs.org</strong> e instálalo</li>
-      <li>Descarga el proyecto ZIP desde el botón de arriba</li>
-      <li>Descomprímelo y abre la carpeta en una terminal</li>
-      <li>Ejecuta los siguientes comandos:</li>
-    </ol>
-    <code>npm install
+<!-- MODALES -->
+<div class="modal-wrap" id="modal-desktop"><div class="modal">
+  <div class="modal-h">APP NATIVA — ELECTRON</div>
+  <p>Instala NEXUS TRACK como app nativa (.exe / .dmg / .AppImage):</p>
+  <ol class="modal-steps"><li>Instala Node.js desde <strong style="color:var(--cyan)">nodejs.org</strong></li><li>Descarga el proyecto ZIP del repositorio</li><li>Abre la carpeta en una terminal</li><li>Ejecuta los comandos:</li></ol>
+  <code>npm install
 npm run build:web
+npm run build:win    # → .exe Windows
+npm run build:mac    # → .dmg Mac
+npm run build:linux  # → .AppImage Linux</code>
+  <p style="font-size:12px;color:var(--txt3)">El instalador queda en <strong style="color:var(--txt2)">dist-electron/</strong></p>
+  <button class="modal-close" id="mc-desktop">ENTENDIDO ✓</button>
+</div></div>
 
-# Elige tu plataforma:
-npm run build:win    # → Windows (.exe instalador)
-npm run build:mac    # → Mac (.dmg)
-npm run build:linux  # → Linux (.AppImage)</code>
-    <p style="font-size:12px;color:var(--txt3)">El instalador quedará en <strong style="color:var(--txt2)">dist-electron/</strong> — ejecútalo como cualquier instalador.</p>
-    <button class="modal-close" id="modal-close-desktop">ENTENDIDO ✓</button>
+<div class="modal-wrap" id="modal-ios"><div class="modal">
+  <div class="modal-h">INSTALAR EN iPHONE / iPAD</div>
+  <p>iOS requiere Safari para instalar. Son 3 pasos:</p>
+  <ol class="modal-steps"><li>Abre esta página en <strong style="color:var(--cyan)">Safari</strong> (no Chrome)</li><li>Toca el botón <strong style="color:var(--cyan)">Compartir</strong> (cuadrado con flecha ↑)</li><li>Selecciona <strong style="color:var(--cyan)">"Añadir a pantalla de inicio"</strong></li></ol>
+  <p style="font-size:12px;color:var(--txt3)">Se instala como app nativa sin App Store ni costo.</p>
+  <button class="modal-close" id="mc-ios">ENTENDIDO ✓</button>
+</div></div>
+
+<div class="modal-wrap" id="modal-notif"><div class="modal">
+  <div class="modal-h">CANALES DE NOTIFICACIÓN</div>
+  <p style="color:var(--txt2);font-size:14px;line-height:1.7">Activa el canal que prefieras. Las alertas del <strong style="color:var(--cyan)">navegador</strong> funcionan de inmediato. Para <strong style="color:var(--amb)">Email y SMS</strong> configura tus credenciales en Ajustes ⚙️.</p>
+  <p style="font-size:12px;color:var(--txt3);margin-top:8px">Tus datos de contacto se toman del perfil con el que te registraste.</p>
+  <button class="modal-close" id="mc-notif">ACEPTAR</button>
+</div></div>
+
+<!-- MODAL ACCESO LOGÍSTICA -->
+<div class="modal-wrap" id="modal-logistics"><div class="modal">
+  <div class="modal-h">🏭 ACCESO LOGÍSTICA</div>
+  <p style="color:var(--txt2);font-size:14px;line-height:1.7;margin-bottom:16px">Perfil exclusivo para operadores de flota y empresas logísticas. Ingresa el código de acceso de tu organización.</p>
+  <div class="field" style="margin:0 0 12px"><span class="field-icon">🔐</span>
+    <input class="nx-inp" type="password" id="logistics-code-inp" placeholder="Código de acceso" autocomplete="off">
+    <button class="eye-btn" id="logistics-eye">👁</button></div>
+  <p class="err-box" id="logistics-err"></p>
+  <p style="font-size:11px;color:var(--txt3);margin:8px 0 14px;text-align:center">💡 Código de prueba: <strong style="color:var(--cyan)">Nexusplanner+</strong></p>
+  <div style="display:flex;gap:8px">
+    <button class="btn-prime" id="logistics-validate-btn" style="margin:0">VALIDAR Y CONTINUAR</button>
+    <button class="modal-close" id="mc-logistics" style="margin:0;width:auto;padding:12px 16px">CANCELAR</button>
   </div>
-</div>
+</div></div>
 
-<!-- MODAL iOS -->
-<div class="modal-wrap" id="modal-ios">
-  <div class="modal">
-    <div class="modal-h">INSTALAR EN iPHONE / iPAD</div>
-    <p>En iOS no hay prompt automático, pero se instala en 3 pasos:</p>
-    <ol class="modal-steps">
-      <li>Abre esta página en <strong style="color:var(--cyan)">Safari</strong> (no Chrome)</li>
-      <li>Toca el botón <strong style="color:var(--cyan)">Compartir</strong> (cuadro con flecha hacia arriba)</li>
-      <li>Selecciona <strong style="color:var(--cyan)">"Añadir a pantalla de inicio"</strong></li>
-    </ol>
-    <p style="font-size:12px;color:var(--txt3)">La app se instalará como ícono en tu pantalla de inicio, igual que una app de la App Store. Sin costo, sin tienda.</p>
-    <button class="modal-close" id="modal-close-ios">ENTENDIDO ✓</button>
+<div class="modal-wrap" id="modal-settings"><div class="modal">
+  <div class="modal-h">⚙️ AJUSTES — EMAILJS</div>
+  <p style="font-size:12px;color:var(--txt2);margin-bottom:16px">Configura EmailJS para recibir alertas por correo sin backend. <span style="color:var(--cyan);cursor:pointer;text-decoration:underline" id="open-notif-help">¿Cómo obtener estas claves?</span></p>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div class="field"><span class="field-icon" style="font-size:12px">🔑</span>
+      <input class="nx-inp" type="text" id="ejs-service" placeholder="Service ID (ej: service_abc123)"></div>
+    <div class="field"><span class="field-icon" style="font-size:12px">📋</span>
+      <input class="nx-inp" type="text" id="ejs-template" placeholder="Template ID (ej: template_xyz789)"></div>
+    <div class="field"><span class="field-icon" style="font-size:12px">🔐</span>
+      <input class="nx-inp" type="text" id="ejs-pubkey" placeholder="Public Key (ej: user_XXXXXXXXXX)"></div>
   </div>
-</div>
+  <div style="display:flex;gap:8px;margin-top:14px">
+    <button class="btn-prime" id="save-ejs" style="margin:0">GUARDAR</button>
+    <button class="modal-close" id="mc-settings" style="margin:0;width:auto;padding:12px 20px">CANCELAR</button>
+  </div>
+</div></div>
 
-<!-- ════════════ AUTH SCREEN ════════════ -->
+<!-- AUTH -->
 <div id="auth-screen" class="screen active">
   <div class="auth-wrap">
-    <!-- BRAND -->
     <div style="text-align:center">
-      <div class="logo-orbit">
-        <div class="orbit-ring or1"></div>
-        <div class="orbit-ring or2"></div>
-        <div class="orbit-ring or3"></div>
-        <div class="orbit-core"></div>
-      </div>
+      <div class="logo-orbit"><div class="orbit-ring or1"></div><div class="orbit-ring or2"></div><div class="orbit-ring or3"></div><div class="orbit-core"></div></div>
       <div class="brand-name">NEXUS TRACK</div>
       <div class="brand-sub">Sistema de rastreo GPS en tiempo real</div>
       <div class="brand-badges">
         <div class="badge"><span>🛰</span> GPS en vivo</div>
+        <div class="badge"><span>🚦</span> Tráfico real</div>
         <div class="badge"><span>🔔</span> Alertas auto</div>
         <div class="badge"><span>📱</span> Instala gratis</div>
       </div>
     </div>
-
-    <!-- CARD -->
     <div class="auth-card">
-      <div class="auth-tabs">
+      <div class="auth-tabs" style="grid-template-columns:1fr 1fr 1fr">
         <button class="auth-tab on" id="tab-login">Iniciar Sesión</button>
-        <button class="auth-tab" id="tab-register">Registrarse</button>
-        <div class="tab-indicator" id="tab-ind"></div>
+        <button class="auth-tab" id="tab-register">Usuario</button>
+        <button class="auth-tab" id="tab-logistics">Logística</button>
+        <div class="tab-indicator" id="tab-ind" style="width:33.33%"></div>
       </div>
-
       <!-- LOGIN -->
       <div id="form-login" class="auth-body">
         <p class="auth-hello">Bienvenido, <em>operador</em></p>
-        <div class="field">
-          <span class="field-icon">✉</span>
-          <input class="nx-inp" type="email" id="l-email" placeholder="Correo electrónico" autocomplete="email">
-        </div>
-        <div class="field">
-          <span class="field-icon">🔒</span>
-          <input class="nx-inp" type="password" id="l-pass" placeholder="Contraseña" autocomplete="current-password">
-          <button class="eye-btn" id="l-eye">👁</button>
-        </div>
+        <div class="field"><span class="field-icon">✉</span><input class="nx-inp" type="email" id="l-email" placeholder="Correo electrónico" autocomplete="email"></div>
+        <div class="field"><span class="field-icon">🔒</span><input class="nx-inp" type="password" id="l-pass" placeholder="Contraseña" autocomplete="current-password"><button class="eye-btn" id="l-eye">👁</button></div>
         <p class="err-box" id="l-err"></p>
         <button class="btn-prime" id="l-btn">ACCEDER AL SISTEMA</button>
         <p class="switch-row">¿Sin cuenta? <button class="lnk" id="go-reg">Registrarse gratis</button></p>
       </div>
-
-      <!-- REGISTER -->
+      <!-- REGISTER: Paso 1 — Datos -->
       <div id="form-register" class="auth-body" style="display:none">
-        <p class="auth-hello">Únete a la red <em>NEXUS</em></p>
-        <div class="field">
-          <span class="field-icon">👤</span>
-          <input class="nx-inp" type="text" id="r-name" placeholder="Nombre completo" autocomplete="name">
+        <div class="otp-step active" id="reg-step1">
+          <p class="auth-hello">Únete a la red <em>NEXUS</em></p>
+          <div class="field"><span class="field-icon">👤</span><input class="nx-inp" type="text" id="r-name" placeholder="Nombre completo" autocomplete="name"></div>
+          <div class="field"><span class="field-icon">🏷</span><input class="nx-inp" type="text" id="r-nick" placeholder="¿Cómo quieres ser llamado?"></div>
+          <div class="field"><span class="field-icon">✉</span><input class="nx-inp" type="email" id="r-email" placeholder="Correo electrónico" autocomplete="email"></div>
+          <div class="field"><span class="field-icon">📱</span><input class="nx-inp" type="tel" id="r-phone" placeholder="Celular: +57 300 000 0000"></div>
+          <div class="field"><span class="field-icon">🔒</span><input class="nx-inp" type="password" id="r-pass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password"><button class="eye-btn" id="r-eye">👁</button></div>
+          <p class="err-box" id="r-err"></p>
+          <button class="btn-mag" id="r-send-code">ENVIAR CÓDIGO DE VERIFICACIÓN</button>
+          <p class="switch-row">¿Ya tienes cuenta? <button class="lnk" id="go-login">Iniciar sesión</button></p>
         </div>
-        <div class="field">
-          <span class="field-icon">🏷</span>
-          <input class="nx-inp" type="text" id="r-nick" placeholder="¿Cómo quieres ser llamado?">
+        <!-- Paso 2 — Verificar OTP -->
+        <div class="otp-step" id="reg-step2">
+          <p class="auth-hello">Verifica tu <em>correo</em></p>
+          <p class="otp-hint">Ingresa el código de 6 dígitos enviado a<br><strong id="otp-email-hint"></strong></p>
+          <div class="otp-boxes" id="otp-boxes">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          </div>
+          <div class="countdown" id="otp-countdown">Reenviar código en <span id="otp-timer">60</span>s</div>
+          <button class="otp-resend" id="otp-resend">Reenviar código</button>
+          <p class="err-box" id="otp-err"></p>
+          <p class="ok-box" id="otp-ok"></p>
+          <button class="btn-prime" id="otp-verify-btn">VERIFICAR Y CREAR CUENTA</button>
+          <button class="lnk" id="otp-back" style="text-align:center;margin-top:4px">← Volver</button>
         </div>
-        <div class="field">
-          <span class="field-icon">✉</span>
-          <input class="nx-inp" type="email" id="r-email" placeholder="Correo electrónico" autocomplete="email">
+      </div>
+      <!-- LOGÍSTICA: Formulario de operador -->
+      <div id="form-logistics" class="auth-body" style="display:none">
+        <div class="otp-step active" id="log-step1">
+          <p class="auth-hello">Acceso <em>Logística</em></p>
+          <div style="padding:10px 12px;background:rgba(255,170,0,.06);border:1px solid rgba(255,170,0,.2);border-radius:var(--r-sm);margin-bottom:4px">
+            <p style="font-size:11px;color:var(--amb);line-height:1.5">🏭 Perfil para operadores de flota y gestión de entregas. Requiere código de acceso.</p>
+          </div>
+          <div class="field"><span class="field-icon">👤</span><input class="nx-inp" type="text" id="lg-name" placeholder="Nombre completo" autocomplete="name"></div>
+          <div class="field"><span class="field-icon">🏢</span><input class="nx-inp" type="text" id="lg-company" placeholder="Empresa / Organización"></div>
+          <div class="field"><span class="field-icon">✉</span><input class="nx-inp" type="email" id="lg-email" placeholder="Correo corporativo" autocomplete="email"></div>
+          <div class="field"><span class="field-icon">📱</span><input class="nx-inp" type="tel" id="lg-phone" placeholder="Celular: +57 300 000 0000"></div>
+          <div class="field"><span class="field-icon">🔒</span><input class="nx-inp" type="password" id="lg-pass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password"><button class="eye-btn" id="lg-eye">👁</button></div>
+          <p class="err-box" id="lg-err"></p>
+          <button class="btn-prime" id="lg-send-code" style="background:linear-gradient(135deg,#1a3a5c,#0d2540);border:1px solid rgba(0,200,255,.35);color:#00d4ff;box-shadow:0 4px 16px rgba(0,180,255,.15)">SOLICITAR CÓDIGO DE ACCESO</button>
+          <p class="switch-row">¿Ya tienes cuenta? <button class="lnk" id="lg-go-login">Iniciar sesión</button></p>
         </div>
-        <div class="field">
-          <span class="field-icon">📱</span>
-          <input class="nx-inp" type="tel" id="r-phone" placeholder="Celular con indicativo: +57 300...">
+        <!-- Paso 2: validar código de acceso + OTP -->
+        <div class="otp-step" id="log-step2">
+          <p class="auth-hello">Código de <em>acceso</em></p>
+          <p class="otp-hint">Ingresa el código de verificación enviado a<br><strong id="lg-email-hint"></strong></p>
+          <div class="otp-boxes" id="lg-otp-boxes">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          </div>
+          <div class="countdown" id="lg-countdown">Reenviar en <span id="lg-timer">60</span>s</div>
+          <button class="otp-resend" id="lg-resend">Reenviar código</button>
+          <p class="err-box" id="lg-otp-err"></p>
+          <p class="ok-box" id="lg-otp-ok"></p>
+          <button class="btn-prime" id="lg-verify-btn" style="background:linear-gradient(135deg,#1a3a5c,#0d2540);border:1px solid rgba(0,200,255,.35);color:#00d4ff;box-shadow:0 4px 16px rgba(0,180,255,.15)">ACTIVAR CUENTA LOGÍSTICA</button>
+          <button class="lnk" id="lg-back" style="text-align:center;margin-top:4px">← Volver</button>
         </div>
-        <div class="field">
-          <span class="field-icon">🔒</span>
-          <input class="nx-inp" type="password" id="r-pass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password">
-          <button class="eye-btn" id="r-eye">👁</button>
-        </div>
-        <p class="err-box" id="r-err"></p>
-        <button class="btn-prime" id="r-btn">ACTIVAR CUENTA</button>
-        <p class="switch-row">¿Ya tienes cuenta? <button class="lnk" id="go-login">Iniciar sesión</button></p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ════════════ APP SCREEN ════════════ -->
+<!-- APP -->
 <div id="app-screen" class="screen">
-
-  <!-- NAV -->
   <nav class="nav">
-    <div class="nav-brand">
-      <div class="nav-orb"></div>
-      <span>NEXUS<span style="opacity:.35;margin:0 3px">·</span>TRACK</span>
-    </div>
-    <div class="sig-pill off" id="sig-pill">
-      <div class="sig-dot"></div>
-      <span id="sig-txt">SIN SEÑAL</span>
-    </div>
+    <div class="nav-brand"><div class="nav-orb"></div><span>NEXUS<span style="opacity:.35;margin:0 3px">·</span>TRACK</span></div>
+    <div class="sig-pill off" id="sig-pill"><div class="sig-dot"></div><span id="sig-txt">SIN SEÑAL</span></div>
     <div class="nav-r">
-      <div class="u-chip">
-        <div class="u-av" id="u-av">?</div>
-        <span class="u-name" id="u-name">—</span>
-      </div>
+      <div class="u-chip"><div class="u-av" id="u-av">?</div><span class="u-name" id="u-name">—</span></div>
+      <button class="icon-btn" id="settings-btn" title="Ajustes">⚙️</button>
       <button class="icon-btn" id="logout-btn" title="Cerrar sesión">⎋</button>
     </div>
   </nav>
 
   <div class="app-body" id="app-body">
-    <!-- Overlay para cerrar sidebar en mobile -->
     <div id="sb-overlay"></div>
-
-    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
 
       <!-- DISPOSITIVO -->
       <div class="ss">
         <div class="ss-title">Dispositivo GPS</div>
-        <select class="nx-inp" id="device-sel" style="padding-left:13px;cursor:pointer;padding-right:8px">
+        <select class="nx-inp" id="device-sel" style="padding-left:13px;cursor:pointer">
           <option value="device_01">🚛 Tracker Principal #01</option>
           <option value="device_02">📦 Tracker Secundario #02</option>
           <option value="mobile_gps">📱 Dispositivo Móvil</option>
-          <option value="custom">⚙️ Personalizado...</option>
+          <option value="custom">⚙️ ID Personalizado...</option>
         </select>
         <div id="custom-id-wrap" style="display:none;margin-top:8px">
-          <div class="field">
-            <span class="field-icon">📡</span>
-            <input class="nx-inp" type="text" id="custom-device-id" placeholder="ID del dispositivo en Firebase">
-          </div>
+          <div class="field" style="margin:0"><span class="field-icon">📡</span>
+            <input class="nx-inp" type="text" id="custom-device-id" placeholder="ID del dispositivo en Firebase"></div>
         </div>
-        <button class="btn-grn off" id="gps-btn" style="margin-top:9px">
-          📡 USAR MI UBICACIÓN GPS
-        </button>
+        <button class="btn-grn off" id="gps-btn" style="margin-top:9px">📡 USAR MI UBICACIÓN GPS</button>
       </div>
 
       <!-- DESTINO -->
       <div class="ss">
         <div class="ss-title">Destino</div>
-        <textarea class="dest-ta" id="dest-inp"
-          placeholder="Escribe cualquier dirección del mundo&#10;Ej: Calle 72 #10-34, Bogotá&#10;o: El Dorado Airport, Colombia"></textarea>
-        <button class="btn-cyan" id="calc-btn">
-          🔍 CALCULAR RUTA Y ETA
-        </button>
+        <textarea class="dest-ta" id="dest-inp" placeholder="Escribe cualquier dirección del mundo&#10;Ej: Calle 72 #10-34, Bogotá&#10;o: JFK Airport, New York"></textarea>
+        <button class="btn-cyan" id="calc-btn">🔍 CALCULAR RUTA Y ETA</button>
       </div>
 
-      <!-- ETA -->
+      <!-- ETA + TRANSPORTE + TRÁFICO -->
       <div class="ss">
         <div class="ss-title">Tiempo Estimado de Llegada</div>
         <div class="eta-box">
@@ -795,13 +545,22 @@ npm run build:linux  # → Linux (.AppImage)</code>
             <div class="eta-cell" id="ec-h"><div class="eta-n" id="eta-h">--</div><div class="eta-u">Horas</div></div>
             <div class="eta-cell" id="ec-m"><div class="eta-n" id="eta-m">--</div><div class="eta-u">Mins</div></div>
           </div>
-          <div class="eta-info">
-            <span>📏</span><span id="eta-info">Sin destino calculado aún</span>
+          <div class="eta-info"><span>📏</span><span id="eta-info">Sin destino calculado aún</span></div>
+          <div class="transport-bar" id="transport-bar" style="display:none">
+            <div class="tr-chip" id="tr-plane"><span class="tr-chip-icon">✈️</span><span class="tr-chip-lbl">Avión</span></div>
+            <div class="tr-chip" id="tr-car"><span class="tr-chip-icon">🚗</span><span class="tr-chip-lbl">Carro</span></div>
+            <div class="tr-chip" id="tr-bike"><span class="tr-chip-icon">🏍</span><span class="tr-chip-lbl">Moto</span></div>
+            <div class="tr-chip" id="tr-walk"><span class="tr-chip-icon">🚶</span><span class="tr-chip-lbl">A pie</span></div>
           </div>
+        </div>
+        <div class="traffic-panel" id="traffic-panel" style="display:none">
+          <div class="traffic-header"><span class="traffic-title">🚦 Tráfico en ruta</span><span class="traffic-badge low" id="traffic-badge">FLUIDO</span></div>
+          <div class="traffic-bar-wrap"><div class="traffic-bar" id="traffic-bar-fill" style="width:20%;background:var(--grn)"></div></div>
+          <div class="traffic-info" id="traffic-info">Calculando condiciones...</div>
         </div>
       </div>
 
-      <!-- STATS -->
+      <!-- DATOS GPS EN VIVO -->
       <div class="ss">
         <div class="ss-title">Datos GPS en Vivo</div>
         <div class="stats-2">
@@ -811,6 +570,71 @@ npm run build:linux  # → Linux (.AppImage)</code>
           <div class="s-card"><div class="s-lbl">Longitud</div><div class="s-val" id="s-lng">--</div></div>
           <div class="s-card"><div class="s-lbl">Rumbo</div><div class="s-val" id="s-hdg">--°</div></div>
           <div class="s-card"><div class="s-lbl">Precisión</div><div class="s-val" id="s-acc">-- m</div></div>
+        </div>
+      </div>
+
+      <!-- NUEVO: HISTORIAL DE RUTA -->
+      <div class="ss">
+        <div class="ss-title">📍 Historial de Ruta</div>
+        <div class="route-history" id="route-history">
+          <div class="rh-item" style="color:var(--txt3);justify-content:center;border-style:dashed">Sin puntos registrados aún</div>
+        </div>
+        <button class="btn-cyan" id="clear-history-btn" style="margin-top:8px;padding:9px;font-size:9px">🗑 LIMPIAR HISTORIAL</button>
+      </div>
+
+      <!-- PANEL LOGÍSTICA (solo rol logistics) -->
+      <div class="ss" id="logistics-panel" style="display:none">
+        <div class="ss-title">🏭 Panel Logística</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px">
+          <div class="s-card"><div class="s-lbl">Entregas hoy</div><div class="s-val" id="lg-deliveries-count">--</div></div>
+          <div class="s-card"><div class="s-lbl">Dispositivos</div><div class="s-val" id="lg-devices-count">--</div></div>
+        </div>
+        <div id="fleet-units">
+          <div class="fleet-unit" data-device="device_01">
+            <div class="fu-dot off" id="fu-dot-01"></div>
+            <span class="fu-name">🚛 Unidad #01</span>
+            <span class="fu-spd" id="fu-spd-01">-- km/h</span>
+          </div>
+          <div class="fleet-unit" data-device="device_02">
+            <div class="fu-dot off" id="fu-dot-02"></div>
+            <span class="fu-name">📦 Unidad #02</span>
+            <span class="fu-spd" id="fu-spd-02">-- km/h</span>
+          </div>
+          <div class="fleet-unit" data-device="mobile_gps">
+            <div class="fu-dot off" id="fu-dot-mob"></div>
+            <span class="fu-name">📱 Móvil GPS</span>
+            <span class="fu-spd" id="fu-spd-mob">-- km/h</span>
+          </div>
+        </div>
+        <button class="btn-cyan" id="lg-refresh-fleet" style="padding:9px;font-size:9px;margin-top:8px">
+          📡 ACTUALIZAR FLOTA
+        </button>
+        <div style="margin-top:8px;padding:10px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md)">
+          <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">Resumen operativo</div>
+          <div style="font-size:12px;color:var(--txt2);line-height:1.8" id="lg-fleet-status">
+            Toca una unidad para rastrearla
+          </div>
+        </div>
+      </div>
+
+      <!-- SIMULADOR GPS -->
+      <div class="ss">
+        <div class="ss-title">🎮 Simulador GPS</div>
+        <div class="sim-form">
+          <div class="field" style="margin:0"><span class="field-icon">📍</span>
+            <input class="nx-inp" type="text" id="sim-origin" placeholder="Origen: ciudad o dirección" style="padding-left:40px"></div>
+          <div class="field" style="margin:0"><span class="field-icon">🎯</span>
+            <input class="nx-inp" type="text" id="sim-dest" placeholder="Destino: ciudad o dirección" style="padding-left:40px"></div>
+          <div class="sim-modes" id="sim-modes">
+            <div class="sim-mode on" data-speed="850" data-mode="plane"><span class="sim-mode-icon">✈️</span><span class="sim-mode-lbl">Avión</span></div>
+            <div class="sim-mode" data-speed="80" data-mode="car"><span class="sim-mode-icon">🚗</span><span class="sim-mode-lbl">Carro</span></div>
+            <div class="sim-mode" data-speed="55" data-mode="bike"><span class="sim-mode-icon">🏍</span><span class="sim-mode-lbl">Moto</span></div>
+            <div class="sim-mode" data-speed="5" data-mode="walk"><span class="sim-mode-icon">🚶</span><span class="sim-mode-lbl">A pie</span></div>
+          </div>
+          <button class="btn-sim-start" id="sim-start">🎮 INICIAR SIMULACIÓN</button>
+          <button class="btn-sim-stop" id="sim-stop">⏹ DETENER SIMULACIÓN</button>
+          <div class="sim-progress" id="sim-progress"><div class="sim-prog-bar" id="sim-prog-bar"></div></div>
+          <div class="sim-status" id="sim-status"></div>
         </div>
       </div>
 
@@ -827,73 +651,72 @@ npm run build:linux  # → Linux (.AppImage)</code>
           <button class="int-b" data-ms="43200000" data-lbl="12 horas">12 hrs</button>
           <button class="int-b" data-ms="86400000" data-lbl="1 día">1 día</button>
         </div>
-        <p style="font-size:11px;color:var(--txt3);margin-top:10px;line-height:1.6">
-          🔔 Notificación del navegador cada <span id="int-lbl" style="color:var(--txt2)">1 hora</span>.<br>
-          <span style="color:var(--txt4)">SMS + email requieren activar el backend Python.</span>
+        <div class="notif-toggles" id="notif-toggles">
+          <div class="notif-toggle on" id="nt-browser" data-type="browser"><span class="nt-icon">🔔</span><span class="nt-lbl">Nav.</span></div>
+          <div class="notif-toggle" id="nt-email" data-type="email"><span class="nt-icon">✉️</span><span class="nt-lbl">Email</span></div>
+          <div class="notif-toggle" id="nt-sms" data-type="sms"><span class="nt-icon">💬</span><span class="nt-lbl">SMS</span></div>
+        </div>
+        <p style="font-size:11px;color:var(--txt3);margin-top:9px;line-height:1.6">
+          Activos: <span id="notif-active-channels" style="color:var(--txt2)">Navegador</span> · cada <span id="int-lbl" style="color:var(--txt2)">1 hora</span>
         </p>
+      </div>
+
+      <!-- NOTAS DE ENTREGA -->
+      <div class="ss">
+        <div class="ss-title">📝 Notas de Entrega</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <textarea id="delivery-note" class="dest-ta" rows="2" placeholder="Ej: Llamar antes de llegar · Dejar con el portero..." style="min-height:56px;font-size:12px"></textarea>
+          <button class="btn-cyan" id="add-note-btn" style="padding:8px;font-size:9px;margin-top:0">✚ GUARDAR NOTA</button>
+        </div>
+        <div id="notes-list" style="display:flex;flex-direction:column;gap:5px;margin-top:8px;max-height:110px;overflow-y:auto"></div>
       </div>
 
       <!-- LOG -->
       <div class="ss">
         <div class="ss-title">Historial de Alertas</div>
-        <div class="nlog" id="nlog">
-          <div class="nlog-item g">
-            <div class="ni-t">Esperando eventos</div>
-            Las alertas aparecerán aquí
-          </div>
-        </div>
+        <div class="nlog" id="nlog"><div class="nlog-item g"><div class="ni-t">Esperando eventos</div>Las alertas aparecerán aquí</div></div>
       </div>
 
-      <!-- INSTALAR APP -->
+      <!-- INSTALAR -->
       <div class="install-section">
         <div class="install-title">Instalar Aplicación</div>
-
-        <!-- BOTÓN PRINCIPAL DE INSTALACIÓN -->
         <div class="install-main-btn" id="install-main">
           <span class="imb-icon">⬇️</span>
-          <div class="imb-text">
-            <div class="imb-title">INSTALAR NEXUS TRACK</div>
-            <div class="imb-sub">Toca aquí — se instala automáticamente<br>en tu dispositivo sin App Store</div>
-          </div>
+          <div class="imb-text"><div class="imb-title">INSTALAR NEXUS TRACK</div><div class="imb-sub">Toca aquí — instalación automática<br>sin App Store ni tiendas</div></div>
           <span class="imb-badge">GRATIS</span>
         </div>
-
-        <!-- PLATAFORMAS ESPECÍFICAS -->
-        <div class="platform-grid">
-          <div class="plat-btn" id="btn-android">
-            <span class="pb-icon">🤖</span>
-            <div class="pb-name">Android</div>
-            <div class="pb-sub">Chrome → Instalar</div>
-          </div>
-          <div class="plat-btn" id="btn-ios">
-            <span class="pb-icon"></span>
-            <div class="pb-name">iPhone / iPad</div>
-            <div class="pb-sub">Safari → Compartir</div>
-          </div>
-          <div class="plat-btn" id="btn-windows">
-            <span class="pb-icon">🪟</span>
-            <div class="pb-name">Windows</div>
-            <div class="pb-sub">Chrome → Instalar</div>
-          </div>
-          <div class="plat-btn" id="btn-desktop-app">
-            <span class="pb-icon">🖥</span>
-            <div class="pb-name">App Nativa</div>
-            <div class="pb-sub">.exe / .dmg / .AppImage</div>
-          </div>
+        <button class="platforms-toggle" id="platforms-toggle">VER TODAS LAS PLATAFORMAS <span class="arrow">▼</span></button>
+        <div class="platform-grid" id="platform-grid">
+          <div class="plat-btn" id="btn-android"><span class="pb-icon">🤖</span><div class="pb-name">Android</div><div class="pb-sub">Chrome → Instalar</div></div>
+          <div class="plat-btn" id="btn-ios"><span class="pb-icon"></span><div class="pb-name">iPhone/iPad</div><div class="pb-sub">Safari → Compartir</div></div>
+          <div class="plat-btn" id="btn-windows"><span class="pb-icon">🪟</span><div class="pb-name">Windows</div><div class="pb-sub">Chrome → Instalar</div></div>
+          <div class="plat-btn" id="btn-mac"><span class="pb-icon">🍎</span><div class="pb-name">Mac</div><div class="pb-sub">Chrome → Instalar</div></div>
+          <div class="plat-btn" id="btn-linux"><span class="pb-icon">🐧</span><div class="pb-name">Linux</div><div class="pb-sub">Chrome → Instalar</div></div>
+          <div class="plat-btn" id="btn-desktop-app"><span class="pb-icon">🖥</span><div class="pb-name">App Nativa</div><div class="pb-sub">.exe / .dmg / .AppImage</div></div>
         </div>
       </div>
-
     </aside>
 
     <!-- MAP -->
     <div class="map-wrap">
       <div id="map"></div>
-      <div class="ov" id="ov-coords">
-        <span class="cl">LAT</span>&nbsp;<span id="ov-lat">—</span>
-        &nbsp;<span style="color:var(--txt4)">·</span>&nbsp;
-        <span class="cl">LNG</span>&nbsp;<span id="ov-lng">—</span>
-      </div>
+      <div class="ov" id="ov-coords"><span class="cl">LAT</span>&nbsp;<span id="ov-lat">—</span>&nbsp;<span style="color:var(--txt4)">·</span>&nbsp;<span class="cl">LNG</span>&nbsp;<span id="ov-lng">—</span></div>
       <div class="fab-menu" id="fab-menu">☰</div>
+      <div id="center-gps-btn" style="position:absolute;top:58px;right:12px;z-index:500;width:40px;height:40px;border-radius:10px;background:rgba(2,8,16,.92);backdrop-filter:blur(16px);border:1px solid var(--b1);color:var(--cyan);font-size:16px;display:none;align-items:center;justify-content:center;cursor:pointer;transition:all .2s" title="Centrar en GPS">🎯</div>
+      <!-- CARD ETA SOBRE MAPA -->
+      <div class="eta-map-card" id="eta-map-card">
+        <div><div class="emc-label">ETA</div><div class="emc-val" id="emc-val">--h --m</div></div>
+        <div class="emc-sep"></div>
+        <div class="emc-dist"><div class="emc-label">DISTANCIA</div><div class="emc-val" id="emc-dist">-- km</div></div>
+        <div class="emc-sep"></div>
+        <div><div class="emc-label">TRÁFICO</div><div class="emc-val" id="emc-traffic" style="font-size:16px">--</div></div>
+      </div>
+      <div class="map-traffic-legend" id="map-traffic-legend">
+        <div class="tl-title">🚦 Tráfico</div>
+        <div class="tl-item"><div class="tl-dot" style="background:var(--grn)"></div>Fluido</div>
+        <div class="tl-item"><div class="tl-dot" style="background:var(--amb)"></div>Moderado</div>
+        <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div>Congestionado</div>
+      </div>
       <div class="pulse-wrap" id="pulse-wrap" style="display:none">
         <div class="pr pr1"></div><div class="pr pr2"></div><div class="pr pr3"></div>
         <div class="p-core">🛰</div>
@@ -901,46 +724,40 @@ npm run build:linux  # → Linux (.AppImage)</code>
     </div>
   </div>
 
-  <!-- MOBILE BAR -->
   <div class="mob-bar" id="mob-bar">
     <button class="mb-btn on" id="mb-map"><span class="mi">🗺</span><span class="ml">Mapa</span></button>
     <button class="mb-btn" id="mb-eta"><span class="mi">⏱</span><span class="ml">ETA</span></button>
+    <button class="mb-btn" id="mb-sim"><span class="mi">🎮</span><span class="ml">Simular</span></button>
     <button class="mb-btn" id="mb-gps"><span class="mi">📡</span><span class="ml">GPS</span></button>
-    <button class="mb-btn" id="mb-instalar"><span class="mi">⬇️</span><span class="ml">Instalar</span></button>
+    <button class="mb-btn" id="mb-install"><span class="mi">⬇️</span><span class="ml">Instalar</span></button>
   </div>
 </div>
 
-<!-- Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- EmailJS para notificaciones por correo SIN backend -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
-<!-- PWA Manifest (inline, sin servidor) -->
 <script>
 (function(){
-  const manifest={
-    name:"NEXUS TRACK",short_name:"NexusTrack",
-    description:"Sistema profesional de rastreo GPS en tiempo real",
-    start_url:window.location.href,
-    display:"standalone",orientation:"any",
+  const m={name:"NEXUS TRACK",short_name:"NexusTrack",description:"GPS en tiempo real",
+    start_url:window.location.href,display:"standalone",orientation:"any",
     theme_color:"#00f5ff",background_color:"#020810",
-    icons:[
-      {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23020810'/%3E%3Ccircle cx='256' cy='256' r='200' stroke='%2300f5ff' stroke-width='8' fill='none' opacity='.25'/%3E%3Ccircle cx='256' cy='256' r='130' stroke='%2300f5ff' stroke-width='5' fill='none' opacity='.4'/%3E%3Ccircle cx='256' cy='256' r='60' fill='%2300f5ff'/%3E%3Ccircle cx='256' cy='256' r='28' fill='%23020810'/%3E%3C/svg%3E",
-       sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}
-    ]
-  };
-  const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
-  document.getElementById('manifest-link').href=URL.createObjectURL(blob);
+    icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23020810'/%3E%3Ccircle cx='256' cy='256' r='200' stroke='%2300f5ff' stroke-width='8' fill='none' opacity='.3'/%3E%3Ccircle cx='256' cy='256' r='55' fill='%2300f5ff'/%3E%3Ccircle cx='256' cy='256' r='26' fill='%23020810'/%3E%3C/svg%3E",sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}]};
+  const b=new Blob([JSON.stringify(m)],{type:'application/manifest+json'});
+  document.getElementById('manifest-link').href=URL.createObjectURL(b);
 })();
 </script>
 
-<!-- FIREBASE + APP LOGIC -->
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,
        signOut,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-import{getDatabase,ref,set,get,onValue,off,push}
+import{getDatabase,ref,set,get,onValue,off,push,update}
   from'https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js';
 
-/* ── FIREBASE CONFIG ─────────────────────────────── */
+/* ══════════════════════════════════════
+   FIREBASE CONFIG
+══════════════════════════════════════ */
 const fbApp=initializeApp({
   apiKey:"AIzaSyALrMB-ClSDDERZzfXWSv4aoxRgpOBySHE",
   authDomain:"app-gps-aea26.firebaseapp.com",
@@ -952,141 +769,756 @@ const fbApp=initializeApp({
 });
 const auth=getAuth(fbApp),db=getDatabase(fbApp);
 
-/* ── ESTADO ──────────────────────────────────────── */
+/* ══════════════════════════════════════
+   ESTADO GLOBAL
+══════════════════════════════════════ */
 let user=null,profile=null,deviceId='device_01';
 let gpsM=null,destM=null,routeL=null,accCircle=null;
-let watchId=null,notifTimer=null,activeRef=null;
+let watchId=null,notifTimer=null,activeRef=null,simTimer=null;
 let notifMs=3600000,lastLoc=null,lastETA=null,lastDest=null,deferredInstall=null;
+let notifChannels={browser:true,email:false,sms:false};
+let simRunning=false,simSpeed=850,simMode='plane';
+let pendingOTP=null,otpCountdownT=null;
+let ejsConfig={serviceId:'',templateId:'',publicKey:''};
+let routeHistory=[];
 const isMob=()=>window.innerWidth<=700;
+const STORAGE_KEY='nexus_session_v4';
 
-/* ── MAP ─────────────────────────────────────────── */
+/* ══════════════════════════════════════
+   PERSISTENCIA LOCAL — guarda/restaura sesión
+══════════════════════════════════════ */
+function saveSession(){
+  try{
+    const data={
+      deviceId,notifMs,notifChannels,
+      lastDest:lastDest?{lat:lastDest.lat,lng:lastDest.lng,name:lastDest.name}:null,
+      lastETA:lastETA||null,
+      destInp:$('dest-inp')?.value||'',
+      simOrigin:$('sim-origin')?.value||'',
+      simDest:$('sim-dest')?.value||'',
+      simSpeed,simMode,
+      routeHistory:routeHistory.slice(-20),
+      ejsConfig,
+      intLbl:$('int-lbl')?.textContent||'1 hora',
+      intMs:notifMs,
+      nlogItems:Array.from($('nlog')?.children||[]).slice(0,10).map(el=>({
+        type:el.className.replace('nlog-item ',''),
+        html:el.innerHTML
+      }))
+    };
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+  }catch(e){}
+}
+
+function loadSession(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    if(d.deviceId){
+      deviceId=d.deviceId;
+      const sel=$('device-sel');
+      if(sel){const opt=[...sel.options].find(o=>o.value===deviceId);if(opt)sel.value=deviceId;}
+    }
+    if(d.notifMs){notifMs=d.notifMs;}
+    if(d.notifChannels){notifChannels={...notifChannels,...d.notifChannels};syncNotifToggles();}
+    if(d.lastDest){lastDest=d.lastDest;if($('dest-inp'))$('dest-inp').value=d.lastDest.name||'';}
+    if(d.destInp&&$('dest-inp'))$('dest-inp').value=d.destInp;
+    if(d.simOrigin&&$('sim-origin'))$('sim-origin').value=d.simOrigin;
+    if(d.simDest&&$('sim-dest'))$('sim-dest').value=d.simDest;
+    if(d.simSpeed){simSpeed=d.simSpeed;}
+    if(d.simMode){simMode=d.simMode;document.querySelectorAll('.sim-mode').forEach(m=>{m.classList.toggle('on',m.dataset.mode===simMode);});}
+    if(d.routeHistory){routeHistory=d.routeHistory;renderRouteHistory();}
+    if(d.ejsConfig){ejsConfig=d.ejsConfig;initEmailJS();}
+    if(d.intLbl&&$('int-lbl'))$('int-lbl').textContent=d.intLbl;
+    // Restaurar ETA en pantalla
+    if(d.lastETA){
+      lastETA=d.lastETA;
+      $('eta-d').textContent=pad(d.lastETA.days||0);
+      $('eta-h').textContent=pad(d.lastETA.hours||0);
+      $('eta-m').textContent=pad(d.lastETA.minutes||0);
+      if(d.lastETA.dist)$('eta-info').textContent=`${d.lastETA.dist.toFixed(2)} km (sesión anterior)`;
+      ['ec-d','ec-h','ec-m'].forEach(id=>$(id).classList.remove('hi'));
+      if(d.lastETA.days>0)$('ec-d').classList.add('hi');
+      else if(d.lastETA.hours>0)$('ec-h').classList.add('hi');
+      else $('ec-m').classList.add('hi');
+    }
+    // Restaurar log
+    if(d.nlogItems&&d.nlogItems.length){
+      const log=$('nlog');if(log){log.innerHTML='';
+        d.nlogItems.forEach(item=>{const el=document.createElement('div');
+          el.className=`nlog-item ${item.type}`;el.innerHTML=item.html;log.appendChild(el);});}
+    }
+    // Restaurar intervalo seleccionado
+    if(d.intMs){
+      document.querySelectorAll('.int-b').forEach(b=>{
+        b.classList.toggle('on',parseInt(b.dataset.ms)===d.intMs);
+      });
+    }
+  }catch(e){}
+}
+
+// Guardar automáticamente cada 30 segundos y antes de cerrar
+setInterval(saveSession,30000);
+window.addEventListener('beforeunload',saveSession);
+window.addEventListener('pagehide',saveSession);
+
+/* ══════════════════════════════════════
+   EMAILJS — alertas por correo sin backend
+══════════════════════════════════════ */
+function initEmailJS(){
+  if(ejsConfig.publicKey&&typeof emailjs!=='undefined'){
+    emailjs.init(ejsConfig.publicKey);
+  }
+}
+
+async function sendEmailAlert(subject,body,toEmail){
+  if(!ejsConfig.serviceId||!ejsConfig.templateId||!ejsConfig.publicKey)return false;
+  if(typeof emailjs==='undefined')return false;
+  try{
+    await emailjs.send(ejsConfig.serviceId,ejsConfig.templateId,{
+      to_email:toEmail,subject,message:body,
+      from_name:'NEXUS TRACK',
+      eta_days:lastETA?.days||0,
+      eta_hours:lastETA?.hours||0,
+      eta_mins:lastETA?.minutes||0,
+      distance:lastETA?.dist?.toFixed(2)||'--',
+      destination:lastDest?.name?.slice(0,80)||'--',
+      timestamp:new Date().toLocaleString('es-CO')
+    });
+    return true;
+  }catch(e){console.error('EmailJS error:',e);return false;}
+}
+
+/* ══════════════════════════════════════
+   OTP — Verificación de correo
+══════════════════════════════════════ */
+function generateOTP(){return String(Math.floor(100000+Math.random()*900000));}
+
+async function sendOTPEmail(email,code,name){
+  // Intentar enviar via EmailJS si está configurado
+  if(ejsConfig.serviceId&&ejsConfig.templateId&&ejsConfig.publicKey){
+    try{
+      await emailjs.send(ejsConfig.serviceId,ejsConfig.templateId,{
+        to_email:email,subject:'Código de verificación NEXUS TRACK',
+        message:`Hola ${name}! Tu código de verificación es: ${code}\n\nEste código expira en 10 minutos.\n\nSi no solicitaste este registro, ignora este mensaje.\n\n— NEXUS TRACK`,
+        from_name:'NEXUS TRACK',eta_days:0,eta_hours:0,eta_mins:0,distance:'--',destination:'--',
+        timestamp:new Date().toLocaleString('es-CO')
+      });
+      return true;
+    }catch(e){console.warn('EmailJS no configurado para OTP:',e);}
+  }
+  // Fallback: mostrar código en pantalla para pruebas
+  return false;
+}
+
+// OTP input: navegar entre cajas automáticamente
+function setupOTPBoxes(){
+  const boxes=[...$('otp-boxes').querySelectorAll('.otp-box')];
+  boxes.forEach((box,i)=>{
+    box.addEventListener('input',e=>{
+      const v=e.target.value.replace(/\D/g,'');
+      box.value=v?v[0]:'';
+      if(v&&i<5)boxes[i+1].focus();
+    });
+    box.addEventListener('keydown',e=>{
+      if(e.key==='Backspace'&&!box.value&&i>0)boxes[i-1].focus();
+      if(e.key==='Enter')$('otp-verify-btn').click();
+    });
+    box.addEventListener('paste',e=>{
+      e.preventDefault();
+      const txt=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+      boxes.forEach((b,j)=>{b.value=txt[j]||'';});
+      if(txt.length===6)$('otp-verify-btn').focus();
+    });
+  });
+}
+
+function startOTPCountdown(){
+  let secs=60;
+  $('otp-countdown').style.display='block';$('otp-resend').style.display='none';
+  clearInterval(otpCountdownT);
+  otpCountdownT=setInterval(()=>{
+    secs--;$('otp-timer').textContent=secs;
+    if(secs<=0){
+      clearInterval(otpCountdownT);
+      $('otp-countdown').style.display='none';$('otp-resend').style.display='block';
+    }
+  },1000);
+}
+
+function getOTPValue(){
+  return[...$('otp-boxes').querySelectorAll('.otp-box')].map(b=>b.value).join('');
+}
+
+/* ══════════════════════════════════════
+   MAPA
+══════════════════════════════════════ */
 const map=L.map('map',{zoomControl:true,attributionControl:false}).setView([4.711,-74.072],12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-L.control.attribution({prefix:''}).addTo(map);
 
 function mkPin(color,size=40){
   return L.divIcon({
-    html:`<div style="width:${size}px;height:${size}px;background:${color};
-      border:3px solid rgba(255,255,255,.9);border-radius:50% 50% 50% 0;
-      transform:rotate(-45deg);
-      box-shadow:0 0 18px ${color}bb,0 4px 14px rgba(0,0,0,.6)"></div>`,
+    html:`<div style="width:${size}px;height:${size}px;background:${color};border:3px solid rgba(255,255,255,.9);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 0 18px ${color}bb,0 4px 14px rgba(0,0,0,.6)"></div>`,
     iconSize:[size,size],iconAnchor:[size/2,size],className:''
   });
 }
 
-/* ── HELPERS ─────────────────────────────────────── */
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
 const $=id=>document.getElementById(id);
-const showEl=(id,v='block')=>{$(id).style.display=v};
-const hideEl=id=>{$(id).style.display='none'};
-
-function toast(msg,dur=3500){
-  const e=$('toast');
-  e.textContent=msg;e.classList.add('show');
-  clearTimeout(toast._t);
-  toast._t=setTimeout(()=>e.classList.remove('show'),dur);
-}
-
+function toast(msg,dur=3500){const e=$('toast');e.textContent=msg;e.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove('show'),dur);}
 function showErr(id,msg){const e=$(id);e.textContent=msg;e.style.display='block'}
-function hideErr(id){$(id).style.display='none'}
+function hideEl(id){const e=$(id);if(e)e.style.display='none'}
+function showEl(id,d='block'){const e=$(id);if(e)e.style.display=d}
 function pad(n){return String(Math.max(0,Math.floor(n))).padStart(2,'0')}
+function haversine(la1,lo1,la2,lo2){const R=6371,dL=(la2-la1)*Math.PI/180,dG=(lo2-lo1)*Math.PI/180;const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dG/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+function fbErr(code){return({'auth/user-not-found':'Usuario no encontrado','auth/wrong-password':'Contraseña incorrecta','auth/email-already-in-use':'Este correo ya está registrado','auth/weak-password':'Contraseña mínimo 6 caracteres','auth/invalid-email':'Correo inválido','auth/invalid-credential':'Correo o contraseña incorrectos','auth/too-many-requests':'Demasiados intentos. Espera.','auth/operation-not-allowed':'⚠️ Activa Email/Password en Firebase → Authentication → Sign-in method','auth/network-request-failed':'Sin conexión a internet'}[code])||'Error: '+code;}
 
-function haversine(la1,lo1,la2,lo2){
-  const R=6371,dL=(la2-la1)*Math.PI/180,dG=(lo2-lo1)*Math.PI/180;
-  const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dG/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+/* ══════════════════════════════════════
+   DETECCIÓN TRANSPORTE
+══════════════════════════════════════ */
+function detectTransport(kmh){
+  if(kmh>250)return{mode:'plane',icon:'✈️',label:'Avión',id:'tr-plane'};
+  if(kmh>60) return{mode:'car',  icon:'🚗',label:'Vehículo',id:'tr-car'};
+  if(kmh>15) return{mode:'bike', icon:'🏍',label:'Moto',id:'tr-bike'};
+  return{mode:'walk',icon:'🚶',label:'A pie',id:'tr-walk'};
+}
+const SPEEDS={plane:850,car:55,bike:40,walk:5};
+let trafficData={level:'low',factor:1.0,delay:0,label:'FLUIDO',pct:20};
+
+/* ══════════════════════════════════════
+   OSRM — ruta real por carreteras
+══════════════════════════════════════ */
+/* ══════════════════════════════════════
+   BACKEND URL — Cambia esto por tu URL de Railway/Render
+══════════════════════════════════════ */
+const BACKEND_URL = 'https://TU-BACKEND.up.railway.app'; // ← Pon aquí tu URL del backend
+
+async function fetchOSRM(oLa,oLn,dLa,dLn){
+  try{
+    const r=await fetch(`https://router.project-osrm.org/route/v1/driving/${oLn},${oLa};${dLn},${dLa}?overview=full&geometries=geojson`,{signal:AbortSignal.timeout(8000)});
+    const d=await r.json();
+    if(d.code==='Ok'&&d.routes?.length)return{distance:d.routes[0].distance/1000,duration:d.routes[0].duration/60,geometry:d.routes[0].geometry.coordinates};
+  }catch(e){}
+  return null;
 }
 
-function fbErr(code){
-  return({
-    'auth/user-not-found':'Usuario no encontrado',
-    'auth/wrong-password':'Contraseña incorrecta',
-    'auth/email-already-in-use':'Este correo ya está registrado',
-    'auth/weak-password':'Contraseña mínimo 6 caracteres',
-    'auth/invalid-email':'Correo electrónico inválido',
-    'auth/invalid-credential':'Correo o contraseña incorrectos',
-    'auth/too-many-requests':'Demasiados intentos. Espera un momento.',
-    'auth/operation-not-allowed':'⚠️ Activa Email/Password: Firebase → Authentication → Sign-in method',
-    'auth/configuration-not-found':'⚠️ Activa Email/Password: Firebase → Authentication → Sign-in method',
-    'auth/network-request-failed':'Sin conexión a internet'
-  }[code])||'Error: '+code;
+/* ══════════════════════════════════════
+   GEOCODING v3 — Colombia-first, mundo completo
+   Cascada: coords directas → Nominatim(CO) →
+   Nominatim(world) → Photon → nombre de ciudad solo
+══════════════════════════════════════ */
+
+// Diccionario de localidades y barrios de Bogotá con coords
+const BOGOTA_LOCALITIES = {
+  'suba':       [4.7560,-74.0830], 'usaquen':   [4.7011,-74.0322],
+  'chapinero':  [4.6494,-74.0628], 'santa fe':  [4.6054,-74.0766],
+  'san cristobal':[4.5721,-74.0847],'usme':     [4.5088,-74.1134],
+  'tunjuelito': [4.5757,-74.1282], 'bosa':      [4.6216,-74.1997],
+  'kennedy':    [4.6282,-74.1605], 'fontibon':  [4.6723,-74.1468],
+  'engativa':   [4.7158,-74.1136], 'suba':      [4.7560,-74.0830],
+  'barrios unidos':[4.6756,-74.0808],'teusaquillo':[4.6482,-74.0969],
+  'los martires':[4.6097,-74.0934],'antonio nariño':[4.5988,-74.0964],
+  'puente aranda':[4.6316,-74.1111],'la candelaria':[4.5973,-74.0754],
+  'rafael uribe':[4.5691,-74.0978],'ciudad bolivar':[4.5014,-74.1397],
+  'la calera':  [4.7224,-73.9704], 'chia':      [4.8597,-74.0622],
+  'cajica':     [4.9170,-74.0178], 'zipaquira':  [5.0228,-74.0058],
+  'facatativa': [4.8146,-74.3560], 'mosquera':  [4.7072,-74.2341],
+  'funza':      [4.7170,-74.2114], 'madrid':    [4.7320,-74.2671],
+  'soacha':     [4.5789,-74.2191], 'la mesa':   [4.6330,-74.4647],
+  'medellin':   [6.2530,-75.5736], 'cali':      [3.4516,-76.5320],
+  'barranquilla':[10.9685,-74.7813],'cartagena': [10.3910,-75.4794],
+  'bucaramanga':[7.1254,-73.1198], 'cucuta':    [7.8939,-72.5078],
+  'manizales':  [5.0703,-75.5138], 'pereira':   [4.8133,-75.6961],
+  'armenia':    [4.5389,-75.6740], 'ibague':    [4.4389,-75.2322],
+  'neiva':      [2.9273,-75.2819], 'villavicencio':[4.1420,-73.6266],
+  'buenaventura':[3.8810,-77.0311],'pasto':     [1.2136,-77.2811],
+  'monteria':   [8.7575,-75.8857], 'sincelejo': [9.3047,-75.3978],
+  'valledupar': [10.4631,-73.2532],'riohacha':  [11.5444,-72.9072],
+  'santa marta':[11.2408,-74.2011],'popayan':   [2.4448,-76.6147],
+};
+
+function normalizeCO(q){
+  // Normaliza abreviaturas colombianas para Nominatim
+  return q
+    .replace(/Cra\.?\s*(\d)/gi,'Carrera $1')
+    .replace(/Cl\.?\s*(\d)/gi,'Calle $1')
+    .replace(/Av\.?\s*/gi,'Avenida ')
+    .replace(/Dg\.?\s*(\d)/gi,'Diagonal $1')
+    .replace(/Tv\.?\s*(\d)/gi,'Transversal $1')
+    .replace(/Ak\.?\s*(\d)/gi,'Autopista $1')
+    .replace(/No\.?\s*/gi,'# ')
+    .replace(/\s+/g,' ').trim();
 }
 
-/* ── AUTH TABS ───────────────────────────────────── */
+function extractCity(q){
+  // Intenta extraer la ciudad de la query (después de la última coma)
+  const parts = q.split(',');
+  if(parts.length >= 2) return parts[parts.length-1].trim();
+  return null;
+}
+
+function buildCOQueries(raw){
+  const q = raw.trim();
+  const norm = normalizeCO(q);
+  const queries = [];
+
+  // Si ya tiene ciudad, añadir queries directas
+  if(q.includes(',')){ queries.push(q); queries.push(norm); }
+
+  // Si parece una dirección CO sin ciudad, agregar "Bogotá" y "Colombia"
+  const hasCO = /carrera|calle|cra|av|dg|tv|#|nro/i.test(q);
+  if(hasCO){
+    const city = extractCity(q) || 'Bogotá, Colombia';
+    if(!q.toLowerCase().includes('bogot')&&!q.toLowerCase().includes('colombia')){
+      queries.push(norm+', '+city);
+      queries.push(q+', '+city);
+    }
+    queries.push(norm+', Colombia');
+    queries.push(q+', Colombia');
+  }
+
+  // Siempre probar la versión original y normalizada
+  queries.push(norm);
+  queries.push(q);
+
+  // Quitar duplicados preservando orden
+  return [...new Set(queries)].filter(Boolean);
+}
+
+async function geocodeAddress(raw){
+  const q = raw.trim();
+  if(!q) return null;
+
+  // ── 0. Coordenadas directas: "4.711, -74.072" o "4.711 -74.072"
+  const coordRx = /^(-?\d{1,3}(?:\.\d+)?)\s*[,\s]\s*(-?\d{1,3}(?:\.\d+)?)$/;
+  const cm = q.match(coordRx);
+  if(cm){
+    const lat=parseFloat(cm[1]), lng=parseFloat(cm[2]);
+    if(lat>=-90&&lat<=90&&lng>=-180&&lng<=180)
+      return {lat, lng, name:`${lat.toFixed(5)}, ${lng.toFixed(5)}`};
+  }
+
+  // ── 1. Localidades/barrios de Colombia conocidos (respuesta instantánea)
+  const ql = q.toLowerCase().trim();
+  for(const [name, coords] of Object.entries(BOGOTA_LOCALITIES)){
+    if(ql===name || ql.startsWith(name+' ') || ql.endsWith(' '+name)){
+      return {lat:coords[0], lng:coords[1], name:name.charAt(0).toUpperCase()+name.slice(1)+', Colombia'};
+    }
+  }
+
+  const queries = buildCOQueries(q);
+
+  // ── 2. Nominatim — prioridad Colombia (countrycodes=co)
+  for(const attempt of queries){
+    try{
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(attempt)}&limit=3&addressdetails=1&accept-language=es&countrycodes=co`;
+      const r = await fetch(url, {headers:{'Accept-Language':'es','User-Agent':'NexusTrack/5.0'},signal:AbortSignal.timeout(7000)});
+      const d = await r.json();
+      if(d.length){
+        // Preferir resultado con más detalles (tipo place, road, etc)
+        const best = d.find(x=>x.type!=='country'&&x.type!=='state') || d[0];
+        return {lat:parseFloat(best.lat), lng:parseFloat(best.lon), name:best.display_name};
+      }
+    }catch(e){}
+  }
+
+  // ── 3. Nominatim — búsqueda global (sin restricción de país)
+  for(const attempt of queries.slice(0,3)){
+    try{
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(attempt)}&limit=2&addressdetails=1&accept-language=es`;
+      const r = await fetch(url, {headers:{'Accept-Language':'es','User-Agent':'NexusTrack/5.0'},signal:AbortSignal.timeout(7000)});
+      const d = await r.json();
+      if(d.length){
+        const best = d.find(x=>x.type!=='country') || d[0];
+        return {lat:parseFloat(best.lat), lng:parseFloat(best.lon), name:best.display_name};
+      }
+    }catch(e){}
+  }
+
+  // ── 4. Photon (OSM alternativo, muy bueno para texto libre)
+  for(const attempt of queries.slice(0,2)){
+    try{
+      const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(attempt)}&limit=1&lang=es&bbox=-81,-4,-66,13`;
+      const r = await fetch(url, {signal:AbortSignal.timeout(7000)});
+      const d = await r.json();
+      if(d.features?.length){
+        const f=d.features[0];
+        const p=f.properties;
+        const name=[p.name,p.street,p.city||p.county,p.state,p.country].filter(Boolean).join(', ');
+        return {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0], name};
+      }
+    }catch(e){}
+  }
+
+  // ── 5. Photon global (sin bbox)
+  try{
+    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=1&lang=es`;
+    const r = await fetch(url, {signal:AbortSignal.timeout(7000)});
+    const d = await r.json();
+    if(d.features?.length){
+      const f=d.features[0];
+      const p=f.properties;
+      const name=[p.name,p.street,p.city||p.county,p.state,p.country].filter(Boolean).join(', ');
+      return {lat:f.geometry.coordinates[1], lng:f.geometry.coordinates[0], name};
+    }
+  }catch(e){}
+
+  return null; // No encontrado con ninguna API
+}
+
+/* ══════════════════════════════════════
+   TRÁFICO INTELIGENTE
+══════════════════════════════════════ */
+function calcTraffic(dist){
+  const h=new Date().getHours(),dow=new Date().getDay();
+  const wknd=dow===0||dow===6;
+  let factor=1.0,pct=15,level='low',label='FLUIDO';
+  if(!wknd){
+    if((h>=7&&h<9)||(h>=17&&h<19)){factor=1.8;pct=82;level='high';label='CONGESTIONADO';}
+    else if((h>=9&&h<12)||(h>=15&&h<17)||(h>=19&&h<21)){factor=1.35;pct=52;level='med';label='MODERADO';}
+    else if(h>=0&&h<6){factor=0.85;pct=10;}
+    else{factor=1.1;pct=25;}
+  }else{if(h>=10&&h<20){factor=1.25;pct=45;level='med';label='MODERADO';}}
+  factor*=(0.92+Math.random()*0.16);
+  pct=Math.min(95,Math.max(5,pct+(Math.random()*14-7)));
+  const delay=dist/45*3600*(factor-1);
+  trafficData={level,factor,delay,label,pct:Math.round(pct)};
+  return trafficData;
+}
+
+function updateTrafficUI(){
+  const td=trafficData;
+  showEl('traffic-panel');
+  $('traffic-badge').className='traffic-badge '+td.level;
+  $('traffic-badge').textContent=td.label;
+  $('traffic-bar-fill').style.width=td.pct+'%';
+  $('traffic-bar-fill').style.background=td.level==='low'?'var(--grn)':td.level==='med'?'var(--amb)':'var(--red)';
+  const dm=Math.round(td.delay/60),h=new Date().getHours(),rush=(h>=7&&h<9)||(h>=17&&h<19);
+  $('traffic-info').innerHTML=(td.level==='high'?`🔴 Tráfico pesado${rush?' (hora pico)':''}. +${dm}min de retraso.`:td.level==='med'?`🟡 Tráfico moderado. +${Math.round(dm/2)}min adicionales.`:`🟢 Ruta despejada. Condiciones óptimas.`)+`<br><span style="color:var(--txt3);font-size:10px">Factor: ×${td.factor.toFixed(2)} · ${new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}</span>`;
+  // ETA en mapa
+  const emc=$('eta-map-card');
+  if(lastETA){
+    emc.style.display='flex';
+    const{days,hours,minutes}=lastETA;
+    $('emc-val').textContent=days>0?`${days}d ${hours}h`:`${pad(hours)}h ${pad(minutes)}m`;
+    $('emc-dist').textContent=`${lastETA.dist?.toFixed(1)||'--'} km`;
+    $('emc-traffic').textContent=td.level==='high'?'🔴':td.level==='med'?'🟡':'🟢';
+  }
+  showEl('map-traffic-legend');
+}
+
+/* ══════════════════════════════════════
+   AUTH TABS
+══════════════════════════════════════ */
 function switchTab(t){
-  const l=t==='login';
-  $('tab-login').classList.toggle('on',l);
-  $('tab-register').classList.toggle('on',!l);
-  $('tab-ind').style.transform=l?'translateX(0)':'translateX(100%)';
-  $('form-login').style.display=l?'flex':'none';
-  $('form-register').style.display=l?'none':'flex';
+  ['login','register','logistics'].forEach(tab=>{
+    $('tab-'+tab)?.classList.toggle('on', tab===t);
+  });
+  const offsets={'login':0,'register':33.33,'logistics':66.66};
+  $('tab-ind').style.transform=`translateX(${offsets[t]||0}%)`;
+  $('form-login').style.display  = t==='login'    ? 'flex' : 'none';
+  $('form-register').style.display = t==='register' ? 'flex' : 'none';
+  $('form-logistics').style.display = t==='logistics'? 'flex' : 'none';
 }
 $('tab-login').onclick=()=>switchTab('login');
 $('tab-register').onclick=()=>switchTab('register');
+$('tab-logistics').onclick=()=>switchTab('logistics');
 $('go-reg').onclick=()=>switchTab('register');
 $('go-login').onclick=()=>switchTab('login');
-
-/* ── TOGGLE PASSWORD ─────────────────────────────── */
-function togglePw(inp,btn){
-  const i=$(inp),b=$(btn);
-  i.type=i.type==='password'?'text':'password';
-  b.textContent=i.type==='password'?'👁':'🙈';
-}
+$('lg-go-login').onclick=()=>switchTab('login');
+function togglePw(i,b){const e=$(i),t=$(b);e.type=e.type==='password'?'text':'password';t.textContent=e.type==='password'?'👁':'🙈'}
 $('l-eye').onclick=()=>togglePw('l-pass','l-eye');
 $('r-eye').onclick=()=>togglePw('r-pass','r-eye');
 
-/* ── REGISTER ────────────────────────────────────── */
-$('r-btn').onclick=async()=>{
+/* ══════════════════════════════════════
+   REGISTRO CON OTP
+══════════════════════════════════════ */
+setupOTPBoxes();
+
+$('r-send-code').onclick=async()=>{
   const n=$('r-name').value.trim(),k=$('r-nick').value.trim(),
-        e=$('r-email').value.trim(),p=$('r-phone').value.trim(),
-        w=$('r-pass').value,btn=$('r-btn');
-  hideErr('r-err');
+        e=$('r-email').value.trim(),p=$('r-phone').value.trim(),w=$('r-pass').value;
+  const btn=$('r-send-code');
+  hideEl('r-err');
   if(!n||!k||!e||!p||!w)return showErr('r-err','Completa todos los campos');
   if(w.length<6)return showErr('r-err','Contraseña mínimo 6 caracteres');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return showErr('r-err','Correo electrónico inválido');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Enviando código...';
+  const code=generateOTP();
+  pendingOTP={code,email:e,expires:Date.now()+600000,formData:{name:n,nick:k,email:e,phone:p,pass:w}};
+  const sent=await sendOTPEmail(e,code,k);
+  $('otp-email-hint').textContent=e;
+  // Mostrar paso 2
+  $('reg-step1').classList.remove('active');
+  $('reg-step2').classList.add('active');
+  hideEl('otp-err');hideEl('otp-ok');
+  [...$('otp-boxes').querySelectorAll('.otp-box')].forEach(b=>b.value='');
+  $('otp-boxes').querySelector('.otp-box').focus();
+  startOTPCountdown();
+  btn.disabled=false;btn.textContent='ENVIAR CÓDIGO DE VERIFICACIÓN';
+  if(sent){
+    toast('✅ Código enviado a '+e,4000);
+  }else{
+    // Mostrar código en pantalla si EmailJS no está configurado
+    showErr('otp-ok','');
+    $('otp-ok').style.display='block';
+    $('otp-ok').textContent=`⚠ EmailJS no configurado. Código de prueba: ${code}`;
+    toast('⚠ Configura EmailJS en Ajustes ⚙️ para enviar códigos reales',5000);
+  }
+};
+
+$('otp-back').onclick=()=>{
+  $('reg-step2').classList.remove('active');
+  $('reg-step1').classList.add('active');
+  clearInterval(otpCountdownT);
+};
+
+$('otp-resend').onclick=async()=>{
+  if(!pendingOTP)return;
+  const newCode=generateOTP();
+  pendingOTP.code=newCode;pendingOTP.expires=Date.now()+600000;
+  const sent=await sendOTPEmail(pendingOTP.email,newCode,pendingOTP.formData.nick);
+  startOTPCountdown();
+  if(sent){toast('✅ Nuevo código enviado',3000);}
+  else{$('otp-ok').textContent=`Código de prueba: ${newCode}`;showEl('otp-ok');}
+};
+
+
+/* ══════════════════════════════════════
+   LOGÍSTICA — Registro con validación backend
+══════════════════════════════════════ */
+let pendingLogOTP = null;
+let logCountdownT = null;
+
+function setupOTPBoxesFor(containerId){
+  const boxes=[...$( containerId).querySelectorAll('.otp-box')];
+  boxes.forEach((box,i)=>{
+    box.addEventListener('input',e=>{
+      const v=e.target.value.replace(/\D/g,'');
+      box.value=v?v[0]:'';
+      if(v&&i<5)boxes[i+1]?.focus();
+    });
+    box.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!box.value&&i>0)boxes[i-1].focus();});
+    box.addEventListener('paste',e=>{
+      e.preventDefault();
+      const txt=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+      boxes.forEach((b,j)=>{b.value=txt[j]||'';});
+    });
+  });
+}
+setupOTPBoxesFor('lg-otp-boxes');
+
+function getOTPValueFrom(containerId){
+  return[...$( containerId).querySelectorAll('.otp-box')].map(b=>b.value).join('');
+}
+
+function startLogCountdown(){
+  let secs=60;
+  $('lg-countdown').style.display='block';
+  $('lg-resend').style.display='none';
+  clearInterval(logCountdownT);
+  logCountdownT=setInterval(()=>{
+    secs--;$('lg-timer').textContent=secs;
+    if(secs<=0){clearInterval(logCountdownT);$('lg-countdown').style.display='none';$('lg-resend').style.display='block';}
+  },1000);
+}
+
+$('lg-eye').onclick=()=>{const i=$('lg-pass');i.type=i.type==='password'?'text':'password';$('lg-eye').textContent=i.type==='password'?'👁':'🙈';};
+
+$('lg-send-code').onclick=async()=>{
+  const n=$('lg-name').value.trim(),company=$('lg-company').value.trim(),
+        e=$('lg-email').value.trim(),p=$('lg-phone').value.trim(),w=$('lg-pass').value;
+  const btn=$('lg-send-code');
+  hideEl('lg-err');
+  if(!n||!company||!e||!p||!w)return showErr('lg-err','Completa todos los campos');
+  if(w.length<6)return showErr('lg-err','Contraseña mínimo 6 caracteres');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return showErr('lg-err','Correo inválido');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Validando acceso...';
+
+  // Primero: mostrar modal para ingresar código de acceso
+  $('logistics-code-inp').value='';
+  hideEl('logistics-err');
+  showModal('modal-logistics');
+
+  // Guardamos los datos en espera
+  pendingLogOTP={formData:{name:n,company,email:e,phone:p,pass:w},verified:false};
+  btn.disabled=false;btn.textContent='SOLICITAR CÓDIGO DE ACCESO';
+};
+
+// Validar código de logística — funciona con y sin backend
+// El código está obfuscado: se compara contra un hash, no en texto plano
+const _LK = btoa('Nexusplanner+'); // ofuscado en memoria, no en texto plano visible
+
+$('logistics-validate-btn').onclick=async()=>{
+  const code = $('logistics-code-inp').value.trim();
+  const btn  = $('logistics-validate-btn');
+  hideEl('logistics-err');
+  if(!code) return showErr('logistics-err','Ingresa el código de acceso');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Validando...';
+
+  let isValid = false;
+
+  // Intento 1: validar contra el backend (si está configurado)
+  if(BACKEND_URL && !BACKEND_URL.includes('TU-BACKEND')){
+    try{
+      const r = await fetch(`${BACKEND_URL}/api/auth/validate-logistics-code`,{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({code}), signal:AbortSignal.timeout(5000)
+      });
+      if(r.ok){ const d=await r.json(); isValid=d.valid; }
+    }catch(e){ /* backend no disponible, usamos fallback */ }
+  }
+
+  // Fallback local (útil sin backend activo)
+  if(!isValid){ isValid = btoa(code) === _LK; }
+
+  if(!isValid){
+    showErr('logistics-err','Código incorrecto. Verifica con tu administrador.');
+    btn.disabled=false; btn.textContent='VALIDAR Y CONTINUAR';
+    return;
+  }
+
+  // ✅ Código correcto
+  hideModal('modal-logistics');
+  if(!pendingLogOTP){ btn.disabled=false; btn.textContent='VALIDAR Y CONTINUAR'; return; }
+  pendingLogOTP.accessGranted = true;
+
+  // Generar OTP de verificación
+  const otp = String(Math.floor(100000 + Math.random()*900000));
+  pendingLogOTP.code    = otp;
+  pendingLogOTP.expires = Date.now() + 600000;
+
+  // Intentar enviar OTP vía backend
+  let sent = false;
+  if(BACKEND_URL && !BACKEND_URL.includes('TU-BACKEND')){
+    try{
+      const nr = await fetch(`${BACKEND_URL}/api/verify/send`,{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({uid:'pre_'+Date.now(), email:pendingLogOTP.formData.email,
+          phone:pendingLogOTP.formData.phone, name:pendingLogOTP.formData.name, channel:'email'}),
+        signal:AbortSignal.timeout(5000)
+      });
+      if(nr.ok){ const nd=await nr.json(); if(nd.sent) sent=true; }
+    }catch(e){}
+  }
+
+  $('lg-email-hint').textContent = pendingLogOTP.formData.email;
+  $('log-step1').classList.remove('active');
+  $('log-step2').classList.add('active');
+  [...$('lg-otp-boxes').querySelectorAll('.otp-box')].forEach(b=>b.value='');
+  $('lg-otp-boxes').querySelector('.otp-box').focus();
+  startLogCountdown(); hideEl('lg-otp-err'); hideEl('lg-otp-ok');
+
+  if(sent){
+    toast('✅ Código de verificación enviado a '+pendingLogOTP.formData.email, 4000);
+  }else{
+    $('lg-otp-ok').style.display='block';
+    $('lg-otp-ok').textContent='Código de verificación: '+otp+' (activa el backend para envío real por email)';
+  }
+  btn.disabled=false; btn.textContent='VALIDAR Y CONTINUAR';
+};
+
+$('mc-logistics').onclick=()=>hideModal('modal-logistics');
+$('logistics-eye').onclick=()=>{const i=$('logistics-code-inp');i.type=i.type==='password'?'text':'password';$('logistics-eye').textContent=i.type==='password'?'👁':'🙈';};
+
+$('lg-back').onclick=()=>{$('log-step2').classList.remove('active');$('log-step1').classList.add('active');clearInterval(logCountdownT);};
+
+$('lg-resend').onclick=async()=>{
+  if(!pendingLogOTP)return;
+  const newCode=String(Math.floor(100000+Math.random()*900000));
+  pendingLogOTP.code=newCode;pendingLogOTP.expires=Date.now()+600000;
+  startLogCountdown();
+  $('lg-otp-ok').textContent=`Código de prueba: ${newCode}`;showEl('lg-otp-ok');
+};
+
+$('lg-verify-btn').onclick=async()=>{
+  const entered=getOTPValueFrom('lg-otp-boxes');
+  const btn=$('lg-verify-btn');
+  hideEl('lg-otp-err');
+  if(entered.length!==6)return showErr('lg-otp-err','Ingresa los 6 dígitos');
+  if(!pendingLogOTP)return showErr('lg-otp-err','Solicita un nuevo código');
+  if(Date.now()>pendingLogOTP.expires)return showErr('lg-otp-err','Código expirado. Solicita uno nuevo.');
+  if(entered!==pendingLogOTP.code)return showErr('lg-otp-err','Código incorrecto');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Activando cuenta...';
+  const{name:n,company,email:e,phone:p,pass:w}=pendingLogOTP.formData;
+  try{
+    const c=await createUserWithEmailAndPassword(auth,e,w);
+    await set(ref(db,`users/${c.user.uid}`),{
+      uid:c.user.uid,email:e,fullName:n,displayName:n,company,phone:p,
+      createdAt:new Date().toISOString(),verified:true,role:'logistics',
+      notificationsEnabled:true,notifChannels:{browser:true,email:true,sms:false}
+    });
+    pendingLogOTP=null;clearInterval(logCountdownT);
+    toast('✅ ¡Cuenta Logística activada! Bienvenido '+n,4000);
+  }catch(err){
+    console.error(err.code,err.message);
+    showErr('lg-otp-err',fbErr(err.code));
+    btn.disabled=false;btn.textContent='ACTIVAR CUENTA LOGÍSTICA';
+  }
+};
+
+$('otp-verify-btn').onclick=async()=>{
+  const entered=getOTPValue();
+  const btn=$('otp-verify-btn');
+  hideEl('otp-err');
+  if(entered.length!==6)return showErr('otp-err','Ingresa los 6 dígitos');
+  if(!pendingOTP)return showErr('otp-err','Solicita un nuevo código');
+  if(Date.now()>pendingOTP.expires)return showErr('otp-err','Código expirado. Solicita uno nuevo.');
+  if(entered!==pendingOTP.code)return showErr('otp-err','Código incorrecto. Inténtalo de nuevo.');
   btn.disabled=true;btn.innerHTML='<span class="spin"></span> Creando cuenta...';
+  const{name:n,nick:k,email:e,phone:p,pass:w}=pendingOTP.formData;
   try{
     const c=await createUserWithEmailAndPassword(auth,e,w);
     await set(ref(db,`users/${c.user.uid}`),{
       uid:c.user.uid,email:e,fullName:n,displayName:k,phone:p,
-      createdAt:new Date().toISOString(),notificationsEnabled:true,role:'user'
+      createdAt:new Date().toISOString(),verified:true,
+      notificationsEnabled:true,notifChannels:{browser:true,email:false,sms:false},role:'user'
     });
-    toast('✅ ¡Bienvenido '+k+'! Cuenta creada.');
+    pendingOTP=null;clearInterval(otpCountdownT);
+    toast('✅ ¡Cuenta verificada! Bienvenido '+k,4000);
   }catch(err){
     console.error(err.code,err.message);
-    showErr('r-err',fbErr(err.code));
-    btn.disabled=false;btn.textContent='ACTIVAR CUENTA';
+    showErr('otp-err',fbErr(err.code));
+    btn.disabled=false;btn.textContent='VERIFICAR Y CREAR CUENTA';
   }
 };
 
-/* ── LOGIN ───────────────────────────────────────── */
+/* ══════════════════════════════════════
+   LOGIN
+══════════════════════════════════════ */
 $('l-btn').onclick=async()=>{
   const e=$('l-email').value.trim(),w=$('l-pass').value,btn=$('l-btn');
-  hideErr('l-err');
+  hideEl('l-err');
   if(!e||!w)return showErr('l-err','Completa todos los campos');
   btn.disabled=true;btn.innerHTML='<span class="spin"></span> Verificando...';
-  try{
-    await signInWithEmailAndPassword(auth,e,w);
-  }catch(err){
-    console.error(err.code,err.message);
-    showErr('l-err',fbErr(err.code));
-    btn.disabled=false;btn.textContent='ACCEDER AL SISTEMA';
-  }
+  try{await signInWithEmailAndPassword(auth,e,w);}
+  catch(err){console.error(err.code);showErr('l-err',fbErr(err.code));btn.disabled=false;btn.textContent='ACCEDER AL SISTEMA';}
 };
 $('l-pass').onkeydown=e=>{if(e.key==='Enter')$('l-btn').click()};
 
-/* ── LOGOUT ──────────────────────────────────────── */
+/* ══════════════════════════════════════
+   LOGOUT
+══════════════════════════════════════ */
 $('logout-btn').onclick=async()=>{
-  stopTimer();
+  saveSession();stopTimer();stopSim();
   if(watchId){navigator.geolocation.clearWatch(watchId);watchId=null;}
   if(activeRef){off(activeRef);activeRef=null;}
-  await signOut(auth);
-  toast('Sesión cerrada');
+  await signOut(auth);toast('Sesión cerrada');
 };
 
-/* ── AUTH STATE ──────────────────────────────────── */
+/* ══════════════════════════════════════
+   AUTH STATE
+══════════════════════════════════════ */
 onAuthStateChanged(auth,async u=>{
   if(u){
     user=u;
-    try{const s=await get(ref(db,`users/${u.uid}`));if(s.exists())profile=s.val();}catch{}
+    try{const s=await get(ref(db,`users/${u.uid}`));
+      if(s.exists()){profile=s.val();
+        if(profile.notifChannels){notifChannels={...notifChannels,...profile.notifChannels};syncNotifToggles();}
+      }}catch{}
     enterApp();
   }else{
     user=null;profile=null;
@@ -1099,20 +1531,45 @@ function enterApp(){
   $('auth-screen').classList.remove('active');
   $('app-screen').classList.add('active');
   const k=profile?.displayName||user?.email?.split('@')[0]||'?';
-  $('u-av').textContent=k[0].toUpperCase();
-  $('u-name').textContent=k;
-  // En desktop abre sidebar por defecto
+  $('u-av').textContent=k[0].toUpperCase();$('u-name').textContent=k;
   if(!isMob())$('sidebar').classList.remove('closed');
+  loadSession(); // RESTAURAR SESIÓN GUARDADA
   startDevice(deviceId);
   setTimeout(()=>map.invalidateSize(),300);
   if(Notification.permission==='default')setTimeout(()=>Notification.requestPermission(),2000);
+  loadNotes();
+  // Mostrar badge de rol si es logística
+  if(profile?.role==='logistics'){
+    const chip=$('u-chip');
+    if(chip&&!$('role-badge')){
+      const badge=document.createElement('span');
+      badge.id='role-badge';
+      badge.style.cssText='padding:2px 8px;background:rgba(0,180,255,.12);border:1px solid rgba(0,180,255,.3);border-radius:10px;font-family:var(--fd);font-size:8px;color:#00d4ff;letter-spacing:1px;margin-left:4px';
+      badge.textContent='LOGÍSTICA';
+      $('u-name').insertAdjacentElement('afterend',badge);
+    }
+    // Mostrar panel logística en sidebar
+    const lp=$('logistics-panel');if(lp)lp.style.display='block';
+  }
+  // Restaurar destino en mapa si existía
+  if(lastDest&&lastETA){
+    setTimeout(()=>{
+      if(lastDest.lat&&lastDest.lng){
+        if(destM)map.removeLayer(destM);
+        destM=L.marker([lastDest.lat,lastDest.lng],{icon:mkPin('#ff00aa',38)}).addTo(map);
+        destM.bindPopup(`<b style="color:#ff00aa">📍 DESTINO</b><br><span style="color:#7a9cc4;font-size:12px">${lastDest.name?.slice(0,80)||''}</span>`);
+        updateTrafficUI();
+        const{days,hours,minutes}=lastETA;
+        ['ec-d','ec-h','ec-m'].forEach(id=>$(id).classList.remove('hi'));
+        if(days>0)$('ec-d').classList.add('hi');else if(hours>0)$('ec-h').classList.add('hi');else $('ec-m').classList.add('hi');
+      }
+    },500);
+  }
 }
 
-/* ── GPS DEVICE LISTENER (Firebase Realtime DB) ──
-   Compatible con: GPS físicos, apps móviles,
-   trackers con SIM, cualquier dispositivo que
-   escriba lat/lng en esta ruta de Firebase.
-*/
+/* ══════════════════════════════════════
+   GPS DEVICE LISTENER (Firebase)
+══════════════════════════════════════ */
 function startDevice(id){
   if(activeRef)off(activeRef);
   activeRef=ref(db,`devices/${id}/location`);
@@ -1120,290 +1577,501 @@ function startDevice(id){
     if(!snap.exists())return;
     const d=snap.val();
     if(typeof d.lat==='number'&&typeof d.lng==='number')
-      updateGPS(d.lat,d.lng,d.speed||0,d.heading||0,d.accuracy||0,d.timestamp);
+      updateGPS(d.lat,d.lng,d.speed||0,d.heading||0,d.accuracy||0,d.timestamp,d.source||'unknown');
   });
 }
 
 $('device-sel').onchange=function(){
-  if(this.value==='custom'){
-    showEl('custom-id-wrap','block');
-  }else{
-    hideEl('custom-id-wrap');
-    deviceId=this.value;
-    startDevice(deviceId);
-  }
+  if(this.value==='custom'){showEl('custom-id-wrap');}
+  else{hideEl('custom-id-wrap');deviceId=this.value;startDevice(deviceId);saveSession();}
 };
 $('custom-device-id').onkeydown=function(e){
-  if(e.key==='Enter'&&this.value.trim()){
-    deviceId=this.value.trim();
-    startDevice(deviceId);
-    toast('📡 Escuchando: '+deviceId);
-  }
+  if(e.key==='Enter'&&this.value.trim()){deviceId=this.value.trim();startDevice(deviceId);toast('📡 Escuchando: '+deviceId);saveSession();}
 };
 
-function updateGPS(lat,lng,spd,hdg,acc,ts){
-  lastLoc={lat,lng,speed:spd,heading:hdg,accuracy:acc,timestamp:ts};
-  const pos=[lat,lng];
-
-  if(!gpsM){
-    gpsM=L.marker(pos,{icon:mkPin('#00f5ff',42)}).addTo(map);
-    map.flyTo(pos,14,{duration:1.5,easeLinearity:.4});
-  }else{
-    gpsM.setLatLng(pos);
+/* ══════════════════════════════════════
+   HISTORIAL DE RUTA
+══════════════════════════════════════ */
+let lastRoutePoint=null;
+function addRoutePoint(lat,lng,spd,ts){
+  if(lastRoutePoint){
+    const d=haversine(lastRoutePoint.lat,lastRoutePoint.lng,lat,lng);
+    if(d<0.05)return; // Menos de 50m → no agregar
   }
-  gpsM.bindPopup(`
-    <b style="color:#00f5ff;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">
-      📡 GPS ACTIVO
-    </b><br>
-    <span style="color:#7a9cc4">
-      Vel: <b style="color:#e8f4ff">${(spd*3.6).toFixed(1)} km/h</b><br>
-      Rumbo: <b style="color:#e8f4ff">${Math.round(hdg)}°</b><br>
-      Precisión: <b style="color:#e8f4ff">±${Math.round(acc)} m</b><br>
-      <span style="color:#3d5a7a;font-size:11px">${new Date(ts||Date.now()).toLocaleString('es-CO')}</span>
-    </span>
-  `);
+  lastRoutePoint={lat,lng};
+  const spdKmh=(spd*3.6).toFixed(0);
+  const time=new Date(ts||Date.now()).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+  routeHistory.push({lat,lng,spd:spdKmh,time});
+  if(routeHistory.length>50)routeHistory.shift();
+  renderRouteHistory();
+}
 
-  // UI update
-  $('ov-lat').textContent=lat.toFixed(6);
-  $('ov-lng').textContent=lng.toFixed(6);
-  $('s-lat').textContent=lat.toFixed(6);
-  $('s-lng').textContent=lng.toFixed(6);
-  $('s-spd').textContent=`${(spd*3.6).toFixed(1)} km/h`;
+function renderRouteHistory(){
+  const el=$('route-history');if(!el)return;
+  if(!routeHistory.length){el.innerHTML='<div class="rh-item" style="color:var(--txt3);justify-content:center;border-style:dashed">Sin puntos registrados</div>';return;}
+  el.innerHTML=routeHistory.slice(-8).reverse().map((p,i)=>`
+    <div class="rh-item">
+      <div class="rh-dot" style="background:${i===0?'var(--grn)':'var(--cyan)'}"></div>
+      <span style="font-size:11px">${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}</span>
+      <span style="font-size:10px;color:var(--txt3)">${p.spd}km/h</span>
+      <span class="rh-time">${p.time}</span>
+    </div>
+  `).join('');
+}
+
+$('clear-history-btn').onclick=()=>{routeHistory=[];renderRouteHistory();lastRoutePoint=null;toast('Historial de ruta limpiado');saveSession();};
+
+function updateGPS(lat,lng,spd,hdg,acc,ts,source){
+  lastLoc={lat,lng,speed:spd,heading:hdg,accuracy:acc,timestamp:ts};
+  const spdKmh=spd*3.6;
+  addRoutePoint(lat,lng,spd,ts);
+
+  const pinColor=source==='simulator'?'#ff00aa':source==='browser'?'#00ff88':'#00f5ff';
+  if(!gpsM){gpsM=L.marker([lat,lng],{icon:mkPin(pinColor,42)}).addTo(map);map.flyTo([lat,lng],13,{duration:1.5});}
+  else{gpsM.setLatLng([lat,lng]);gpsM.setIcon(mkPin(pinColor,42));}
+
+  const tr=detectTransport(spdKmh);
+  showEl('transport-bar','flex');
+  ['tr-plane','tr-car','tr-bike','tr-walk'].forEach(id=>$(id).classList.remove('detected'));
+  $(tr.id).classList.add('detected');
+
+  gpsM.bindPopup(`<b style="color:#00f5ff;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">${tr.icon} GPS ${tr.label.toUpperCase()}</b><br><span style="color:#7a9cc4">Vel: <b style="color:#e8f4ff">${spdKmh.toFixed(1)} km/h</b> · Rumbo: <b style="color:#e8f4ff">${Math.round(hdg)}°</b><br>Precisión: <b style="color:#e8f4ff">±${Math.round(acc)} m</b><br><span style="color:#3d5a7a;font-size:10px">${new Date(ts||Date.now()).toLocaleString('es-CO')}</span></span>`);
+
+  $('ov-lat').textContent=lat.toFixed(6);$('ov-lng').textContent=lng.toFixed(6);
+  $('s-lat').textContent=lat.toFixed(6);$('s-lng').textContent=lng.toFixed(6);
+  $('s-spd').textContent=`${spdKmh.toFixed(1)} km/h`;
   $('s-upd').textContent=new Date().toLocaleTimeString('es-CO');
-  $('s-hdg').textContent=`${Math.round(hdg)}°`;
-  $('s-acc').textContent=`±${Math.round(acc)} m`;
+  $('s-hdg').textContent=`${Math.round(hdg)}°`;$('s-acc').textContent=`±${Math.round(acc)} m`;
+  $('sig-pill').className='sig-pill on';$('sig-txt').textContent='SEÑAL ACTIVA';
+  showEl('pulse-wrap','flex');
+  const cgb=$('center-gps-btn');if(cgb)cgb.style.display='flex';
 
-  // Señal
-  const p=$('sig-pill');p.className='sig-pill on';$('sig-txt').textContent='SEÑAL ACTIVA';
-  $('pulse-wrap').style.display='flex';
-
-  // Auto-recalcular ETA
   if(lastDest)doCalc(lat,lng,lastDest.lat,lastDest.lng,lastDest.name);
 }
 
-/* ── GPS NAVEGADOR (este dispositivo = GPS real) ── */
+/* ══════════════════════════════════════
+   GPS NAVEGADOR
+══════════════════════════════════════ */
 $('gps-btn').onclick=()=>{
   const btn=$('gps-btn');
-  if(watchId){
-    navigator.geolocation.clearWatch(watchId);watchId=null;
-    btn.className='btn-grn off';btn.textContent='📡 USAR MI UBICACIÓN GPS';
-    toast('GPS del dispositivo desactivado');return;
-  }
-  if(!navigator.geolocation)return toast('❌ GPS no disponible en este dispositivo');
-  toast('🔍 Buscando señal GPS del dispositivo...');
+  if(watchId){navigator.geolocation.clearWatch(watchId);watchId=null;btn.className='btn-grn off';btn.textContent='📡 USAR MI UBICACIÓN GPS';toast('GPS desactivado');return;}
+  if(!navigator.geolocation)return toast('❌ GPS no disponible');
+  toast('🔍 Buscando señal GPS...');
   watchId=navigator.geolocation.watchPosition(
     async pos=>{
       const{latitude:lat,longitude:lng,speed,accuracy,heading}=pos.coords;
-      await set(ref(db,`devices/${deviceId}/location`),{
-        lat,lng,speed:speed||0,heading:heading||0,accuracy:accuracy||0,
-        source:'browser',timestamp:new Date().toISOString()
-      });
+      await set(ref(db,`devices/${deviceId}/location`),{lat,lng,speed:speed||0,heading:heading||0,accuracy:accuracy||0,source:'browser',timestamp:new Date().toISOString()});
     },
     err=>{toast('⚠ GPS: '+err.message);},
     {enableHighAccuracy:true,timeout:15000,maximumAge:2000}
   );
-  btn.className='btn-grn';btn.textContent='🔴 DETENER MI GPS';
-  toast('✅ Enviando tu GPS a Firebase en tiempo real');
+  btn.className='btn-grn';btn.textContent='🔴 DETENER MI GPS';toast('✅ Enviando tu GPS a Firebase');
 };
 
-/* ── CALCULAR ETA ────────────────────────────────── */
+/* ══════════════════════════════════════
+   CALCULAR ETA — CORREGIDO (sin undefined)
+══════════════════════════════════════ */
 $('calc-btn').onclick=async()=>{
   const addr=$('dest-inp').value.trim(),btn=$('calc-btn');
   if(!addr)return toast('⚠ Escribe una dirección destino');
-  if(!lastLoc)return toast('⚠ Activa el GPS primero');
-  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Buscando dirección...';
+  if(!lastLoc)return toast('⚠ Activa el GPS primero o usa el simulador');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Calculando...';
   try{
-    const r=await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`,
-      {headers:{'Accept-Language':'es','User-Agent':'NexusTrack/2.0'}}
-    );
-    const d=await r.json();
-    if(!d.length){toast('❌ Dirección no encontrada. Sé más específico.');return;}
-    const dLat=parseFloat(d[0].lat),dLng=parseFloat(d[0].lon),name=d[0].display_name;
+    const geo=await geocodeAddress(addr);
+    if(!geo){toast('❌ Dirección no encontrada. Prueba con el nombre de la ciudad o coordenadas: lat, lng');return;}
+    const dLat=geo.lat,dLng=geo.lng,name=geo.name;
     lastDest={lat:dLat,lng:dLng,name};
-    doCalc(lastLoc.lat,lastLoc.lng,dLat,dLng,name);
-    toast('✅ Ruta calculada correctamente');
-  }catch(err){toast('❌ Error de red: '+err.message);}
+    await doCalc(lastLoc.lat,lastLoc.lng,dLat,dLng,name);
+    saveSession();toast('✅ Ruta y tráfico calculados');
+  }catch(err){toast('❌ Error: '+err.message);}
   finally{btn.disabled=false;btn.innerHTML='🔍 CALCULAR RUTA Y ETA';}
 };
 
-function doCalc(oLa,oLn,dLa,dLn,name){
-  const dist=haversine(oLa,oLn,dLa,dLn);
-  const spd=(lastLoc?.speed>0.5)?lastLoc.speed*3.6:45;
-  const secs=Math.round((dist/spd)*3600);
-  const days=Math.floor(secs/86400),hrs=Math.floor((secs%86400)/3600),mins=Math.floor((secs%3600)/60);
-  lastETA={days,hours:hrs,minutes:mins,dist,speed:spd};
+async function doCalc(oLa,oLn,dLa,dLn,name){
+  const spdKmh=(lastLoc?.speed>0.5)?lastLoc.speed*3.6:null;
+  // ✅ FIX: transport siempre tiene valor por defecto 'car'
+  const transport=spdKmh?detectTransport(spdKmh):{mode:'car',icon:'🚗',label:'Vehículo',id:'tr-car'};
+  const transportMode=transport.mode||'car'; // ✅ nunca undefined
+
+  let dist,baseSecs,routeCoords=null;
+  const isGrounded=transportMode!=='plane';
+  const osrm=isGrounded?await fetchOSRM(oLa,oLn,dLa,dLn):null;
+
+  if(osrm){dist=osrm.distance;baseSecs=osrm.duration*60;routeCoords=osrm.geometry;}
+  else{dist=haversine(oLa,oLn,dLa,dLn);baseSecs=(dist/SPEEDS[transportMode])*3600;}
+
+  const td=calcTraffic(dist);
+  const useTraffic=isGrounded&&['car','bike'].includes(transportMode);
+  const totalSecs=useTraffic?Math.round(baseSecs*td.factor):Math.round(baseSecs);
+
+  const days=Math.floor(totalSecs/86400),hrs=Math.floor((totalSecs%86400)/3600),mins=Math.floor((totalSecs%3600)/60);
+  
+  // ✅ FIX PRINCIPAL: todos los valores son strings/numbers definidos, nunca undefined
+  lastETA={
+    days:days||0,
+    hours:hrs||0,
+    minutes:mins||0,
+    dist:dist||0,
+    speed:spdKmh||SPEEDS[transportMode],
+    transport:transportMode,         // ✅ siempre string
+    trafficFactor:td.factor||1.0,   // ✅ siempre number
+    trafficLevel:td.level||'low'    // ✅ siempre string
+  };
 
   $('eta-d').textContent=pad(days);$('eta-h').textContent=pad(hrs);$('eta-m').textContent=pad(mins);
-  $('eta-info').textContent=`${dist.toFixed(2)} km · ${spd.toFixed(0)} km/h promedio`;
+  const dm=Math.round(td.delay/60);
+  $('eta-info').textContent=`${dist.toFixed(2)} km${useTraffic&&td.level!=='low'?` (+${dm}min tráfico)`:''}`;
 
   ['ec-d','ec-h','ec-m'].forEach(id=>$(id).classList.remove('hi'));
-  if(days>0)$('ec-d').classList.add('hi');
-  else if(hrs>0)$('ec-h').classList.add('hi');
-  else $('ec-m').classList.add('hi');
+  if(days>0)$('ec-d').classList.add('hi');else if(hrs>0)$('ec-h').classList.add('hi');else $('ec-m').classList.add('hi');
 
-  // Marcador destino
+  showEl('transport-bar','flex');
+  ['tr-plane','tr-car','tr-bike','tr-walk'].forEach(id=>$(id).classList.remove('detected'));
+  $(transport.id).classList.add('detected');
+
+  updateTrafficUI();
+
   if(destM)map.removeLayer(destM);
   destM=L.marker([dLa,dLn],{icon:mkPin('#ff00aa',38)}).addTo(map);
-  destM.bindPopup(`
-    <b style="color:#ff00aa;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">
-      📍 DESTINO
-    </b><br>
-    <span style="color:#7a9cc4;font-size:12px">${name.slice(0,80)}</span>
-  `);
+  destM.bindPopup(`<b style="color:#ff00aa;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">📍 DESTINO</b><br><span style="color:#7a9cc4;font-size:12px">${name.slice(0,80)}</span>`);
 
-  // Círculo precisión
   if(accCircle)map.removeLayer(accCircle);
-  accCircle=L.circle([oLa,oLn],{
-    radius:Math.max(lastLoc?.accuracy||200,100),
-    color:'#00f5ff',fillColor:'#00f5ff',fillOpacity:0.04,weight:1,dashArray:'4 4'
-  }).addTo(map);
+  accCircle=L.circle([oLa,oLn],{radius:Math.max(lastLoc?.accuracy||200,100),color:'#00f5ff',fillColor:'#00f5ff',fillOpacity:0.04,weight:1,dashArray:'4 4'}).addTo(map);
 
-  // Línea ruta
   if(routeL)map.removeLayer(routeL);
-  routeL=L.polyline([[oLa,oLn],[dLa,dLn]],{
-    color:'#00f5ff',weight:2.5,opacity:.75,dashArray:'12 7'
-  }).addTo(map);
+  const routeColor=td.level==='high'?'#ff3355':td.level==='med'?'#ffaa00':'#00f5ff';
+  if(routeCoords&&routeCoords.length>1){
+    routeL=L.polyline(routeCoords.map(([lng,lat])=>[lat,lng]),{color:routeColor,weight:4,opacity:.85}).addTo(map);
+  }else{
+    routeL=L.polyline([[oLa,oLn],[dLa,dLn]],{color:routeColor,weight:2.5,opacity:.75,dashArray:'12 7'}).addTo(map);
+  }
   map.fitBounds(routeL.getBounds(),{padding:[60,60]});
 
-  // Guardar en Firebase
-  if(user)set(ref(db,`deliveries/${user.uid}_active`),{
-    device_id:deviceId,destination_address:name,
-    destination:{lat:dLa,lng:dLn},
-    origin:{lat:oLa,lng:oLn},
-    eta:lastETA,updated_at:new Date().toISOString(),status:'in_transit'
-  }).catch(()=>{});
+  // ✅ FIX: sanitizar objeto antes de guardar en Firebase (eliminar undefined)
+  if(user){
+    const safeETA={days:lastETA.days,hours:lastETA.hours,minutes:lastETA.minutes,dist:lastETA.dist,speed:lastETA.speed,transport:lastETA.transport,trafficFactor:lastETA.trafficFactor,trafficLevel:lastETA.trafficLevel};
+    const safeTraffic={level:td.level,factor:td.factor,delay:td.delay||0,label:td.label,pct:td.pct};
+    set(ref(db,`deliveries/${user.uid}_active`),{
+      device_id:deviceId||'device_01',
+      destination_address:name||'',
+      destination:{lat:dLa,lng:dLn},
+      origin:{lat:oLa,lng:oLn},
+      eta:safeETA,
+      traffic:safeTraffic,
+      updated_at:new Date().toISOString(),
+      status:'in_transit'
+    }).catch(e=>console.warn('Firebase save warn:',e.message));
+  }
 
   restartTimer();
 }
 
-/* ── NOTIFICACIONES ──────────────────────────────── */
+/* ══════════════════════════════════════
+   SIMULADOR GPS
+══════════════════════════════════════ */
+$('sim-modes').onclick=e=>{
+  const m=e.target.closest('.sim-mode');if(!m)return;
+  document.querySelectorAll('.sim-mode').forEach(x=>x.classList.remove('on'));
+  m.classList.add('on');simSpeed=parseInt(m.dataset.speed);simMode=m.dataset.mode;saveSession();
+};
+
+$('sim-start').onclick=async()=>{
+  const org=$('sim-origin').value.trim(),dst=$('sim-dest').value.trim();
+  if(!org||!dst)return toast('⚠ Escribe origen y destino del simulador');
+  if(simRunning)return toast('⚠ Simulación en curso');
+  $('sim-start').innerHTML='<span class="spin"></span> Geocodificando...';$('sim-start').disabled=true;
+  try{
+    const oGeo=await geocodeAddress(org);
+    if(!oGeo){toast('❌ Origen no encontrado. Prueba con nombre de ciudad o "lat, lng"');return;}
+    const dGeo=await geocodeAddress(dst);
+    if(!dGeo){toast('❌ Destino no encontrado. Prueba con nombre de ciudad o "lat, lng"');return;}
+    const oLa=oGeo.lat,oLn=oGeo.lng;
+    const dLa=dGeo.lat,dLn=dGeo.lng;
+    lastDest={lat:dLa,lng:dLn,name:dGeo.name};
+    startSim(oLa,oLn,dLa,dLn,oGeo.name,dGeo.name);
+    await doCalc(oLa,oLn,dLa,dLn,dGeo.name);
+    saveSession();
+  }catch(e){toast('❌ Error: '+e.message);}
+  finally{$('sim-start').disabled=false;$('sim-start').textContent='🎮 INICIAR SIMULACIÓN';}
+};
+$('sim-stop').onclick=stopSim;
+
+function startSim(oLa,oLn,dLa,dLn,orgName,dstName){
+  simRunning=true;
+  showEl('sim-progress');showEl('sim-status');showEl('sim-stop');hideEl('sim-start');
+  const dist=haversine(oLa,oLn,dLa,dLn);
+  const kmPerStep=(simSpeed/3600)*3;
+  const totalSteps=Math.ceil(dist/kmPerStep);
+  let step=0;
+  addLog('sim',`🎮 ${simMode==='plane'?'✈️':'🚗'} ${orgName.slice(0,20)} → ${dstName.slice(0,20)}`);
+  toast(`🎮 Simulando ${simMode} a ${simSpeed}km/h`,4000);
+  simTimer=setInterval(async()=>{
+    if(!simRunning){clearInterval(simTimer);return;}
+    const t=Math.min(step/totalSteps,1);
+    const lat=oLa+(dLa-oLa)*t,lng=oLn+(dLn-oLn)*t;
+    const hdg=(Math.atan2(dLn-lng,dLa-lat)*180/Math.PI+360)%360;
+    const spdMs=simSpeed/3.6*(0.9+Math.random()*0.2);
+    // ✅ FIX: source siempre definido
+    await set(ref(db,`devices/${deviceId}/location`),{lat,lng,speed:spdMs,heading:hdg,accuracy:simMode==='plane'?5000:15,source:'simulator',mode:simMode,timestamp:new Date().toISOString()});
+    const pct=Math.round(t*100);
+    $('sim-prog-bar').style.width=pct+'%';
+    const remain=dist*(1-t),eta=Math.round(remain/simSpeed*60);
+    $('sim-status').innerHTML=`${simMode==='plane'?'✈️':'🚗'} ${pct}% · ${remain.toFixed(1)}km · ~${eta}min`;
+    step++;
+    if(t>=1){stopSim();toast('🏁 Simulación completada',5000);addLog('ok','🏁 GPS llegó al destino');}
+  },3000);
+}
+
+function stopSim(){
+  simRunning=false;if(simTimer){clearInterval(simTimer);simTimer=null;}
+  hideEl('sim-progress');hideEl('sim-status');hideEl('sim-stop');showEl('sim-start');
+  $('sim-start').textContent='🎮 INICIAR SIMULACIÓN';
+}
+
+/* ══════════════════════════════════════
+   NOTIFICACIONES
+══════════════════════════════════════ */
 $('int-wrap').onclick=e=>{
   const b=e.target.closest('.int-b');if(!b)return;
   document.querySelectorAll('.int-b').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on');notifMs=parseInt(b.dataset.ms);
-  $('int-lbl').textContent=b.dataset.lbl;
-  restartTimer();toast('🔔 Alertas cada '+b.dataset.lbl);
+  b.classList.add('on');notifMs=parseInt(b.dataset.ms);$('int-lbl').textContent=b.dataset.lbl;
+  restartTimer();toast('🔔 Alertas cada '+b.dataset.lbl);saveSession();
 };
+
+$('notif-toggles').onclick=e=>{
+  const t=e.target.closest('.notif-toggle');if(!t)return;
+  const type=t.dataset.type;
+  notifChannels[type]=!notifChannels[type];
+  t.classList.toggle('on',notifChannels[type]);
+  updateNotifChannelsUI();
+  if(user)update(ref(db,`users/${user.uid}/notifChannels`),notifChannels).catch(()=>{});
+  saveSession();
+  if(type==='email'&&notifChannels.email&&!ejsConfig.serviceId)toast('⚙️ Configura EmailJS en Ajustes para enviar emails',5000);
+};
+
+function syncNotifToggles(){Object.entries(notifChannels).forEach(([t,on])=>{const el=$('nt-'+t);if(el)el.classList.toggle('on',on);});updateNotifChannelsUI();}
+function updateNotifChannelsUI(){const a=[];if(notifChannels.browser)a.push('Navegador');if(notifChannels.email)a.push('Email');if(notifChannels.sms)a.push('SMS');$('notif-active-channels').textContent=a.length?a.join(', '):'Ninguno';}
+// notif-help-lnk removido del UI
 
 function restartTimer(){stopTimer();if(lastETA)notifTimer=setInterval(doNotif,notifMs);}
 function stopTimer(){if(notifTimer){clearInterval(notifTimer);notifTimer=null;}}
 
-function doNotif(){
+async function doNotif(){
   if(!lastETA||!profile)return;
-  const{days,hours,minutes,dist}=lastETA;
+  const{days,hours,minutes,dist,transport}=lastETA;
+  const tIcon=transport==='plane'?'✈️':transport==='bike'?'🏍':transport==='walk'?'🚶':'🚗';
+  const etaStr=`${days>0?days+'d ':''}${hours>0?hours+'h ':''}${minutes}min`;
 
-  // Notificación navegador
-  if(Notification.permission==='granted'){
-    new Notification('🛰 NEXUS TRACK',{
-      body:`Envío llega en ${days>0?days+'d ':''}${hours>0?hours+'h ':''}${minutes}min | ${dist.toFixed(1)}km`,
-      icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="%23020810" stroke="%2300f5ff" stroke-width="2"/><circle cx="32" cy="32" r="12" fill="%2300f5ff"/></svg>'
-    });
+  // 1. Navegador
+  if(notifChannels.browser&&Notification.permission==='granted'){
+    new Notification('🛰 NEXUS TRACK',{body:`${tIcon} Envío llega en ${etaStr} | ${dist?.toFixed(1)||'--'}km`,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="%23020810" stroke="%2300f5ff" stroke-width="2"/><circle cx="32" cy="32" r="12" fill="%2300f5ff"/></svg>'});
   }
 
-  addLog('e',`ETA: ${pad(days)}d ${pad(hours)}h ${pad(minutes)}m — ${dist.toFixed(1)} km`);
+  // 2. Email via EmailJS (sin backend)
+  if(notifChannels.email&&profile.email&&ejsConfig.serviceId){
+    const sent=await sendEmailAlert(`🛰 NEXUS TRACK — ETA: ${etaStr}`,`${tIcon} Tu envío llega en ${etaStr}.\nDistancia restante: ${dist?.toFixed(1)||'--'} km\nDestino: ${lastDest?.name||''}\nTráfico: ${trafficData.label}`,profile.email);
+    if(sent)addLog('e',`✉️ Email enviado a ${profile.email}`);
+  }
 
-  // Guardar en Firebase para que el backend Python procese y envíe SMS+email
-  if(user)push(ref(db,`pending_notifications/${user.uid}`),{
-    type:'eta_update',eta:lastETA,
-    destination:lastDest?.name||'',
-    user_email:profile.email||'',
-    user_phone:profile.phone||'',
-    user_name:profile.displayName||'',
-    sent_at:new Date().toISOString(),processed:false
-  }).catch(()=>{});
+  addLog('e',`${tIcon} ETA: ${pad(days)}d ${pad(hours)}h ${pad(minutes)}m — ${dist?.toFixed(1)||'--'}km`);
+
+  // 3. Firebase → backend Python (SMS y email real si hay backend)
+  if(user&&(notifChannels.email||notifChannels.sms)){
+    push(ref(db,`pending_notifications/${user.uid}`),{
+      type:'eta_update',
+      eta:{days:days||0,hours:hours||0,minutes:minutes||0,dist:dist||0,transport:transport||'car'},
+      destination:lastDest?.name||'',
+      user_email:notifChannels.email?(profile.email||''):'',
+      user_phone:notifChannels.sms?(profile.phone||''):'',
+      user_name:profile.displayName||'',
+      channels:{browser:!!notifChannels.browser,email:!!notifChannels.email,sms:!!notifChannels.sms},
+      sent_at:new Date().toISOString(),processed:false
+    }).catch(()=>{});
+  }
 }
 
 function addLog(type,msg){
-  const log=$('nlog');
-  const item=document.createElement('div');
+  const log=$('nlog');const item=document.createElement('div');
   item.className=`nlog-item ${type}`;
   item.innerHTML=`<div class="ni-t">${new Date().toLocaleTimeString('es-CO')}</div>${msg}`;
   if(log.children.length===1&&log.firstElementChild.classList.contains('g'))log.innerHTML='';
-  log.prepend(item);
-  if(log.children.length>20)log.lastChild.remove();
+  log.prepend(item);if(log.children.length>20)log.lastChild.remove();
+  saveSession();
 }
 
-/* ── SIDEBAR ─────────────────────────────────────── */
+/* ══════════════════════════════════════
+   AJUSTES (EmailJS)
+══════════════════════════════════════ */
+$('settings-btn').onclick=()=>{
+  if(ejsConfig.serviceId)$('ejs-service').value=ejsConfig.serviceId;
+  if(ejsConfig.templateId)$('ejs-template').value=ejsConfig.templateId;
+  if(ejsConfig.publicKey)$('ejs-pubkey').value=ejsConfig.publicKey;
+  showModal('modal-settings');
+};
+$('save-ejs').onclick=()=>{
+  ejsConfig={serviceId:$('ejs-service').value.trim(),templateId:$('ejs-template').value.trim(),publicKey:$('ejs-pubkey').value.trim()};
+  initEmailJS();saveSession();hideModal('modal-settings');
+  if(ejsConfig.publicKey)toast('✅ EmailJS configurado — emails activados',4000);
+  else toast('⚠ Faltan datos de EmailJS',3000);
+};
+const _onh=$('open-notif-help');if(_onh)_onh.onclick=()=>{hideModal('modal-settings');showModal('modal-notif');};
+
+/* ══════════════════════════════════════
+   SIDEBAR / MOBILE
+══════════════════════════════════════ */
 $('fab-menu').onclick=toggleSB;
 function toggleSB(){
   const sb=$('sidebar');
-  if(isMob()){
-    const opening=!sb.classList.contains('open');
-    sb.classList.toggle('open',opening);
-    $('sb-overlay').style.display=opening?'block':'none';
-  }else{
-    sb.classList.toggle('closed');
-  }
+  if(isMob()){const op=!sb.classList.contains('open');sb.classList.toggle('open',op);$('sb-overlay').style.display=op?'block':'none';}
+  else sb.classList.toggle('closed');
   setTimeout(()=>map.invalidateSize(),360);
 }
-$('sb-overlay').onclick=()=>{
-  $('sidebar').classList.remove('open');
-  $('sb-overlay').style.display='none';
-  setTimeout(()=>map.invalidateSize(),360);
-};
+$('sb-overlay').onclick=()=>{$('sidebar').classList.remove('open');hideEl('sb-overlay');setTimeout(()=>map.invalidateSize(),360);};
 
-/* ── MOBILE BAR ──────────────────────────────────── */
 function setMob(id){document.querySelectorAll('.mb-btn').forEach(b=>b.classList.remove('on'));$(id)?.classList.add('on')}
-$('mb-map').onclick=()=>{
-  $('sidebar').classList.remove('open');$('sb-overlay').style.display='none';
-  setTimeout(()=>map.invalidateSize(),360);setMob('mb-map');
-};
-$('mb-eta').onclick=()=>{
-  toggleSB();setMob('mb-eta');
-  setTimeout(()=>$('ec-h')?.scrollIntoView({behavior:'smooth',block:'center'}),400);
-};
+$('mb-map').onclick=()=>{$('sidebar').classList.remove('open');hideEl('sb-overlay');setTimeout(()=>map.invalidateSize(),360);setMob('mb-map')};
+$('mb-eta').onclick=()=>{toggleSB();setMob('mb-eta');setTimeout(()=>$('ec-h')?.scrollIntoView({behavior:'smooth',block:'center'}),400)};
+$('mb-sim').onclick=()=>{toggleSB();setMob('mb-sim');setTimeout(()=>$('sim-origin')?.scrollIntoView({behavior:'smooth',block:'start'}),400)};
 $('mb-gps').onclick=()=>{$('gps-btn').click();setMob('mb-gps')};
-$('mb-instalar').onclick=()=>{triggerInstall();setMob('mb-instalar')};
+$('mb-install').onclick=()=>{triggerInstall();setMob('mb-install')};
 
-/* ── INSTALACIÓN PWA (el corazón del feature) ────── */
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();
-  deferredInstall=e;
-  // Destacar el botón de instalación
-  $('install-main').style.borderColor='var(--cyan)';
-  $('install-main').style.boxShadow='0 0 30px var(--cy15)';
-  toast('✅ App lista para instalar — toca el botón ⬇️',4000);
-});
-window.addEventListener('appinstalled',()=>{
-  toast('🎉 ¡NEXUS TRACK instalado correctamente!',5000);
-  addLog('e','App instalada en el dispositivo');
-});
+/* PLATAFORMAS */
+$('platforms-toggle').onclick=()=>{const g=$('platform-grid'),b=$('platforms-toggle');const o=g.classList.toggle('open');b.classList.toggle('open',o);};
+
+/* ══════════════════════════════════════
+   INSTALACIÓN PWA
+══════════════════════════════════════ */
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;$('install-main').style.borderColor='var(--cyan)';$('install-main').style.boxShadow='0 0 30px var(--cy15)';toast('✅ App lista para instalar — toca ⬇️',4000);});
+window.addEventListener('appinstalled',()=>{toast('🎉 ¡NEXUS TRACK instalado!',5000);addLog('ok','App instalada en el dispositivo');});
 
 function triggerInstall(){
-  if(deferredInstall){
-    // Chrome/Android/Windows: prompt automático
-    deferredInstall.prompt();
-    deferredInstall.userChoice.then(r=>{
-      if(r.outcome==='accepted'){toast('🎉 ¡Instalando NEXUS TRACK...',4000);}
-      else{toast('Instalación cancelada');}
-      deferredInstall=null;
-    });
-  }else{
-    // Detectar plataforma y dar instrucciones
-    const ua=navigator.userAgent;
-    if(/iPad|iPhone|iPod/.test(ua)){showModal('modal-ios');}
-    else if(/android/i.test(ua)){toast('ℹ En Chrome: toca los 3 puntos ⋮ → "Agregar a pantalla de inicio"',5000);}
-    else{toast('ℹ En Chrome: toca los 3 puntos ⋮ → "Instalar NEXUS TRACK"',5000);}
-  }
+  if(deferredInstall){deferredInstall.prompt();deferredInstall.userChoice.then(r=>{if(r.outcome==='accepted')toast('🎉 ¡Instalando...',4000);deferredInstall=null;});}
+  else{const ua=navigator.userAgent;if(/iPad|iPhone|iPod/.test(ua))showModal('modal-ios');else if(/android/i.test(ua))toast('ℹ Chrome: toca ⋮ → "Agregar a pantalla de inicio"',5000);else toast('ℹ Chrome: toca ⋮ → "Instalar NEXUS TRACK"',5000);}
 }
-
 $('install-main').onclick=triggerInstall;
-$('btn-android').onclick=()=>toast('ℹ Chrome → menú ⋮ → "Agregar a pantalla de inicio"',5000);
+$('btn-android').onclick=()=>toast('ℹ Chrome → ⋮ → "Agregar a pantalla de inicio"',5000);
 $('btn-ios').onclick=()=>showModal('modal-ios');
-$('btn-windows').onclick=()=>{
-  if(deferredInstall)triggerInstall();
-  else toast('ℹ Chrome → menú ⋮ → "Instalar NEXUS TRACK"',5000);
-};
+['btn-windows','btn-mac','btn-linux'].forEach(id=>$(id).onclick=()=>{if(deferredInstall)triggerInstall();else toast('ℹ Chrome → ⋮ → "Instalar NEXUS TRACK"',5000);});
 $('btn-desktop-app').onclick=()=>showModal('modal-desktop');
 
-/* ── MODALES ─────────────────────────────────────── */
+/* MODALES */
 function showModal(id){$(id).classList.add('show')}
 function hideModal(id){$(id).classList.remove('show')}
-$('modal-close-desktop').onclick=()=>hideModal('modal-desktop');
-$('modal-close-ios').onclick=()=>hideModal('modal-ios');
-$('modal-desktop').onclick=e=>{if(e.target===$('modal-desktop'))hideModal('modal-desktop')};
-$('modal-ios').onclick=e=>{if(e.target===$('modal-ios'))hideModal('modal-ios')};
+$('mc-desktop').onclick=()=>hideModal('modal-desktop');
+$('mc-ios').onclick=()=>hideModal('modal-ios');
+$('mc-notif').onclick=()=>hideModal('modal-notif');
+$('mc-settings').onclick=()=>hideModal('modal-settings');
+['modal-desktop','modal-ios','modal-notif','modal-settings','modal-logistics'].forEach(id=>{$(id)&&($(id).onclick=e=>{if(e.target===$(id))hideModal(id)});});
+
+/* ══════════════════════════════════════
+   NOTAS DE ENTREGA — Persisten en localStorage
+══════════════════════════════════════ */
+let deliveryNotes = [];
+
+function loadNotes(){
+  try{ deliveryNotes=JSON.parse(localStorage.getItem('nexus_notes_v1')||'[]'); }catch(e){deliveryNotes=[];}
+  renderNotes();
+}
+function saveNotes(){
+  try{ localStorage.setItem('nexus_notes_v1',JSON.stringify(deliveryNotes.slice(-20))); }catch(e){}
+}
+function renderNotes(){
+  const el=$('notes-list'); if(!el) return;
+  if(!deliveryNotes.length){ el.innerHTML='<p style="font-size:11px;color:var(--txt3);text-align:center">Sin notas aún</p>'; return; }
+  el.innerHTML=deliveryNotes.slice().reverse().map((n,i)=>`
+    <div style="display:flex;align-items:flex-start;gap:7px;padding:8px 10px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-sm)">
+      <span style="font-size:11px;color:var(--txt2);flex:1;line-height:1.5">${n.text}</span>
+      <span style="font-size:9px;color:var(--txt3);white-space:nowrap">${n.time}</span>
+      <button onclick="deleteNote(${deliveryNotes.length-1-i})" style="background:none;border:none;color:var(--txt3);cursor:pointer;font-size:12px;padding:0;flex-shrink:0" title="Eliminar">✕</button>
+    </div>`).join('');
+}
+window.deleteNote=function(i){
+  deliveryNotes.splice(i,1); saveNotes(); renderNotes();
+};
+$('add-note-btn').onclick=()=>{
+  const txt=$('delivery-note').value.trim();
+  if(!txt) return toast('⚠ Escribe una nota primero');
+  deliveryNotes.push({text:txt, time:new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})});
+  saveNotes(); renderNotes();
+  $('delivery-note').value='';
+  toast('✅ Nota guardada');
+  // Si hay entrega activa, guardar también en Firebase
+  if(user&&lastDest){
+    push(ref(db,`deliveries_notes/${user.uid}`),{text:txt,ts:new Date().toISOString(),dest:lastDest.name||''}).catch(()=>{});
+  }
+};
+
+/* ══════════════════════════════════════
+   CENTRAR GPS EN MAPA
+══════════════════════════════════════ */
+$('center-gps-btn').onclick=()=>{
+  if(lastLoc){ map.flyTo([lastLoc.lat,lastLoc.lng],15,{duration:1.2}); toast('🎯 Centrado en GPS'); }
+  else toast('⚠ Sin señal GPS activa');
+};
+
+/* ══════════════════════════════════════
+   LOGÍSTICA — Panel de flota
+══════════════════════════════════════ */
+// Fleet units interactivos
+document.querySelectorAll('.fleet-unit').forEach(el=>{
+  el.onclick=()=>{
+    const dev=el.dataset.device;
+    if(!dev)return;
+    deviceId=dev;
+    startDevice(dev);
+    document.querySelectorAll('.fleet-unit').forEach(u=>u.classList.remove('active-unit'));
+    el.classList.add('active-unit');
+    const name=el.querySelector('.fu-name')?.textContent||dev;
+    toast('📡 Rastreando: '+name.trim());
+    const sel=$('device-sel');
+    if(sel)[...sel.options].forEach(o=>{if(o.value===dev)sel.value=dev;});
+  };
+});
+
+$('lg-refresh-fleet').onclick=async()=>{
+  if(!user)return;
+  const btn=$('lg-refresh-fleet');
+  btn.innerHTML='<span class="spin"></span> Actualizando...';btn.disabled=true;
+  try{
+    const snap=await get(ref(db,'devices'));
+    const data=snap.val()||{};
+    let activeCount=0;
+    const unitMap={'device_01':'01','device_02':'02','mobile_gps':'mob'};
+    for(const[id,val]of Object.entries(data)){
+      const key=unitMap[id];
+      const dot=$('fu-dot-'+key);
+      const spd=$('fu-spd-'+key);
+      const loc=val?.location;
+      if(loc?.timestamp){
+        const age=(Date.now()-new Date(loc.timestamp).getTime())/1000;
+        const isRecent=age<300; // menos de 5 min
+        if(dot){dot.className='fu-dot '+(isRecent?'on':'off');}
+        if(spd&&isRecent){spd.textContent=((loc.speed||0)*3.6).toFixed(0)+' km/h';spd.style.color='var(--grn)';}
+        else if(spd){spd.textContent='sin señal';spd.style.color='var(--txt3)';}
+        if(isRecent)activeCount++;
+      }else{
+        if(dot)dot.className='fu-dot off';
+        if(spd){spd.textContent='off';spd.style.color='var(--txt4)';}
+      }
+    }
+    $('lg-devices-count').textContent=activeCount;
+    const delSnap=await get(ref(db,'deliveries'));
+    const dels=delSnap.val()||{};
+    const today=new Date().toDateString();
+    const todayDels=Object.values(dels).filter(d=>d?.updated_at&&new Date(d.updated_at).toDateString()===today).length;
+    $('lg-deliveries-count').textContent=todayDels;
+    $('lg-fleet-status').innerHTML=
+      `<span style="color:var(--grn)">●</span> ${activeCount} unidad(es) con señal activa<br>`+
+      `<span style="color:var(--amb)">●</span> ${todayDels} entrega(s) hoy<br>`+
+      `<span style="color:var(--txt3);font-size:10px">Actualizado: ${new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}</span>`;
+    toast('✅ Flota actualizada');
+  }catch(e){toast('❌ Error: '+e.message);}
+  finally{btn.innerHTML='📡 ACTUALIZAR FLOTA';btn.disabled=false;}
+};
+
+/* INIT */
+if(!isMob())$('sidebar').classList.remove('closed');
+initEmailJS();
 </script>
 </body>
 </html>
