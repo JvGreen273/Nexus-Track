@@ -324,6 +324,117 @@ body{font-family:var(--fb);background:var(--bg0);color:var(--txt1);height:100dvh
 .fu-name{font-size:12px;color:var(--txt1);flex:1}
 .fu-spd{font-family:var(--fm);font-size:10px;color:var(--txt3)}
 
+/* ══ PANTALLA LOGÍSTICA ══ */
+#logistics-screen{background:var(--bg0);flex-direction:column;overflow:hidden}
+.lg-nav{height:calc(var(--nav) + var(--st));padding-top:var(--st);padding-left:calc(16px + var(--sl));padding-right:calc(16px + var(--sr));flex-shrink:0;display:flex;align-items:center;justify-content:space-between;background:rgba(2,8,16,.97);backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,180,255,.15);z-index:300}
+.lg-nav-brand{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:3px;color:#00d4ff;text-shadow:0 0 15px rgba(0,180,255,.3)}
+.lg-nav-orb{width:32px;height:32px;border-radius:50%;border:1.5px solid #00d4ff;background:rgba(0,180,255,.08);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.lg-nav-orb::before{content:'';width:10px;height:10px;background:#00d4ff;border-radius:50%;box-shadow:0 0 10px #00d4ff;animation:pc 2s ease-in-out infinite}
+.lg-tabs{display:flex;gap:0;background:rgba(2,8,16,.97);border-bottom:1px solid rgba(0,180,255,.12);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.lg-tabs::-webkit-scrollbar{display:none}
+.lg-tab{padding:12px 18px;background:none;border:none;color:var(--txt3);font-family:var(--fd);font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap;border-bottom:2px solid transparent;position:relative}
+.lg-tab.on{color:#00d4ff;border-bottom-color:#00d4ff}
+.lg-tab:hover{color:var(--txt2)}
+.lg-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+
+/* CARDS LOGÍSTICA */
+.lg-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.lg-stat{background:var(--bg3);border:1px solid rgba(0,180,255,.12);border-radius:var(--r-lg);padding:14px;position:relative;overflow:hidden}
+.lg-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#00d4ff,transparent);opacity:.5}
+.lg-stat-lbl{font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:8px}
+.lg-stat-val{font-family:var(--fd);font-size:26px;font-weight:800;color:#00d4ff;text-shadow:0 0 20px rgba(0,180,255,.4);line-height:1}
+.lg-stat-sub{font-size:10px;color:var(--txt3);margin-top:4px}
+
+/* TABLA PEDIDOS */
+.lg-table{width:100%;border-collapse:collapse}
+.lg-th{font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;padding:10px 12px;text-align:left;border-bottom:1px solid var(--b1)}
+.lg-tr{border-bottom:1px solid rgba(0,245,255,.04);transition:background .2s;cursor:pointer}
+.lg-tr:hover{background:rgba(0,180,255,.04)}
+.lg-td{padding:11px 12px;font-size:12px;color:var(--txt2);vertical-align:middle}
+.lg-td:first-child{font-family:var(--fm);color:#00d4ff;font-size:11px}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-family:var(--fd);font-size:8px;letter-spacing:1px;font-weight:700}
+.sb-transit{background:rgba(0,245,255,.08);color:var(--cyan);border:1px solid rgba(0,245,255,.2)}
+.sb-done{background:var(--gn06);color:var(--grn);border:1px solid rgba(0,255,136,.2)}
+.sb-pending{background:var(--am10);color:var(--amb);border:1px solid var(--am30)}
+.sb-error{background:var(--rd10);color:var(--red);border:1px solid rgba(255,51,85,.2)}
+
+/* FORM CREAR PEDIDO */
+.lg-form-card{background:var(--bg3);border:1px solid rgba(0,180,255,.12);border-radius:var(--r-lg);padding:18px}
+.lg-form-title{font-family:var(--fd);font-size:9px;letter-spacing:2.5px;color:#00d4ff;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.lg-form-title::before{content:'';width:14px;height:1px;background:linear-gradient(90deg,#00d4ff,transparent)}
+.lg-inp{width:100%;padding:11px 14px;background:var(--bg4);border:1px solid rgba(0,180,255,.12);border-radius:var(--r-md);color:var(--txt0);font-family:var(--fb);font-size:14px;outline:none;transition:all .2s;-webkit-appearance:none;margin-bottom:9px}
+.lg-inp::placeholder{color:var(--txt4)}
+.lg-inp:focus{border-color:#00d4ff;box-shadow:0 0 0 3px rgba(0,180,255,.08)}
+.lg-inp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn-logistics{padding:12px 20px;background:linear-gradient(135deg,#1a3a5c,#0d2540);border:1px solid rgba(0,200,255,.35);border-radius:var(--r-md);color:#00d4ff;font-family:var(--fd);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-logistics:hover{box-shadow:0 0 20px rgba(0,180,255,.2);border-color:rgba(0,200,255,.6)}
+.btn-logistics:disabled{opacity:.4;cursor:not-allowed}
+
+/* DETALLE PEDIDO (MODAL) */
+.order-detail-panel{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.order-detail-panel.show{opacity:1;pointer-events:all}
+.odp-card{background:var(--bg3);border:1px solid rgba(0,180,255,.2);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:24px;width:100%;max-width:600px;max-height:85vh;overflow-y:auto;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.order-detail-panel.show .odp-card{transform:translateY(0)}
+.odp-title{font-family:var(--fd);font-size:11px;letter-spacing:3px;color:#00d4ff;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.odp-close{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:20px;padding:0;transition:color .2s}
+.odp-close:hover{color:var(--red)}
+.odp-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--b0)}
+.odp-lbl{font-family:var(--fd);font-size:8px;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;min-width:90px;padding-top:2px}
+.odp-val{font-size:13px;color:var(--txt1);flex:1;line-height:1.5}
+.odp-val.mono{font-family:var(--fm);color:#00d4ff}
+.hist-entry{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--b0)}
+.hist-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.hist-time{font-family:var(--fm);font-size:10px;color:var(--txt3);white-space:nowrap}
+.hist-txt{font-size:12px;color:var(--txt2);flex:1}
+
+/* SECCIÓN ASIGNACIÓN USUARIO ↔ GPS */
+.assign-card{background:var(--bg3);border:1px solid rgba(0,180,255,.12);border-radius:var(--r-lg);padding:16px}
+.assign-arrow{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:18px;color:var(--txt3)}
+.assign-arrow::before,.assign-arrow::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--b2))}
+.user-search-result{display:flex;flex-direction:column;gap:5px;max-height:150px;overflow-y:auto;margin-top:8px}
+.user-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg4);border:1px solid var(--b1);border-radius:var(--r-md);cursor:pointer;transition:all .2s}
+.user-row:hover{border-color:rgba(0,180,255,.4);background:rgba(0,180,255,.06)}
+.user-row-av{width:28px;height:28px;border-radius:50%;background:var(--cy10);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:11px;color:var(--cyan);font-weight:700;flex-shrink:0}
+.user-row-info{flex:1}
+.user-row-name{font-size:13px;color:var(--txt1)}
+.user-row-email{font-size:10px;color:var(--txt3)}
+.user-row-badge{font-family:var(--fd);font-size:8px;padding:2px 7px;border-radius:10px;background:var(--cy06);color:var(--cyan);border:1px solid var(--b1)}
+
+/* FILTROS */
+.filter-bar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.filter-chip{padding:5px 12px;background:var(--bg3);border:1px solid var(--b1);border-radius:20px;font-family:var(--fd);font-size:8px;letter-spacing:1px;color:var(--txt3);cursor:pointer;transition:all .2s}
+.filter-chip:hover{border-color:rgba(0,180,255,.4);color:var(--txt2)}
+.filter-chip.on{background:rgba(0,180,255,.1);border-color:#00d4ff;color:#00d4ff}
+.search-inp{padding:9px 14px 9px 36px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r-md);color:var(--txt0);font-family:var(--fb);font-size:13px;outline:none;transition:all .2s;width:100%;-webkit-appearance:none;margin-bottom:10px}
+.search-inp:focus{border-color:rgba(0,180,255,.4)}
+.search-inp::placeholder{color:var(--txt4)}
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--txt3);font-size:13px;pointer-events:none}
+
+/* SEGURIDAD CLIENTE — vista difuminada coords */
+.client-track-card{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:16px;margin-bottom:14px}
+.client-track-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.client-track-badge{padding:3px 10px;background:var(--gn15);border:1px solid rgba(0,255,136,.3);border-radius:20px;font-family:var(--fd);font-size:8px;color:var(--grn);letter-spacing:1.5px}
+.client-track-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.cti-box{background:var(--bg4);border:1px solid var(--b1);border-radius:var(--r-md);padding:10px 12px;text-align:center}
+.cti-lbl{font-family:var(--fd);font-size:7px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:5px}
+.cti-val{font-family:var(--fm);font-size:14px;color:var(--cyan)}
+.client-zone-map{width:100%;height:140px;background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r-md);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.zone-blur-overlay{position:absolute;inset:0;background:radial-gradient(circle at center,transparent 35%,rgba(2,8,16,.85) 75%);pointer-events:none;z-index:2}
+.client-security-note{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;background:rgba(255,170,0,.06);border:1px solid rgba(255,170,0,.2);border-radius:var(--r-sm);font-size:11px;color:var(--txt2);line-height:1.5}
+
+/* MAPA FLOTA FILTROS */
+.lg-map-controls{position:absolute;top:12px;left:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.lg-map-filter-bar{display:flex;flex-wrap:wrap;gap:6px;pointer-events:all}
+.lg-map-search-row{display:flex;gap:6px;pointer-events:all}
+.lg-map-search{flex:1;padding:8px 12px;background:rgba(2,8,16,.92);backdrop-filter:blur(16px);border:1px solid rgba(0,180,255,.2);border-radius:var(--r-md);color:var(--txt0);font-family:var(--fb);font-size:13px;outline:none}
+.lg-map-search::placeholder{color:var(--txt4)}
+.lg-map-filter-btn{padding:6px 12px;background:rgba(2,8,16,.92);backdrop-filter:blur(12px);border:1px solid rgba(0,180,255,.2);border-radius:var(--r-md);font-family:var(--fd);font-size:8px;letter-spacing:1px;color:var(--txt3);cursor:pointer;transition:all .2s;white-space:nowrap;pointer-events:all}
+.lg-map-filter-btn.on{background:rgba(0,180,255,.15);border-color:#00d4ff;color:#00d4ff}
+.lg-map-status{padding:6px 12px;background:rgba(2,8,16,.92);backdrop-filter:blur(12px);border:1px solid rgba(0,180,255,.15);border-radius:var(--r-md);font-family:var(--fm);font-size:11px;color:var(--txt2);pointer-events:none;display:flex;align-items:center;gap:8px}
+.lg-map-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.lg-map-refresh{padding:8px 14px;background:rgba(2,8,16,.92);backdrop-filter:blur(12px);border:1px solid rgba(0,180,255,.2);border-radius:var(--r-md);font-family:var(--fd);font-size:8.5px;letter-spacing:1.5px;color:#00d4ff;cursor:pointer;transition:all .2s;pointer-events:all;white-space:nowrap}
+.lg-map-refresh:hover{background:rgba(0,180,255,.15)}
 @media(max-width:700px){.mob-bar{display:grid}.u-name{display:none}.sig-pill{display:none}.brand-name{font-size:26px;letter-spacing:5px}.eta-n{font-size:24px}.app-body{height:calc(100dvh - var(--nav) - var(--st) - 56px - var(--sb-s))}}
 @media(max-width:380px){.brand-name{font-size:22px;letter-spacing:4px}.int-b{font-size:8px;padding:5px 8px}}
 </style>
@@ -423,75 +534,287 @@ npm run build:linux  # → .AppImage Linux</code>
         <button class="btn-prime" id="l-btn">ACCEDER AL SISTEMA</button>
         <p class="switch-row">¿Sin cuenta? <button class="lnk" id="go-reg">Registrarse gratis</button></p>
       </div>
-      <!-- REGISTER: Paso 1 — Datos -->
+      <!-- REGISTER: Registro directo (sin OTP) -->
       <div id="form-register" class="auth-body" style="display:none">
-        <div class="otp-step active" id="reg-step1">
-          <p class="auth-hello">Únete a la red <em>NEXUS</em></p>
-          <div class="field"><span class="field-icon">👤</span><input class="nx-inp" type="text" id="r-name" placeholder="Nombre completo" autocomplete="name"></div>
-          <div class="field"><span class="field-icon">🏷</span><input class="nx-inp" type="text" id="r-nick" placeholder="¿Cómo quieres ser llamado?"></div>
-          <div class="field"><span class="field-icon">✉</span><input class="nx-inp" type="email" id="r-email" placeholder="Correo electrónico" autocomplete="email"></div>
-          <div class="field"><span class="field-icon">📱</span><input class="nx-inp" type="tel" id="r-phone" placeholder="Celular: +57 300 000 0000"></div>
-          <div class="field"><span class="field-icon">🔒</span><input class="nx-inp" type="password" id="r-pass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password"><button class="eye-btn" id="r-eye">👁</button></div>
-          <p class="err-box" id="r-err"></p>
-          <button class="btn-mag" id="r-send-code">ENVIAR CÓDIGO DE VERIFICACIÓN</button>
-          <p class="switch-row">¿Ya tienes cuenta? <button class="lnk" id="go-login">Iniciar sesión</button></p>
-        </div>
-        <!-- Paso 2 — Verificar OTP -->
-        <div class="otp-step" id="reg-step2">
-          <p class="auth-hello">Verifica tu <em>correo</em></p>
-          <p class="otp-hint">Ingresa el código de 6 dígitos enviado a<br><strong id="otp-email-hint"></strong></p>
-          <div class="otp-boxes" id="otp-boxes">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-          </div>
-          <div class="countdown" id="otp-countdown">Reenviar código en <span id="otp-timer">60</span>s</div>
-          <button class="otp-resend" id="otp-resend">Reenviar código</button>
-          <p class="err-box" id="otp-err"></p>
-          <p class="ok-box" id="otp-ok"></p>
-          <button class="btn-prime" id="otp-verify-btn">VERIFICAR Y CREAR CUENTA</button>
-          <button class="lnk" id="otp-back" style="text-align:center;margin-top:4px">← Volver</button>
-        </div>
+        <p class="auth-hello">Únete a la red <em>NEXUS</em></p>
+        <div class="field"><span class="field-icon">👤</span><input class="nx-inp" type="text" id="r-name" placeholder="Nombre completo" autocomplete="name"></div>
+        <div class="field"><span class="field-icon">🏷</span><input class="nx-inp" type="text" id="r-nick" placeholder="¿Cómo quieres ser llamado?"></div>
+        <div class="field"><span class="field-icon">✉</span><input class="nx-inp" type="email" id="r-email" placeholder="Correo electrónico" autocomplete="email"></div>
+        <div class="field"><span class="field-icon">📱</span><input class="nx-inp" type="tel" id="r-phone" placeholder="Celular: +57 300 000 0000"></div>
+        <div class="field"><span class="field-icon">🔒</span><input class="nx-inp" type="password" id="r-pass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password"><button class="eye-btn" id="r-eye">👁</button></div>
+        <p class="err-box" id="r-err"></p>
+        <button class="btn-prime" id="r-register-btn">CREAR CUENTA</button>
+        <p class="switch-row">¿Ya tienes cuenta? <button class="lnk" id="go-login">Iniciar sesión</button></p>
       </div>
-      <!-- LOGÍSTICA: Formulario de operador -->
+      <!-- LOGÍSTICA: Registro directo con código de acceso -->
       <div id="form-logistics" class="auth-body" style="display:none">
-        <div class="otp-step active" id="log-step1">
-          <p class="auth-hello">Acceso <em>Logística</em></p>
-          <div style="padding:10px 12px;background:rgba(255,170,0,.06);border:1px solid rgba(255,170,0,.2);border-radius:var(--r-sm);margin-bottom:4px">
-            <p style="font-size:11px;color:var(--amb);line-height:1.5">🏭 Perfil para operadores de flota y gestión de entregas. Requiere código de acceso.</p>
-          </div>
-          <div class="field"><span class="field-icon">👤</span><input class="nx-inp" type="text" id="lg-name" placeholder="Nombre completo" autocomplete="name"></div>
-          <div class="field"><span class="field-icon">🏢</span><input class="nx-inp" type="text" id="lg-company" placeholder="Empresa / Organización"></div>
-          <div class="field"><span class="field-icon">✉</span><input class="nx-inp" type="email" id="lg-email" placeholder="Correo corporativo" autocomplete="email"></div>
-          <div class="field"><span class="field-icon">📱</span><input class="nx-inp" type="tel" id="lg-phone" placeholder="Celular: +57 300 000 0000"></div>
-          <div class="field"><span class="field-icon">🔒</span><input class="nx-inp" type="password" id="lg-pass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password"><button class="eye-btn" id="lg-eye">👁</button></div>
-          <p class="err-box" id="lg-err"></p>
-          <button class="btn-prime" id="lg-send-code" style="background:linear-gradient(135deg,#1a3a5c,#0d2540);border:1px solid rgba(0,200,255,.35);color:#00d4ff;box-shadow:0 4px 16px rgba(0,180,255,.15)">SOLICITAR CÓDIGO DE ACCESO</button>
-          <p class="switch-row">¿Ya tienes cuenta? <button class="lnk" id="lg-go-login">Iniciar sesión</button></p>
+        <p class="auth-hello">Operador <em>Logística</em></p>
+        <div style="padding:9px 12px;background:rgba(0,180,255,.06);border:1px solid rgba(0,180,255,.2);border-radius:var(--r-sm)">
+          <p style="font-size:11px;color:#00d4ff;line-height:1.5">🏭 Perfil para operadores de flota y gestión de entregas.</p>
         </div>
-        <!-- Paso 2: validar código de acceso + OTP -->
-        <div class="otp-step" id="log-step2">
-          <p class="auth-hello">Código de <em>acceso</em></p>
-          <p class="otp-hint">Ingresa el código de verificación enviado a<br><strong id="lg-email-hint"></strong></p>
-          <div class="otp-boxes" id="lg-otp-boxes">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-          </div>
-          <div class="countdown" id="lg-countdown">Reenviar en <span id="lg-timer">60</span>s</div>
-          <button class="otp-resend" id="lg-resend">Reenviar código</button>
-          <p class="err-box" id="lg-otp-err"></p>
-          <p class="ok-box" id="lg-otp-ok"></p>
-          <button class="btn-prime" id="lg-verify-btn" style="background:linear-gradient(135deg,#1a3a5c,#0d2540);border:1px solid rgba(0,200,255,.35);color:#00d4ff;box-shadow:0 4px 16px rgba(0,180,255,.15)">ACTIVAR CUENTA LOGÍSTICA</button>
-          <button class="lnk" id="lg-back" style="text-align:center;margin-top:4px">← Volver</button>
+        <div class="field"><span class="field-icon">👤</span><input class="nx-inp" type="text" id="lg-name" placeholder="Nombre completo" autocomplete="name"></div>
+        <div class="field"><span class="field-icon">🏢</span><input class="nx-inp" type="text" id="lg-company" placeholder="Empresa / Organización"></div>
+        <div class="field"><span class="field-icon">✉</span><input class="nx-inp" type="email" id="lg-email" placeholder="Correo electrónico (cualquier dominio)" autocomplete="email"></div>
+        <div class="field"><span class="field-icon">📱</span><input class="nx-inp" type="tel" id="lg-phone" placeholder="Celular: +57 300 000 0000"></div>
+        <div class="field"><span class="field-icon">🔒</span><input class="nx-inp" type="password" id="lg-pass" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password"><button class="eye-btn" id="lg-eye">👁</button></div>
+        <div class="field"><span class="field-icon">🔑</span><input class="nx-inp" type="password" id="lg-access-code" placeholder="Código de acceso Logística" autocomplete="off"><button class="eye-btn" id="lg-code-eye">👁</button></div>
+        <p class="err-box" id="lg-err"></p>
+        <button class="btn-prime" id="lg-register-btn" style="background:linear-gradient(135deg,#1a3a5c,#0d2540);border:1px solid rgba(0,200,255,.35);color:#00d4ff;box-shadow:0 4px 16px rgba(0,180,255,.15)">ACTIVAR CUENTA LOGÍSTICA</button>
+        <p class="switch-row">¿Ya tienes cuenta? <button class="lnk" id="lg-go-login">Iniciar sesión</button></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════ PANTALLA LOGÍSTICA ════════════ -->
+<div id="logistics-screen" class="screen">
+
+  <!-- NAV LOGÍSTICA -->
+  <nav class="lg-nav">
+    <div class="lg-nav-brand"><div class="lg-nav-orb"></div>NEXUS · <span style="color:var(--txt2)">LOGISTICS</span></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="u-chip"><div class="u-av" id="lg-u-av" style="background:rgba(0,180,255,.12);border-color:rgba(0,180,255,.3);color:#00d4ff">L</div><span class="u-name" id="lg-u-name">Operador</span></div>
+      <div style="padding:2px 8px;background:rgba(0,180,255,.1);border:1px solid rgba(0,180,255,.25);border-radius:10px;font-family:var(--fd);font-size:7px;color:#00d4ff;letter-spacing:1.5px">LOGÍSTICA</div>
+      <button class="icon-btn" id="lg-logout-btn" title="Cerrar sesión">⎋</button>
+    </div>
+  </nav>
+
+  <!-- TABS DE SECCIONES -->
+  <div class="lg-tabs">
+    <button class="lg-tab on" data-section="dashboard">📊 Dashboard</button>
+    <button class="lg-tab" data-section="orders">📦 Pedidos</button>
+    <button class="lg-tab" data-section="assign">🔗 Asignar GPS</button>
+    <button class="lg-tab" data-section="history">📋 Historial</button>
+    <button class="lg-tab" data-section="map-view">🗺 Mapa Flota</button>
+  </div>
+
+  <!-- ══ DASHBOARD ══ -->
+  <div class="lg-body" id="lg-sec-dashboard">
+    <div class="lg-stat-grid">
+      <div class="lg-stat"><div class="lg-stat-lbl">Pedidos Activos</div><div class="lg-stat-val" id="lgs-active">0</div><div class="lg-stat-sub">en tránsito ahora</div></div>
+      <div class="lg-stat"><div class="lg-stat-lbl">Entregas Hoy</div><div class="lg-stat-val" id="lgs-today">0</div><div class="lg-stat-sub">completadas</div></div>
+      <div class="lg-stat"><div class="lg-stat-lbl">GPS Activos</div><div class="lg-stat-val" id="lgs-gps">0</div><div class="lg-stat-sub">con señal</div></div>
+      <div class="lg-stat"><div class="lg-stat-lbl">Clientes</div><div class="lg-stat-val" id="lgs-clients">0</div><div class="lg-stat-sub">registrados</div></div>
+    </div>
+
+    <!-- Actividad reciente -->
+    <div class="lg-form-card">
+      <div class="lg-form-title">Actividad Reciente</div>
+      <div id="lg-recent-activity" style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:12px;color:var(--txt3);text-align:center;padding:16px">Cargando actividad...</div>
+      </div>
+    </div>
+
+    <!-- Acceso rápido al mapa normal -->
+    <button class="btn-logistics" id="lg-to-map" style="width:100%;padding:14px;text-align:center">
+      🗺 VER MAPA DE RASTREO GPS
+    </button>
+  </div>
+
+  <!-- ══ PEDIDOS ══ -->
+  <div class="lg-body" id="lg-sec-orders" style="display:none">
+    <!-- Crear nuevo pedido -->
+    <div class="lg-form-card">
+      <div class="lg-form-title">Crear Nuevo Pedido</div>
+      <div class="lg-inp-row">
+        <input class="lg-inp" type="text" id="new-order-id" placeholder="ID del Pedido (ej: PED-001)" style="margin:0">
+        <input class="lg-inp" type="text" id="new-order-client" placeholder="Email o ID del cliente" style="margin:0">
+      </div>
+      <div style="height:8px"></div>
+      <input class="lg-inp" type="text" id="new-order-dest" placeholder="📍 Dirección de destino">
+      <div class="lg-inp-row">
+        <input class="lg-inp" type="text" id="new-order-gps" placeholder="ID del GPS (ej: device_01)" style="margin:0">
+        <select class="lg-inp" id="new-order-mode" style="margin:0;cursor:pointer">
+          <option value="car">🚗 Vehículo</option>
+          <option value="bike">🏍 Moto</option>
+          <option value="plane">✈️ Avión</option>
+          <option value="walk">🚶 A pie</option>
+        </select>
+      </div>
+      <textarea class="lg-inp" id="new-order-notes" placeholder="Notas de entrega (opcional)" rows="2" style="resize:none;margin-bottom:10px"></textarea>
+      <button class="btn-logistics" id="create-order-btn" style="width:100%;padding:13px">✚ CREAR PEDIDO Y ASIGNAR</button>
+      <p class="err-box" id="create-order-err" style="margin-top:8px"></p>
+    </div>
+
+    <!-- Lista de pedidos -->
+    <div class="lg-form-card">
+      <div class="lg-form-title">Pedidos Activos</div>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-inp" type="text" id="orders-search" placeholder="Buscar por ID, cliente o GPS...">
+      </div>
+      <div class="filter-bar" id="orders-filter">
+        <div class="filter-chip on" data-status="all">Todos</div>
+        <div class="filter-chip" data-status="in_transit">En tránsito</div>
+        <div class="filter-chip" data-status="completed">Completados</div>
+        <div class="filter-chip" data-status="pending">Pendientes</div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="lg-table" id="orders-table">
+          <thead><tr>
+            <th class="lg-th">ID Pedido</th>
+            <th class="lg-th">Cliente</th>
+            <th class="lg-th">GPS</th>
+            <th class="lg-th">Destino</th>
+            <th class="lg-th">ETA</th>
+            <th class="lg-th">Estado</th>
+          </tr></thead>
+          <tbody id="orders-tbody">
+            <tr><td class="lg-td" colspan="6" style="text-align:center;color:var(--txt3)">Cargando pedidos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ASIGNAR GPS ══ -->
+  <div class="lg-body" id="lg-sec-assign" style="display:none">
+    <div class="assign-card">
+      <div class="lg-form-title">Asignar GPS a Cliente</div>
+      <p style="font-size:12px;color:var(--txt2);margin-bottom:14px;line-height:1.6">Busca un cliente registrado y asígnale un dispositivo GPS. El cliente verá en su perfil el seguimiento en tiempo real de su pedido.</p>
+
+      <!-- Buscar usuario -->
+      <div style="margin-bottom:12px">
+        <div style="font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);margin-bottom:8px;text-transform:uppercase">① Buscar Cliente</div>
+        <div class="search-wrap">
+          <span class="search-icon">👤</span>
+          <input class="search-inp" type="text" id="assign-user-search" placeholder="Buscar por nombre o correo..." style="margin:0">
+        </div>
+        <div class="user-search-result" id="assign-user-results">
+          <div style="font-size:11px;color:var(--txt3);text-align:center;padding:10px">Escribe para buscar usuarios...</div>
+        </div>
+        <div id="assign-selected-user" style="display:none;padding:10px 12px;background:rgba(0,245,255,.06);border:1px solid var(--b2);border-radius:var(--r-md);margin-top:8px">
+          <div style="font-size:10px;color:var(--txt3);margin-bottom:4px;font-family:var(--fd);letter-spacing:1px">CLIENTE SELECCIONADO</div>
+          <div style="font-size:13px;color:var(--txt1)" id="assign-sel-name">—</div>
+          <div style="font-size:11px;color:var(--txt3)" id="assign-sel-email">—</div>
         </div>
       </div>
+
+      <div class="assign-arrow">↓</div>
+
+      <!-- Datos del GPS y pedido -->
+      <div style="font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);margin-bottom:8px;text-transform:uppercase">② Configurar GPS y Pedido</div>
+      <input class="lg-inp" type="text" id="assign-order-id" placeholder="ID del Pedido (ej: ORD-2025-001)">
+      <select class="lg-inp" id="assign-gps-select" style="cursor:pointer">
+        <option value="">Seleccionar dispositivo GPS...</option>
+        <option value="device_01">🚛 Tracker Principal #01</option>
+        <option value="device_02">📦 Tracker Secundario #02</option>
+        <option value="mobile_gps">📱 Dispositivo Móvil</option>
+        <option value="custom">⌨️ ID personalizado...</option>
+      </select>
+      <input class="lg-inp" type="text" id="assign-gps-custom" placeholder="ID del dispositivo en Firebase" style="display:none">
+      <input class="lg-inp" type="text" id="assign-dest" placeholder="Dirección de destino">
+      <textarea class="lg-inp" id="assign-notes" placeholder="Instrucciones de entrega..." rows="2" style="resize:none"></textarea>
+
+      <button class="btn-logistics" id="do-assign-btn" style="width:100%;padding:14px">
+        🔗 CONFIRMAR ASIGNACIÓN
+      </button>
+      <p class="err-box" id="assign-err" style="margin-top:8px"></p>
+      <p class="ok-box" id="assign-ok" style="margin-top:8px;display:none"></p>
+    </div>
+  </div>
+
+  <!-- ══ HISTORIAL ══ -->
+  <div class="lg-body" id="lg-sec-history" style="display:none">
+    <div class="lg-form-card">
+      <div class="lg-form-title">Historial de Entregas</div>
+      <div class="search-wrap" style="margin-bottom:10px">
+        <span class="search-icon">🔍</span>
+        <input class="search-inp" type="text" id="hist-search" placeholder="Buscar por ID pedido, GPS o cliente..." style="margin:0">
+      </div>
+      <div class="filter-bar" id="hist-date-filter">
+        <div class="filter-chip on" data-days="0">Hoy</div>
+        <div class="filter-chip" data-days="7">7 días</div>
+        <div class="filter-chip" data-days="30">30 días</div>
+        <div class="filter-chip" data-days="999">Todo</div>
+        <div class="filter-chip" data-days="-1" id="hist-custom-chip">📅 Fecha</div>
+      </div>
+      <div id="hist-custom-date-wrap" style="display:none;margin-bottom:10px">
+        <input type="date" id="hist-custom-date" class="lg-inp" style="margin:0" placeholder="Seleccionar fecha">
+      </div>
+      <div style="overflow-x:auto">
+        <table class="lg-table">
+          <thead><tr>
+            <th class="lg-th">ID Pedido</th>
+            <th class="lg-th">Cliente</th>
+            <th class="lg-th">GPS usado</th>
+            <th class="lg-th">Salida</th>
+            <th class="lg-th">Llegada</th>
+            <th class="lg-th">Duración</th>
+            <th class="lg-th">Estado</th>
+          </tr></thead>
+          <tbody id="hist-tbody">
+            <tr><td class="lg-td" colspan="7" style="text-align:center;color:var(--txt3)">Cargando historial...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MAPA FLOTA ══ -->
+  <div id="lg-sec-map-view" style="display:none;flex:1;position:relative;overflow:hidden">
+    <div id="lg-map" style="width:100%;height:100%;background:var(--bg1)"></div>
+    <!-- Controles del mapa de flota -->
+    <div class="lg-map-controls">
+      <!-- Fila buscador + refresh -->
+      <div class="lg-map-search-row">
+        <input class="lg-map-search" id="lg-map-search" placeholder="🔍 Buscar GPS, cliente, email o teléfono...">
+        <button class="lg-map-refresh" id="lg-map-refresh-btn">↻ ACTUALIZAR</button>
+      </div>
+      <!-- Filtros de fecha -->
+      <div class="lg-map-filter-bar" id="lg-map-date-filters">
+        <button class="lg-map-filter-btn on" data-lgdate="today">HOY</button>
+        <button class="lg-map-filter-btn" data-lgdate="yesterday">AYER</button>
+        <button class="lg-map-filter-btn" data-lgdate="7d">7 DÍAS</button>
+        <button class="lg-map-filter-btn" data-lgdate="all">TODO</button>
+        <input type="date" id="lg-map-custom-date" class="lg-map-search" style="max-width:160px;font-size:12px;padding:6px 10px" title="Fecha específica">
+      </div>
+      <!-- Filtros de estado señal -->
+      <div class="lg-map-filter-bar" id="lg-map-signal-filters">
+        <button class="lg-map-filter-btn on" data-lgsig="all">● TODOS</button>
+        <button class="lg-map-filter-btn" data-lgsig="active" style="color:var(--grn)">● ACTIVOS</button>
+        <button class="lg-map-filter-btn" data-lgsig="moderate" style="color:var(--amb)">● MODERADO</button>
+        <button class="lg-map-filter-btn" data-lgsig="inactive" style="color:var(--red)">● SIN SEÑAL</button>
+      </div>
+      <!-- Status bar -->
+      <div class="lg-map-status">
+        <span class="lg-map-dot" style="background:var(--grn);box-shadow:0 0 6px var(--grn)"></span>
+        <span id="lg-map-count">0</span> unidades activas
+        &nbsp;·&nbsp;
+        <span id="lg-map-filter-info" style="color:var(--txt3);font-size:10px">Mostrando todo</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- PANEL DETALLE PEDIDO -->
+<div class="order-detail-panel" id="order-detail-panel">
+  <div class="odp-card">
+    <div class="odp-title">
+      DETALLE DEL PEDIDO
+      <button class="odp-close" id="odp-close">✕</button>
+    </div>
+    <div id="odp-content">
+      <div class="odp-row"><span class="odp-lbl">ID Pedido</span><span class="odp-val mono" id="odp-id">—</span></div>
+      <div class="odp-row"><span class="odp-lbl">Cliente</span><span class="odp-val" id="odp-client">—</span></div>
+      <div class="odp-row"><span class="odp-lbl">GPS Asignado</span><span class="odp-val mono" id="odp-gps">—</span></div>
+      <div class="odp-row"><span class="odp-lbl">Destino</span><span class="odp-val" id="odp-dest">—</span></div>
+      <div class="odp-row"><span class="odp-lbl">Modo</span><span class="odp-val" id="odp-mode">—</span></div>
+      <div class="odp-row"><span class="odp-lbl">Fecha salida</span><span class="odp-val mono" id="odp-start">—</span></div>
+      <div class="odp-row"><span class="odp-lbl">Fecha llegada</span><span class="odp-val mono" id="odp-end">—</span></div>
+      <div class="odp-row"><span class="odp-lbl">Duración</span><span class="odp-val mono" id="odp-dur">—</span></div>
+      <div class="odp-row"><span class="odp-lbl">Estado</span><span class="odp-val" id="odp-status">—</span></div>
+      <div class="odp-row"><span class="odp-lbl">Notas</span><span class="odp-val" id="odp-notes">—</span></div>
+    </div>
+    <div style="margin-top:16px">
+      <div style="font-family:var(--fd);font-size:8px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:10px">Timeline de entrega</div>
+      <div id="odp-timeline" style="display:flex;flex-direction:column;gap:0"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn-logistics" id="odp-track-btn" style="flex:1;padding:12px;text-align:center">🗺 RASTREAR EN MAPA</button>
+      <button class="btn-logistics" id="odp-complete-btn" style="padding:12px;background:linear-gradient(135deg,#1a4030,#0d2820);border-color:rgba(0,255,136,.3);color:var(--grn)">✓ MARCAR ENTREGADO</button>
     </div>
   </div>
 </div>
@@ -528,6 +851,41 @@ npm run build:linux  # → .AppImage Linux</code>
         <button class="btn-grn off" id="gps-btn" style="margin-top:9px">📡 USAR MI UBICACIÓN GPS</button>
       </div>
 
+      <!-- MI PEDIDO ASIGNADO (Vista segura para clientes) -->
+      <div class="ss" id="client-order-section" style="display:none">
+        <div class="ss-title">📦 Mi Pedido</div>
+        <div class="client-track-card">
+          <div class="client-track-header">
+            <span id="ct-order-id" style="font-family:var(--fm);color:#00d4ff;font-size:13px">—</span>
+            <span class="client-track-badge" id="ct-status-badge">EN TRÁNSITO</span>
+          </div>
+          <!-- Info general del pedido sin coords exactas -->
+          <div class="client-track-info">
+            <div class="cti-box">
+              <div class="cti-lbl">Destino</div>
+              <div class="cti-val" id="ct-dest" style="font-size:11px;color:var(--txt1);font-family:var(--fb)">—</div>
+            </div>
+            <div class="cti-box">
+              <div class="cti-lbl">Estado señal</div>
+              <div class="cti-val" id="ct-signal">🔵 Activo</div>
+            </div>
+            <div class="cti-box">
+              <div class="cti-lbl">Velocidad aprox.</div>
+              <div class="cti-val" id="ct-speed">-- km/h</div>
+            </div>
+            <div class="cti-box">
+              <div class="cti-lbl">Zona actual</div>
+              <div class="cti-val" id="ct-zone" style="font-size:11px;color:var(--txt1);font-family:var(--fb)">Cargando...</div>
+            </div>
+          </div>
+          <!-- Nota de seguridad -->
+          <div class="client-security-note">
+            <span>🔒</span>
+            <span>La ubicación precisa del vehículo es visible solo para el operador logístico por razones de seguridad.</span>
+          </div>
+        </div>
+      </div>
+
       <!-- DESTINO -->
       <div class="ss">
         <div class="ss-title">Destino</div>
@@ -561,13 +919,13 @@ npm run build:linux  # → .AppImage Linux</code>
       </div>
 
       <!-- DATOS GPS EN VIVO -->
-      <div class="ss">
+      <div class="ss" id="gps-live-data-section">
         <div class="ss-title">Datos GPS en Vivo</div>
         <div class="stats-2">
           <div class="s-card"><div class="s-lbl">Velocidad</div><div class="s-val" id="s-spd">-- km/h</div></div>
           <div class="s-card"><div class="s-lbl">Actualizado</div><div class="s-val" id="s-upd">--:--:--</div></div>
-          <div class="s-card"><div class="s-lbl">Latitud</div><div class="s-val" id="s-lat">--</div></div>
-          <div class="s-card"><div class="s-lbl">Longitud</div><div class="s-val" id="s-lng">--</div></div>
+          <div class="s-card gps-coord-card"><div class="s-lbl">Latitud</div><div class="s-val" id="s-lat">--</div></div>
+          <div class="s-card gps-coord-card"><div class="s-lbl">Longitud</div><div class="s-val" id="s-lng">--</div></div>
           <div class="s-card"><div class="s-lbl">Rumbo</div><div class="s-val" id="s-hdg">--°</div></div>
           <div class="s-card"><div class="s-lbl">Precisión</div><div class="s-val" id="s-acc">-- m</div></div>
         </div>
@@ -1234,347 +1592,156 @@ $('l-eye').onclick=()=>togglePw('l-pass','l-eye');
 $('r-eye').onclick=()=>togglePw('r-pass','r-eye');
 
 /* ══════════════════════════════════════
-   REGISTRO CON OTP
+   REGISTRO DIRECTO — Sin OTP
 ══════════════════════════════════════ */
-setupOTPBoxes();
-
-$('r-send-code').onclick=async()=>{
+$('r-register-btn').onclick=async()=>{
   const n=$('r-name').value.trim(),k=$('r-nick').value.trim(),
         e=$('r-email').value.trim(),p=$('r-phone').value.trim(),w=$('r-pass').value;
-  const btn=$('r-send-code');
+  const btn=$('r-register-btn');
   hideEl('r-err');
   if(!n||!k||!e||!p||!w)return showErr('r-err','Completa todos los campos');
   if(w.length<6)return showErr('r-err','Contraseña mínimo 6 caracteres');
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return showErr('r-err','Correo electrónico inválido');
-  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Enviando código...';
-  const code=generateOTP();
-  pendingOTP={code,email:e,expires:Date.now()+600000,formData:{name:n,nick:k,email:e,phone:p,pass:w}};
-  const sent=await sendOTPEmail(e,code,k);
-  $('otp-email-hint').textContent=e;
-  // Mostrar paso 2
-  $('reg-step1').classList.remove('active');
-  $('reg-step2').classList.add('active');
-  hideEl('otp-err');hideEl('otp-ok');
-  [...$('otp-boxes').querySelectorAll('.otp-box')].forEach(b=>b.value='');
-  $('otp-boxes').querySelector('.otp-box').focus();
-  startOTPCountdown();
-  btn.disabled=false;btn.textContent='ENVIAR CÓDIGO DE VERIFICACIÓN';
-  if(sent){
-    toast('✅ Código enviado a '+e,4000);
-  }else{
-    // Mostrar código en pantalla si EmailJS no está configurado
-    showErr('otp-ok','');
-    $('otp-ok').style.display='block';
-    $('otp-ok').textContent=`⚠ EmailJS no configurado. Código de prueba: ${code}`;
-    toast('⚠ Configura EmailJS en Ajustes ⚙️ para enviar códigos reales',5000);
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Creando cuenta...';
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,e,w);
+    await set(ref(db,`users/${cred.user.uid}`),{
+      uid:cred.user.uid,email:e,fullName:n,displayName:k,phone:p,
+      createdAt:new Date().toISOString(),role:'user',
+      notificationsEnabled:true,notifChannels:{browser:true,email:false,sms:false}
+    });
+    toast('✅ ¡Bienvenido a NEXUS TRACK, '+k+'!',4000);
+  }catch(err){
+    console.error(err.code,err.message);
+    showErr('r-err',fbErr(err.code));
+    btn.disabled=false;btn.textContent='CREAR CUENTA';
   }
-};
-
-$('otp-back').onclick=()=>{
-  $('reg-step2').classList.remove('active');
-  $('reg-step1').classList.add('active');
-  clearInterval(otpCountdownT);
-};
-
-$('otp-resend').onclick=async()=>{
-  if(!pendingOTP)return;
-  const newCode=generateOTP();
-  pendingOTP.code=newCode;pendingOTP.expires=Date.now()+600000;
-  const sent=await sendOTPEmail(pendingOTP.email,newCode,pendingOTP.formData.nick);
-  startOTPCountdown();
-  if(sent){toast('✅ Nuevo código enviado',3000);}
-  else{$('otp-ok').textContent=`Código de prueba: ${newCode}`;showEl('otp-ok');}
 };
 
 
 /* ══════════════════════════════════════
-   LOGÍSTICA — Registro con validación backend
+   LOGÍSTICA — Registro directo con código
 ══════════════════════════════════════ */
-let pendingLogOTP = null;
-let logCountdownT = null;
+const _LK = btoa('Nexusplanner+');
 
-function setupOTPBoxesFor(containerId){
-  const boxes=[...$( containerId).querySelectorAll('.otp-box')];
-  boxes.forEach((box,i)=>{
-    box.addEventListener('input',e=>{
-      const v=e.target.value.replace(/\D/g,'');
-      box.value=v?v[0]:'';
-      if(v&&i<5)boxes[i+1]?.focus();
-    });
-    box.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!box.value&&i>0)boxes[i-1].focus();});
-    box.addEventListener('paste',e=>{
-      e.preventDefault();
-      const txt=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
-      boxes.forEach((b,j)=>{b.value=txt[j]||'';});
-    });
-  });
-}
-setupOTPBoxesFor('lg-otp-boxes');
+$('lg-eye').onclick=()=>togglePw('lg-pass','lg-eye');
+const lgce=$('lg-code-eye');if(lgce)lgce.onclick=()=>togglePw('lg-access-code','lg-code-eye');
 
-function getOTPValueFrom(containerId){
-  return[...$( containerId).querySelectorAll('.otp-box')].map(b=>b.value).join('');
-}
-
-function startLogCountdown(){
-  let secs=60;
-  $('lg-countdown').style.display='block';
-  $('lg-resend').style.display='none';
-  clearInterval(logCountdownT);
-  logCountdownT=setInterval(()=>{
-    secs--;$('lg-timer').textContent=secs;
-    if(secs<=0){clearInterval(logCountdownT);$('lg-countdown').style.display='none';$('lg-resend').style.display='block';}
-  },1000);
-}
-
-$('lg-eye').onclick=()=>{const i=$('lg-pass');i.type=i.type==='password'?'text':'password';$('lg-eye').textContent=i.type==='password'?'👁':'🙈';};
-
-$('lg-send-code').onclick=async()=>{
+$('lg-register-btn').onclick=async()=>{
   const n=$('lg-name').value.trim(),company=$('lg-company').value.trim(),
-        e=$('lg-email').value.trim(),p=$('lg-phone').value.trim(),w=$('lg-pass').value;
-  const btn=$('lg-send-code');
+        e=$('lg-email').value.trim(),p=$('lg-phone').value.trim(),
+        w=$('lg-pass').value,code=($('lg-access-code')?.value||'').trim();
+  const btn=$('lg-register-btn');
   hideEl('lg-err');
-  if(!n||!company||!e||!p||!w)return showErr('lg-err','Completa todos los campos');
+  if(!n||!company||!e||!p||!w||!code)return showErr('lg-err','Completa todos los campos');
   if(w.length<6)return showErr('lg-err','Contraseña mínimo 6 caracteres');
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return showErr('lg-err','Correo inválido');
-  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Validando acceso...';
-
-  // Primero: mostrar modal para ingresar código de acceso
-  $('logistics-code-inp').value='';
-  hideEl('logistics-err');
-  showModal('modal-logistics');
-
-  // Guardamos los datos en espera
-  pendingLogOTP={formData:{name:n,company,email:e,phone:p,pass:w},verified:false};
-  btn.disabled=false;btn.textContent='SOLICITAR CÓDIGO DE ACCESO';
-};
-
-// Validar código de logística — funciona con y sin backend
-// El código está obfuscado: se compara contra un hash, no en texto plano
-const _LK = btoa('Nexusplanner+'); // ofuscado en memoria, no en texto plano visible
-
-$('logistics-validate-btn').onclick=async()=>{
-  const code = $('logistics-code-inp').value.trim();
-  const btn  = $('logistics-validate-btn');
-  hideEl('logistics-err');
-  if(!code) return showErr('logistics-err','Ingresa el código de acceso');
-  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Validando...';
-
-  let isValid = false;
-
-  // Intento 1: validar contra el backend (si está configurado)
-  if(BACKEND_URL && !BACKEND_URL.includes('TU-BACKEND')){
-    try{
-      const r = await fetch(`${BACKEND_URL}/api/auth/validate-logistics-code`,{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({code}), signal:AbortSignal.timeout(5000)
-      });
-      if(r.ok){ const d=await r.json(); isValid=d.valid; }
-    }catch(e){ /* backend no disponible, usamos fallback */ }
+  // Validar código de acceso
+  let valid=btoa(code)===_LK;
+  if(!valid&&BACKEND_URL&&!BACKEND_URL.includes('TU-BACKEND')){
+    try{const r=await fetch(BACKEND_URL+'/api/auth/validate-logistics-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code}),signal:AbortSignal.timeout(5000)});if(r.ok){const d=await r.json();valid=d.valid;}}catch(e){}
   }
-
-  // Fallback local (útil sin backend activo)
-  if(!isValid){ isValid = btoa(code) === _LK; }
-
-  if(!isValid){
-    showErr('logistics-err','Código incorrecto. Verifica con tu administrador.');
-    btn.disabled=false; btn.textContent='VALIDAR Y CONTINUAR';
-    return;
-  }
-
-  // ✅ Código correcto
-  hideModal('modal-logistics');
-  if(!pendingLogOTP){ btn.disabled=false; btn.textContent='VALIDAR Y CONTINUAR'; return; }
-  pendingLogOTP.accessGranted = true;
-
-  // Generar OTP de verificación
-  const otp = String(Math.floor(100000 + Math.random()*900000));
-  pendingLogOTP.code    = otp;
-  pendingLogOTP.expires = Date.now() + 600000;
-
-  // Intentar enviar OTP vía backend
-  let sent = false;
-  if(BACKEND_URL && !BACKEND_URL.includes('TU-BACKEND')){
-    try{
-      const nr = await fetch(`${BACKEND_URL}/api/verify/send`,{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({uid:'pre_'+Date.now(), email:pendingLogOTP.formData.email,
-          phone:pendingLogOTP.formData.phone, name:pendingLogOTP.formData.name, channel:'email'}),
-        signal:AbortSignal.timeout(5000)
-      });
-      if(nr.ok){ const nd=await nr.json(); if(nd.sent) sent=true; }
-    }catch(e){}
-  }
-
-  $('lg-email-hint').textContent = pendingLogOTP.formData.email;
-  $('log-step1').classList.remove('active');
-  $('log-step2').classList.add('active');
-  [...$('lg-otp-boxes').querySelectorAll('.otp-box')].forEach(b=>b.value='');
-  $('lg-otp-boxes').querySelector('.otp-box').focus();
-  startLogCountdown(); hideEl('lg-otp-err'); hideEl('lg-otp-ok');
-
-  if(sent){
-    toast('✅ Código de verificación enviado a '+pendingLogOTP.formData.email, 4000);
-  }else{
-    $('lg-otp-ok').style.display='block';
-    $('lg-otp-ok').textContent='Código de verificación: '+otp+' (activa el backend para envío real por email)';
-  }
-  btn.disabled=false; btn.textContent='VALIDAR Y CONTINUAR';
-};
-
-$('mc-logistics').onclick=()=>hideModal('modal-logistics');
-$('logistics-eye').onclick=()=>{const i=$('logistics-code-inp');i.type=i.type==='password'?'text':'password';$('logistics-eye').textContent=i.type==='password'?'👁':'🙈';};
-
-$('lg-back').onclick=()=>{$('log-step2').classList.remove('active');$('log-step1').classList.add('active');clearInterval(logCountdownT);};
-
-$('lg-resend').onclick=async()=>{
-  if(!pendingLogOTP)return;
-  const newCode=String(Math.floor(100000+Math.random()*900000));
-  pendingLogOTP.code=newCode;pendingLogOTP.expires=Date.now()+600000;
-  startLogCountdown();
-  $('lg-otp-ok').textContent=`Código de prueba: ${newCode}`;showEl('lg-otp-ok');
-};
-
-$('lg-verify-btn').onclick=async()=>{
-  const entered=getOTPValueFrom('lg-otp-boxes');
-  const btn=$('lg-verify-btn');
-  hideEl('lg-otp-err');
-  if(entered.length!==6)return showErr('lg-otp-err','Ingresa los 6 dígitos');
-  if(!pendingLogOTP)return showErr('lg-otp-err','Solicita un nuevo código');
-  if(Date.now()>pendingLogOTP.expires)return showErr('lg-otp-err','Código expirado. Solicita uno nuevo.');
-  if(entered!==pendingLogOTP.code)return showErr('lg-otp-err','Código incorrecto');
+  if(!valid)return showErr('lg-err','Código de acceso incorrecto');
   btn.disabled=true;btn.innerHTML='<span class="spin"></span> Activando cuenta...';
-  const{name:n,company,email:e,phone:p,pass:w}=pendingLogOTP.formData;
   try{
-    const c=await createUserWithEmailAndPassword(auth,e,w);
-    await set(ref(db,`users/${c.user.uid}`),{
-      uid:c.user.uid,email:e,fullName:n,displayName:n,company,phone:p,
+    const cred=await createUserWithEmailAndPassword(auth,e,w);
+    await set(ref(db,`users/${cred.user.uid}`),{
+      uid:cred.user.uid,email:e,fullName:n,displayName:n,company,phone:p,
       createdAt:new Date().toISOString(),verified:true,role:'logistics',
       notificationsEnabled:true,notifChannels:{browser:true,email:true,sms:false}
     });
-    pendingLogOTP=null;clearInterval(logCountdownT);
     toast('✅ ¡Cuenta Logística activada! Bienvenido '+n,4000);
   }catch(err){
     console.error(err.code,err.message);
-    showErr('lg-otp-err',fbErr(err.code));
+    showErr('lg-err',fbErr(err.code));
     btn.disabled=false;btn.textContent='ACTIVAR CUENTA LOGÍSTICA';
   }
 };
 
-$('otp-verify-btn').onclick=async()=>{
-  const entered=getOTPValue();
-  const btn=$('otp-verify-btn');
-  hideEl('otp-err');
-  if(entered.length!==6)return showErr('otp-err','Ingresa los 6 dígitos');
-  if(!pendingOTP)return showErr('otp-err','Solicita un nuevo código');
-  if(Date.now()>pendingOTP.expires)return showErr('otp-err','Código expirado. Solicita uno nuevo.');
-  if(entered!==pendingOTP.code)return showErr('otp-err','Código incorrecto. Inténtalo de nuevo.');
-  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Creando cuenta...';
-  const{name:n,nick:k,email:e,phone:p,pass:w}=pendingOTP.formData;
-  try{
-    const c=await createUserWithEmailAndPassword(auth,e,w);
-    await set(ref(db,`users/${c.user.uid}`),{
-      uid:c.user.uid,email:e,fullName:n,displayName:k,phone:p,
-      createdAt:new Date().toISOString(),verified:true,
-      notificationsEnabled:true,notifChannels:{browser:true,email:false,sms:false},role:'user'
+
+/* ══════════════════════════════════════
+   AUTH STATE — Detecta login y enruta
+══════════════════════════════════════ */
+onAuthStateChanged(auth, async u => {
+  if(u){
+    user = u;
+    try{
+      const snap = await get(ref(db,`users/${u.uid}`));
+      if(snap.exists()) profile = snap.val();
+    }catch(e){}
+    enterApp();
+  } else {
+    user = null; profile = null;
+    ['app-screen','logistics-screen'].forEach(id=>{
+      const el=$(id); if(el) el.classList.remove('active');
     });
-    pendingOTP=null;clearInterval(otpCountdownT);
-    toast('✅ ¡Cuenta verificada! Bienvenido '+k,4000);
-  }catch(err){
-    console.error(err.code,err.message);
-    showErr('otp-err',fbErr(err.code));
-    btn.disabled=false;btn.textContent='VERIFICAR Y CREAR CUENTA';
+    $('auth-screen').classList.add('active');
   }
-};
+});
+
+/* ══════════════════════════════════════
+   ENTER APP — Enruta según rol
+══════════════════════════════════════ */
+function enterApp(){
+  $('auth-screen').classList.remove('active');
+  const k = profile?.displayName || user?.email?.split('@')[0] || '?';
+
+  if(profile?.role === 'logistics'){
+    // ── LOGÍSTICA: pantalla propia ──
+    ['app-screen'].forEach(id=>$(id)?.classList.remove('active'));
+    $('logistics-screen').classList.add('active');
+    const av=$('lg-u-av'); if(av) av.textContent=k[0].toUpperCase();
+    const nm=$('lg-u-name'); if(nm) nm.textContent=k;
+    initLogisticsScreen();
+  } else {
+    // ── USUARIO NORMAL: mapa ──
+    $('logistics-screen')?.classList.remove('active');
+    $('app-screen').classList.add('active');
+    $('u-av').textContent = k[0].toUpperCase();
+    $('u-name').textContent = k;
+    if(!isMob()) $('sidebar').classList.remove('closed');
+    loadSession();
+    startDevice(deviceId);
+    setTimeout(()=>map.invalidateSize(), 300);
+    if(Notification.permission==='default') setTimeout(()=>Notification.requestPermission(), 2000);
+    loadNotes();
+    // loadAssignedOrder también aplica restricciones de seguridad para clientes
+    loadAssignedOrder();
+  }
+}
+
+/* ══════════════════════════════════════
+   LOGOUT
+══════════════════════════════════════ */
+function doLogout(){
+  saveSession(); stopTimer(); stopSim();
+  if(watchId){ navigator.geolocation.clearWatch(watchId); watchId=null; }
+  if(activeRef){ off(activeRef); activeRef=null; }
+  signOut(auth).then(()=>toast('Sesión cerrada'));
+}
+const logoutBtn=$('logout-btn'); if(logoutBtn) logoutBtn.onclick=doLogout;
+const lgLogout=$('lg-logout-btn'); if(lgLogout) lgLogout.onclick=doLogout;
 
 /* ══════════════════════════════════════
    LOGIN
 ══════════════════════════════════════ */
 $('l-btn').onclick=async()=>{
-  const e=$('l-email').value.trim(),w=$('l-pass').value,btn=$('l-btn');
+  const e=$('l-email').value.trim(), w=$('l-pass').value, btn=$('l-btn');
   hideEl('l-err');
-  if(!e||!w)return showErr('l-err','Completa todos los campos');
-  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Verificando...';
-  try{await signInWithEmailAndPassword(auth,e,w);}
-  catch(err){console.error(err.code);showErr('l-err',fbErr(err.code));btn.disabled=false;btn.textContent='ACCEDER AL SISTEMA';}
+  if(!e||!w) return showErr('l-err','Completa todos los campos');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Verificando...';
+  try{ await signInWithEmailAndPassword(auth,e,w); }
+  catch(err){ showErr('l-err',fbErr(err.code)); btn.disabled=false; btn.textContent='ACCEDER AL SISTEMA'; }
 };
-$('l-pass').onkeydown=e=>{if(e.key==='Enter')$('l-btn').click()};
+$('l-pass').onkeydown=e=>{ if(e.key==='Enter') $('l-btn').click(); };
 
 /* ══════════════════════════════════════
-   LOGOUT
-══════════════════════════════════════ */
-$('logout-btn').onclick=async()=>{
-  saveSession();stopTimer();stopSim();
-  if(watchId){navigator.geolocation.clearWatch(watchId);watchId=null;}
-  if(activeRef){off(activeRef);activeRef=null;}
-  await signOut(auth);toast('Sesión cerrada');
-};
-
-/* ══════════════════════════════════════
-   AUTH STATE
-══════════════════════════════════════ */
-onAuthStateChanged(auth,async u=>{
-  if(u){
-    user=u;
-    try{const s=await get(ref(db,`users/${u.uid}`));
-      if(s.exists()){profile=s.val();
-        if(profile.notifChannels){notifChannels={...notifChannels,...profile.notifChannels};syncNotifToggles();}
-      }}catch{}
-    enterApp();
-  }else{
-    user=null;profile=null;
-    $('auth-screen').classList.add('active');
-    $('app-screen').classList.remove('active');
-  }
-});
-
-function enterApp(){
-  $('auth-screen').classList.remove('active');
-  $('app-screen').classList.add('active');
-  const k=profile?.displayName||user?.email?.split('@')[0]||'?';
-  $('u-av').textContent=k[0].toUpperCase();$('u-name').textContent=k;
-  if(!isMob())$('sidebar').classList.remove('closed');
-  loadSession(); // RESTAURAR SESIÓN GUARDADA
-  startDevice(deviceId);
-  setTimeout(()=>map.invalidateSize(),300);
-  if(Notification.permission==='default')setTimeout(()=>Notification.requestPermission(),2000);
-  loadNotes();
-  // Mostrar badge de rol si es logística
-  if(profile?.role==='logistics'){
-    const chip=$('u-chip');
-    if(chip&&!$('role-badge')){
-      const badge=document.createElement('span');
-      badge.id='role-badge';
-      badge.style.cssText='padding:2px 8px;background:rgba(0,180,255,.12);border:1px solid rgba(0,180,255,.3);border-radius:10px;font-family:var(--fd);font-size:8px;color:#00d4ff;letter-spacing:1px;margin-left:4px';
-      badge.textContent='LOGÍSTICA';
-      $('u-name').insertAdjacentElement('afterend',badge);
-    }
-    // Mostrar panel logística en sidebar
-    const lp=$('logistics-panel');if(lp)lp.style.display='block';
-  }
-  // Restaurar destino en mapa si existía
-  if(lastDest&&lastETA){
-    setTimeout(()=>{
-      if(lastDest.lat&&lastDest.lng){
-        if(destM)map.removeLayer(destM);
-        destM=L.marker([lastDest.lat,lastDest.lng],{icon:mkPin('#ff00aa',38)}).addTo(map);
-        destM.bindPopup(`<b style="color:#ff00aa">📍 DESTINO</b><br><span style="color:#7a9cc4;font-size:12px">${lastDest.name?.slice(0,80)||''}</span>`);
-        updateTrafficUI();
-        const{days,hours,minutes}=lastETA;
-        ['ec-d','ec-h','ec-m'].forEach(id=>$(id).classList.remove('hi'));
-        if(days>0)$('ec-d').classList.add('hi');else if(hours>0)$('ec-h').classList.add('hi');else $('ec-m').classList.add('hi');
-      }
-    },500);
-  }
-}
-
-/* ══════════════════════════════════════
-   GPS DEVICE LISTENER (Firebase)
+   DEVICE LISTENER — GPS Firebase
 ══════════════════════════════════════ */
 function startDevice(id){
-  if(activeRef)off(activeRef);
-  activeRef=ref(db,`devices/${id}/location`);
-  onValue(activeRef,snap=>{
-    if(!snap.exists())return;
+  if(activeRef) off(activeRef);
+  activeRef = ref(db,`devices/${id}/location`);
+  onValue(activeRef, snap=>{
+    if(!snap.exists()) return;
     const d=snap.val();
     if(typeof d.lat==='number'&&typeof d.lng==='number')
       updateGPS(d.lat,d.lng,d.speed||0,d.heading||0,d.accuracy||0,d.timestamp,d.source||'unknown');
@@ -1582,187 +1749,124 @@ function startDevice(id){
 }
 
 $('device-sel').onchange=function(){
-  if(this.value==='custom'){showEl('custom-id-wrap');}
-  else{hideEl('custom-id-wrap');deviceId=this.value;startDevice(deviceId);saveSession();}
+  if(this.value==='custom'){ showEl('custom-id-wrap'); }
+  else{ hideEl('custom-id-wrap'); deviceId=this.value; startDevice(deviceId); saveSession(); }
 };
-$('custom-device-id').onkeydown=function(e){
-  if(e.key==='Enter'&&this.value.trim()){deviceId=this.value.trim();startDevice(deviceId);toast('📡 Escuchando: '+deviceId);saveSession();}
+const cdi=$('custom-device-id');
+if(cdi) cdi.onkeydown=function(e){
+  if(e.key==='Enter'&&this.value.trim()){ deviceId=this.value.trim(); startDevice(deviceId); toast('📡 Escuchando: '+deviceId); }
 };
-
-/* ══════════════════════════════════════
-   HISTORIAL DE RUTA
-══════════════════════════════════════ */
-let lastRoutePoint=null;
-function addRoutePoint(lat,lng,spd,ts){
-  if(lastRoutePoint){
-    const d=haversine(lastRoutePoint.lat,lastRoutePoint.lng,lat,lng);
-    if(d<0.05)return; // Menos de 50m → no agregar
-  }
-  lastRoutePoint={lat,lng};
-  const spdKmh=(spd*3.6).toFixed(0);
-  const time=new Date(ts||Date.now()).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
-  routeHistory.push({lat,lng,spd:spdKmh,time});
-  if(routeHistory.length>50)routeHistory.shift();
-  renderRouteHistory();
-}
-
-function renderRouteHistory(){
-  const el=$('route-history');if(!el)return;
-  if(!routeHistory.length){el.innerHTML='<div class="rh-item" style="color:var(--txt3);justify-content:center;border-style:dashed">Sin puntos registrados</div>';return;}
-  el.innerHTML=routeHistory.slice(-8).reverse().map((p,i)=>`
-    <div class="rh-item">
-      <div class="rh-dot" style="background:${i===0?'var(--grn)':'var(--cyan)'}"></div>
-      <span style="font-size:11px">${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}</span>
-      <span style="font-size:10px;color:var(--txt3)">${p.spd}km/h</span>
-      <span class="rh-time">${p.time}</span>
-    </div>
-  `).join('');
-}
-
-$('clear-history-btn').onclick=()=>{routeHistory=[];renderRouteHistory();lastRoutePoint=null;toast('Historial de ruta limpiado');saveSession();};
-
-function updateGPS(lat,lng,spd,hdg,acc,ts,source){
-  lastLoc={lat,lng,speed:spd,heading:hdg,accuracy:acc,timestamp:ts};
-  const spdKmh=spd*3.6;
-  addRoutePoint(lat,lng,spd,ts);
-
-  const pinColor=source==='simulator'?'#ff00aa':source==='browser'?'#00ff88':'#00f5ff';
-  if(!gpsM){gpsM=L.marker([lat,lng],{icon:mkPin(pinColor,42)}).addTo(map);map.flyTo([lat,lng],13,{duration:1.5});}
-  else{gpsM.setLatLng([lat,lng]);gpsM.setIcon(mkPin(pinColor,42));}
-
-  const tr=detectTransport(spdKmh);
-  showEl('transport-bar','flex');
-  ['tr-plane','tr-car','tr-bike','tr-walk'].forEach(id=>$(id).classList.remove('detected'));
-  $(tr.id).classList.add('detected');
-
-  gpsM.bindPopup(`<b style="color:#00f5ff;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">${tr.icon} GPS ${tr.label.toUpperCase()}</b><br><span style="color:#7a9cc4">Vel: <b style="color:#e8f4ff">${spdKmh.toFixed(1)} km/h</b> · Rumbo: <b style="color:#e8f4ff">${Math.round(hdg)}°</b><br>Precisión: <b style="color:#e8f4ff">±${Math.round(acc)} m</b><br><span style="color:#3d5a7a;font-size:10px">${new Date(ts||Date.now()).toLocaleString('es-CO')}</span></span>`);
-
-  $('ov-lat').textContent=lat.toFixed(6);$('ov-lng').textContent=lng.toFixed(6);
-  $('s-lat').textContent=lat.toFixed(6);$('s-lng').textContent=lng.toFixed(6);
-  $('s-spd').textContent=`${spdKmh.toFixed(1)} km/h`;
-  $('s-upd').textContent=new Date().toLocaleTimeString('es-CO');
-  $('s-hdg').textContent=`${Math.round(hdg)}°`;$('s-acc').textContent=`±${Math.round(acc)} m`;
-  $('sig-pill').className='sig-pill on';$('sig-txt').textContent='SEÑAL ACTIVA';
-  showEl('pulse-wrap','flex');
-  const cgb=$('center-gps-btn');if(cgb)cgb.style.display='flex';
-
-  if(lastDest)doCalc(lat,lng,lastDest.lat,lastDest.lng,lastDest.name);
-}
 
 /* ══════════════════════════════════════
    GPS NAVEGADOR
 ══════════════════════════════════════ */
-$('gps-btn').onclick=()=>{
+const gpsbtn=$('gps-btn');
+if(gpsbtn) gpsbtn.onclick=()=>{
   const btn=$('gps-btn');
-  if(watchId){navigator.geolocation.clearWatch(watchId);watchId=null;btn.className='btn-grn off';btn.textContent='📡 USAR MI UBICACIÓN GPS';toast('GPS desactivado');return;}
-  if(!navigator.geolocation)return toast('❌ GPS no disponible');
-  toast('🔍 Buscando señal GPS...');
+  if(watchId){
+    navigator.geolocation.clearWatch(watchId); watchId=null;
+    btn.className='btn-grn off'; btn.textContent='📡 USAR MI UBICACIÓN GPS';
+    toast('GPS desactivado'); return;
+  }
+  if(!navigator.geolocation) return toast('❌ GPS no disponible');
   watchId=navigator.geolocation.watchPosition(
-    async pos=>{
+    pos=>{
       const{latitude:lat,longitude:lng,speed,accuracy,heading}=pos.coords;
-      await set(ref(db,`devices/${deviceId}/location`),{lat,lng,speed:speed||0,heading:heading||0,accuracy:accuracy||0,source:'browser',timestamp:new Date().toISOString()});
-    },
-    err=>{toast('⚠ GPS: '+err.message);},
-    {enableHighAccuracy:true,timeout:15000,maximumAge:2000}
+      const ts=new Date().toISOString();
+      // Actualizar UI inmediatamente (sin esperar Firebase)
+      updateGPS(lat,lng,speed||0,heading||0,accuracy||0,ts,'browser');
+      // Guardar en Firebase sin bloquear
+      set(ref(db,`devices/${deviceId}/location`),{
+        lat,lng,speed:speed||0,heading:heading||0,accuracy:accuracy||0,
+        source:'browser',timestamp:ts
+      }).catch(()=>{});
+    }, err=>toast('⚠ GPS: '+err.message),
+    {enableHighAccuracy:true,timeout:20000,maximumAge:0}
   );
-  btn.className='btn-grn';btn.textContent='🔴 DETENER MI GPS';toast('✅ Enviando tu GPS a Firebase');
+  btn.className='btn-grn'; btn.textContent='🔴 DETENER MI GPS'; toast('✅ GPS activo');
 };
 
 /* ══════════════════════════════════════
-   CALCULAR ETA — CORREGIDO (sin undefined)
+   UPDATE GPS UI
 ══════════════════════════════════════ */
-$('calc-btn').onclick=async()=>{
-  const addr=$('dest-inp').value.trim(),btn=$('calc-btn');
-  if(!addr)return toast('⚠ Escribe una dirección destino');
-  if(!lastLoc)return toast('⚠ Activa el GPS primero o usa el simulador');
-  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Calculando...';
+let lastRoutePoint=null;
+function updateGPS(lat,lng,spd,hdg,acc,ts,source){
+  lastLoc={lat,lng,speed:spd,heading:hdg,accuracy:acc,timestamp:ts};
+  const spdKmh=spd*3.6;
+  addRoutePoint(lat,lng,spd,ts);
+  const pinColor=source==='simulator'?'#ff00aa':source==='browser'?'#00ff88':'#00f5ff';
+  if(!gpsM){ gpsM=L.marker([lat,lng],{icon:mkPin(pinColor,42)}).addTo(map); map.flyTo([lat,lng],13,{duration:1.5}); }
+  else{ gpsM.setLatLng([lat,lng]); gpsM.setIcon(mkPin(pinColor,42)); }
+  const tr=detectTransport(spdKmh);
+  showEl('transport-bar','flex');
+  ['tr-plane','tr-car','tr-bike','tr-walk'].forEach(id=>$(id).classList.remove('detected'));
+  $(tr.id).classList.add('detected');
+  gpsM.bindPopup(`<b style="color:#00f5ff;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">${tr.icon} GPS ${tr.label.toUpperCase()}</b><br><span style="color:#7a9cc4">Vel: <b style="color:#e8f4ff">${spdKmh.toFixed(1)} km/h</b> · Rumbo: <b style="color:#e8f4ff">${Math.round(hdg)}°</b><br>Precisión: <b style="color:#e8f4ff">±${Math.round(acc)} m</b></span>`);
+  $('ov-lat').textContent=lat.toFixed(6); $('ov-lng').textContent=lng.toFixed(6);
+  $('s-lat').textContent=lat.toFixed(6); $('s-lng').textContent=lng.toFixed(6);
+  $('s-spd').textContent=`${spdKmh.toFixed(1)} km/h`;
+  $('s-upd').textContent=new Date().toLocaleTimeString('es-CO');
+  $('s-hdg').textContent=`${Math.round(hdg)}°`; $('s-acc').textContent=`±${Math.round(acc)} m`;
+  $('sig-pill').className='sig-pill on'; $('sig-txt').textContent='SEÑAL ACTIVA';
+  showEl('pulse-wrap','flex');
+  const cgb=$('center-gps-btn'); if(cgb) cgb.style.display='flex';
+  if(lastDest) doCalc(lat,lng,lastDest.lat,lastDest.lng,lastDest.name);
+}
+
+/* ══════════════════════════════════════
+   CALCULAR ETA
+══════════════════════════════════════ */
+const calcbtn=$('calc-btn');
+if(calcbtn) calcbtn.onclick=async()=>{
+  const addr=($('dest-inp')?.value||'').trim(), btn=$('calc-btn');
+  if(!addr) return toast('⚠ Escribe una dirección destino');
+  if(!lastLoc) return toast('⚠ Activa el GPS primero o usa el simulador');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Calculando...';
   try{
     const geo=await geocodeAddress(addr);
-    if(!geo){toast('❌ Dirección no encontrada. Prueba con el nombre de la ciudad o coordenadas: lat, lng');return;}
-    const dLat=geo.lat,dLng=geo.lng,name=geo.name;
-    lastDest={lat:dLat,lng:dLng,name};
-    await doCalc(lastLoc.lat,lastLoc.lng,dLat,dLng,name);
-    saveSession();toast('✅ Ruta y tráfico calculados');
-  }catch(err){toast('❌ Error: '+err.message);}
-  finally{btn.disabled=false;btn.innerHTML='🔍 CALCULAR RUTA Y ETA';}
+    if(!geo){ toast('❌ Dirección no encontrada. Prueba con nombre de ciudad o coordenadas: lat, lng'); return; }
+    lastDest={lat:geo.lat,lng:geo.lng,name:geo.name};
+    await doCalc(lastLoc.lat,lastLoc.lng,geo.lat,geo.lng,geo.name);
+    saveSession(); toast('✅ Ruta y tráfico calculados');
+  }catch(err){ toast('❌ Error: '+err.message); }
+  finally{ btn.disabled=false; btn.innerHTML='🔍 CALCULAR RUTA Y ETA'; }
 };
 
 async function doCalc(oLa,oLn,dLa,dLn,name){
   const spdKmh=(lastLoc?.speed>0.5)?lastLoc.speed*3.6:null;
-  // ✅ FIX: transport siempre tiene valor por defecto 'car'
   const transport=spdKmh?detectTransport(spdKmh):{mode:'car',icon:'🚗',label:'Vehículo',id:'tr-car'};
-  const transportMode=transport.mode||'car'; // ✅ nunca undefined
-
+  const tMode=transport.mode||'car';
   let dist,baseSecs,routeCoords=null;
-  const isGrounded=transportMode!=='plane';
-  const osrm=isGrounded?await fetchOSRM(oLa,oLn,dLa,dLn):null;
-
-  if(osrm){dist=osrm.distance;baseSecs=osrm.duration*60;routeCoords=osrm.geometry;}
-  else{dist=haversine(oLa,oLn,dLa,dLn);baseSecs=(dist/SPEEDS[transportMode])*3600;}
-
+  const osrm=(tMode!=='plane')?await fetchOSRM(oLa,oLn,dLa,dLn):null;
+  if(osrm){ dist=osrm.distance; baseSecs=osrm.duration*60; routeCoords=osrm.geometry; }
+  else{ dist=haversine(oLa,oLn,dLa,dLn); baseSecs=(dist/SPEEDS[tMode])*3600; }
   const td=calcTraffic(dist);
-  const useTraffic=isGrounded&&['car','bike'].includes(transportMode);
+  const useTraffic=tMode!=='plane'&&['car','bike'].includes(tMode);
   const totalSecs=useTraffic?Math.round(baseSecs*td.factor):Math.round(baseSecs);
-
   const days=Math.floor(totalSecs/86400),hrs=Math.floor((totalSecs%86400)/3600),mins=Math.floor((totalSecs%3600)/60);
-  
-  // ✅ FIX PRINCIPAL: todos los valores son strings/numbers definidos, nunca undefined
-  lastETA={
-    days:days||0,
-    hours:hrs||0,
-    minutes:mins||0,
-    dist:dist||0,
-    speed:spdKmh||SPEEDS[transportMode],
-    transport:transportMode,         // ✅ siempre string
-    trafficFactor:td.factor||1.0,   // ✅ siempre number
-    trafficLevel:td.level||'low'    // ✅ siempre string
-  };
-
-  $('eta-d').textContent=pad(days);$('eta-h').textContent=pad(hrs);$('eta-m').textContent=pad(mins);
-  const dm=Math.round(td.delay/60);
-  $('eta-info').textContent=`${dist.toFixed(2)} km${useTraffic&&td.level!=='low'?` (+${dm}min tráfico)`:''}`;
-
+  lastETA={days:days||0,hours:hrs||0,minutes:mins||0,dist:dist||0,speed:spdKmh||SPEEDS[tMode],transport:tMode,trafficFactor:td.factor||1,trafficLevel:td.level||'low'};
+  $('eta-d').textContent=pad(days); $('eta-h').textContent=pad(hrs); $('eta-m').textContent=pad(mins);
+  $('eta-info').textContent=`${dist.toFixed(2)} km${useTraffic&&td.level!=='low'?` (+${Math.round(td.delay/60)}min tráfico)`:''}`;
   ['ec-d','ec-h','ec-m'].forEach(id=>$(id).classList.remove('hi'));
-  if(days>0)$('ec-d').classList.add('hi');else if(hrs>0)$('ec-h').classList.add('hi');else $('ec-m').classList.add('hi');
-
+  if(days>0)$('ec-d').classList.add('hi'); else if(hrs>0)$('ec-h').classList.add('hi'); else $('ec-m').classList.add('hi');
   showEl('transport-bar','flex');
   ['tr-plane','tr-car','tr-bike','tr-walk'].forEach(id=>$(id).classList.remove('detected'));
   $(transport.id).classList.add('detected');
-
   updateTrafficUI();
-
-  if(destM)map.removeLayer(destM);
+  if(destM) map.removeLayer(destM);
   destM=L.marker([dLa,dLn],{icon:mkPin('#ff00aa',38)}).addTo(map);
   destM.bindPopup(`<b style="color:#ff00aa;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">📍 DESTINO</b><br><span style="color:#7a9cc4;font-size:12px">${name.slice(0,80)}</span>`);
-
-  if(accCircle)map.removeLayer(accCircle);
+  if(accCircle) map.removeLayer(accCircle);
   accCircle=L.circle([oLa,oLn],{radius:Math.max(lastLoc?.accuracy||200,100),color:'#00f5ff',fillColor:'#00f5ff',fillOpacity:0.04,weight:1,dashArray:'4 4'}).addTo(map);
-
-  if(routeL)map.removeLayer(routeL);
-  const routeColor=td.level==='high'?'#ff3355':td.level==='med'?'#ffaa00':'#00f5ff';
-  if(routeCoords&&routeCoords.length>1){
-    routeL=L.polyline(routeCoords.map(([lng,lat])=>[lat,lng]),{color:routeColor,weight:4,opacity:.85}).addTo(map);
-  }else{
-    routeL=L.polyline([[oLa,oLn],[dLa,dLn]],{color:routeColor,weight:2.5,opacity:.75,dashArray:'12 7'}).addTo(map);
-  }
+  if(routeL) map.removeLayer(routeL);
+  const rc=td.level==='high'?'#ff3355':td.level==='med'?'#ffaa00':'#00f5ff';
+  if(routeCoords&&routeCoords.length>1){ routeL=L.polyline(routeCoords.map(([lng,lat])=>[lat,lng]),{color:rc,weight:4,opacity:.85}).addTo(map); }
+  else{ routeL=L.polyline([[oLa,oLn],[dLa,dLn]],{color:rc,weight:2.5,opacity:.75,dashArray:'12 7'}).addTo(map); }
   map.fitBounds(routeL.getBounds(),{padding:[60,60]});
-
-  // ✅ FIX: sanitizar objeto antes de guardar en Firebase (eliminar undefined)
   if(user){
-    const safeETA={days:lastETA.days,hours:lastETA.hours,minutes:lastETA.minutes,dist:lastETA.dist,speed:lastETA.speed,transport:lastETA.transport,trafficFactor:lastETA.trafficFactor,trafficLevel:lastETA.trafficLevel};
-    const safeTraffic={level:td.level,factor:td.factor,delay:td.delay||0,label:td.label,pct:td.pct};
-    set(ref(db,`deliveries/${user.uid}_active`),{
-      device_id:deviceId||'device_01',
-      destination_address:name||'',
-      destination:{lat:dLa,lng:dLn},
-      origin:{lat:oLa,lng:oLn},
-      eta:safeETA,
-      traffic:safeTraffic,
-      updated_at:new Date().toISOString(),
-      status:'in_transit'
-    }).catch(e=>console.warn('Firebase save warn:',e.message));
+    const safeETA={days:lastETA.days,hours:lastETA.hours,minutes:lastETA.minutes,dist:lastETA.dist,speed:lastETA.speed,transport:tMode,trafficFactor:lastETA.trafficFactor,trafficLevel:lastETA.trafficLevel};
+    set(ref(db,`deliveries/${user.uid}_active`),{device_id:deviceId||'device_01',destination_address:name||'',destination:{lat:dLa,lng:dLn},origin:{lat:oLa,lng:oLn},eta:safeETA,traffic:{level:td.level,factor:td.factor,delay:td.delay||0,label:td.label,pct:td.pct},updated_at:new Date().toISOString(),status:'in_transit'}).catch(()=>{});
   }
-
   restartTimer();
 }
 
@@ -1770,61 +1874,51 @@ async function doCalc(oLa,oLn,dLa,dLn,name){
    SIMULADOR GPS
 ══════════════════════════════════════ */
 $('sim-modes').onclick=e=>{
-  const m=e.target.closest('.sim-mode');if(!m)return;
+  const m=e.target.closest('.sim-mode'); if(!m) return;
   document.querySelectorAll('.sim-mode').forEach(x=>x.classList.remove('on'));
-  m.classList.add('on');simSpeed=parseInt(m.dataset.speed);simMode=m.dataset.mode;saveSession();
+  m.classList.add('on'); simSpeed=parseInt(m.dataset.speed); simMode=m.dataset.mode; saveSession();
 };
-
 $('sim-start').onclick=async()=>{
-  const org=$('sim-origin').value.trim(),dst=$('sim-dest').value.trim();
-  if(!org||!dst)return toast('⚠ Escribe origen y destino del simulador');
-  if(simRunning)return toast('⚠ Simulación en curso');
-  $('sim-start').innerHTML='<span class="spin"></span> Geocodificando...';$('sim-start').disabled=true;
+  const org=($('sim-origin')?.value||'').trim(), dst=($('sim-dest')?.value||'').trim();
+  if(!org||!dst) return toast('⚠ Escribe origen y destino');
+  if(simRunning) return toast('⚠ Simulación en curso');
+  $('sim-start').innerHTML='<span class="spin"></span> Buscando...'; $('sim-start').disabled=true;
   try{
-    const oGeo=await geocodeAddress(org);
-    if(!oGeo){toast('❌ Origen no encontrado. Prueba con nombre de ciudad o "lat, lng"');return;}
-    const dGeo=await geocodeAddress(dst);
-    if(!dGeo){toast('❌ Destino no encontrado. Prueba con nombre de ciudad o "lat, lng"');return;}
-    const oLa=oGeo.lat,oLn=oGeo.lng;
-    const dLa=dGeo.lat,dLn=dGeo.lng;
-    lastDest={lat:dLa,lng:dLn,name:dGeo.name};
-    startSim(oLa,oLn,dLa,dLn,oGeo.name,dGeo.name);
-    await doCalc(oLa,oLn,dLa,dLn,dGeo.name);
+    const oGeo=await geocodeAddress(org); if(!oGeo){ toast('❌ Origen no encontrado'); return; }
+    const dGeo=await geocodeAddress(dst); if(!dGeo){ toast('❌ Destino no encontrado'); return; }
+    lastDest={lat:dGeo.lat,lng:dGeo.lng,name:dGeo.name};
+    startSim(oGeo.lat,oGeo.lng,dGeo.lat,dGeo.lng,oGeo.name,dGeo.name);
+    await doCalc(oGeo.lat,oGeo.lng,dGeo.lat,dGeo.lng,dGeo.name);
     saveSession();
-  }catch(e){toast('❌ Error: '+e.message);}
-  finally{$('sim-start').disabled=false;$('sim-start').textContent='🎮 INICIAR SIMULACIÓN';}
+  }catch(e){ toast('❌ Error: '+e.message); }
+  finally{ $('sim-start').disabled=false; $('sim-start').textContent='🎮 INICIAR SIMULACIÓN'; }
 };
 $('sim-stop').onclick=stopSim;
 
 function startSim(oLa,oLn,dLa,dLn,orgName,dstName){
-  simRunning=true;
-  showEl('sim-progress');showEl('sim-status');showEl('sim-stop');hideEl('sim-start');
-  const dist=haversine(oLa,oLn,dLa,dLn);
-  const kmPerStep=(simSpeed/3600)*3;
-  const totalSteps=Math.ceil(dist/kmPerStep);
+  simRunning=true; showEl('sim-progress'); showEl('sim-status'); showEl('sim-stop'); hideEl('sim-start');
+  const dist=haversine(oLa,oLn,dLa,dLn), kmPerStep=(simSpeed/3600)*3, totalSteps=Math.ceil(dist/kmPerStep);
   let step=0;
   addLog('sim',`🎮 ${simMode==='plane'?'✈️':'🚗'} ${orgName.slice(0,20)} → ${dstName.slice(0,20)}`);
-  toast(`🎮 Simulando ${simMode} a ${simSpeed}km/h`,4000);
+  toast(`🎮 Simulando a ${simSpeed}km/h`,4000);
   simTimer=setInterval(async()=>{
-    if(!simRunning){clearInterval(simTimer);return;}
+    if(!simRunning){ clearInterval(simTimer); return; }
     const t=Math.min(step/totalSteps,1);
-    const lat=oLa+(dLa-oLa)*t,lng=oLn+(dLn-oLn)*t;
+    const lat=oLa+(dLa-oLa)*t, lng=oLn+(dLn-oLn)*t;
     const hdg=(Math.atan2(dLn-lng,dLa-lat)*180/Math.PI+360)%360;
     const spdMs=simSpeed/3.6*(0.9+Math.random()*0.2);
-    // ✅ FIX: source siempre definido
     await set(ref(db,`devices/${deviceId}/location`),{lat,lng,speed:spdMs,heading:hdg,accuracy:simMode==='plane'?5000:15,source:'simulator',mode:simMode,timestamp:new Date().toISOString()});
     const pct=Math.round(t*100);
     $('sim-prog-bar').style.width=pct+'%';
-    const remain=dist*(1-t),eta=Math.round(remain/simSpeed*60);
+    const remain=dist*(1-t), eta=Math.round(remain/simSpeed*60);
     $('sim-status').innerHTML=`${simMode==='plane'?'✈️':'🚗'} ${pct}% · ${remain.toFixed(1)}km · ~${eta}min`;
     step++;
-    if(t>=1){stopSim();toast('🏁 Simulación completada',5000);addLog('ok','🏁 GPS llegó al destino');}
+    if(t>=1){ stopSim(); toast('🏁 Simulación completada',5000); addLog('ok','🏁 GPS llegó al destino'); }
   },3000);
 }
-
 function stopSim(){
-  simRunning=false;if(simTimer){clearInterval(simTimer);simTimer=null;}
-  hideEl('sim-progress');hideEl('sim-status');hideEl('sim-stop');showEl('sim-start');
+  simRunning=false; if(simTimer){clearInterval(simTimer);simTimer=null;}
+  hideEl('sim-progress'); hideEl('sim-status'); hideEl('sim-stop'); showEl('sim-start');
   $('sim-start').textContent='🎮 INICIAR SIMULACIÓN';
 }
 
@@ -1832,136 +1926,771 @@ function stopSim(){
    NOTIFICACIONES
 ══════════════════════════════════════ */
 $('int-wrap').onclick=e=>{
-  const b=e.target.closest('.int-b');if(!b)return;
+  const b=e.target.closest('.int-b'); if(!b) return;
   document.querySelectorAll('.int-b').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on');notifMs=parseInt(b.dataset.ms);$('int-lbl').textContent=b.dataset.lbl;
-  restartTimer();toast('🔔 Alertas cada '+b.dataset.lbl);saveSession();
+  b.classList.add('on'); notifMs=parseInt(b.dataset.ms); $('int-lbl').textContent=b.dataset.lbl;
+  restartTimer(); toast('🔔 Alertas cada '+b.dataset.lbl); saveSession();
 };
-
 $('notif-toggles').onclick=e=>{
-  const t=e.target.closest('.notif-toggle');if(!t)return;
-  const type=t.dataset.type;
-  notifChannels[type]=!notifChannels[type];
-  t.classList.toggle('on',notifChannels[type]);
-  updateNotifChannelsUI();
-  if(user)update(ref(db,`users/${user.uid}/notifChannels`),notifChannels).catch(()=>{});
+  const t=e.target.closest('.notif-toggle'); if(!t) return;
+  const type=t.dataset.type; notifChannels[type]=!notifChannels[type];
+  t.classList.toggle('on',notifChannels[type]); updateNotifChannelsUI();
+  if(user) update(ref(db,`users/${user.uid}/notifChannels`),notifChannels).catch(()=>{});
   saveSession();
-  if(type==='email'&&notifChannels.email&&!ejsConfig.serviceId)toast('⚙️ Configura EmailJS en Ajustes para enviar emails',5000);
 };
-
-function syncNotifToggles(){Object.entries(notifChannels).forEach(([t,on])=>{const el=$('nt-'+t);if(el)el.classList.toggle('on',on);});updateNotifChannelsUI();}
-function updateNotifChannelsUI(){const a=[];if(notifChannels.browser)a.push('Navegador');if(notifChannels.email)a.push('Email');if(notifChannels.sms)a.push('SMS');$('notif-active-channels').textContent=a.length?a.join(', '):'Ninguno';}
-// notif-help-lnk removido del UI
-
-function restartTimer(){stopTimer();if(lastETA)notifTimer=setInterval(doNotif,notifMs);}
-function stopTimer(){if(notifTimer){clearInterval(notifTimer);notifTimer=null;}}
-
+function syncNotifToggles(){ Object.entries(notifChannels).forEach(([t,on])=>{ const el=$('nt-'+t); if(el) el.classList.toggle('on',on); }); updateNotifChannelsUI(); }
+function updateNotifChannelsUI(){ const a=[]; if(notifChannels.browser)a.push('Navegador'); if(notifChannels.email)a.push('Email'); if(notifChannels.sms)a.push('SMS'); const el=$('notif-active-channels'); if(el) el.textContent=a.length?a.join(', '):'Ninguno'; }
+function restartTimer(){ stopTimer(); if(lastETA) notifTimer=setInterval(doNotif,notifMs); }
+function stopTimer(){ if(notifTimer){clearInterval(notifTimer);notifTimer=null;} }
 async function doNotif(){
-  if(!lastETA||!profile)return;
+  if(!lastETA||!profile) return;
   const{days,hours,minutes,dist,transport}=lastETA;
   const tIcon=transport==='plane'?'✈️':transport==='bike'?'🏍':transport==='walk'?'🚶':'🚗';
   const etaStr=`${days>0?days+'d ':''}${hours>0?hours+'h ':''}${minutes}min`;
-
-  // 1. Navegador
   if(notifChannels.browser&&Notification.permission==='granted'){
-    new Notification('🛰 NEXUS TRACK',{body:`${tIcon} Envío llega en ${etaStr} | ${dist?.toFixed(1)||'--'}km`,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="%23020810" stroke="%2300f5ff" stroke-width="2"/><circle cx="32" cy="32" r="12" fill="%2300f5ff"/></svg>'});
+    new Notification('🛰 NEXUS TRACK',{body:`${tIcon} Envío llega en ${etaStr} | ${dist?.toFixed(1)||'--'}km`});
   }
-
-  // 2. Email via EmailJS (sin backend)
-  if(notifChannels.email&&profile.email&&ejsConfig.serviceId){
-    const sent=await sendEmailAlert(`🛰 NEXUS TRACK — ETA: ${etaStr}`,`${tIcon} Tu envío llega en ${etaStr}.\nDistancia restante: ${dist?.toFixed(1)||'--'} km\nDestino: ${lastDest?.name||''}\nTráfico: ${trafficData.label}`,profile.email);
-    if(sent)addLog('e',`✉️ Email enviado a ${profile.email}`);
-  }
-
+  if(notifChannels.email&&profile.email&&ejsConfig.serviceId) await sendEmailAlert(`🛰 ETA: ${etaStr}`,`${tIcon} Tu envío llega en ${etaStr}.
+Distancia: ${dist?.toFixed(1)||'--'} km
+Destino: ${lastDest?.name||''}`,profile.email);
   addLog('e',`${tIcon} ETA: ${pad(days)}d ${pad(hours)}h ${pad(minutes)}m — ${dist?.toFixed(1)||'--'}km`);
-
-  // 3. Firebase → backend Python (SMS y email real si hay backend)
   if(user&&(notifChannels.email||notifChannels.sms)){
-    push(ref(db,`pending_notifications/${user.uid}`),{
-      type:'eta_update',
-      eta:{days:days||0,hours:hours||0,minutes:minutes||0,dist:dist||0,transport:transport||'car'},
-      destination:lastDest?.name||'',
-      user_email:notifChannels.email?(profile.email||''):'',
-      user_phone:notifChannels.sms?(profile.phone||''):'',
-      user_name:profile.displayName||'',
-      channels:{browser:!!notifChannels.browser,email:!!notifChannels.email,sms:!!notifChannels.sms},
-      sent_at:new Date().toISOString(),processed:false
-    }).catch(()=>{});
+    push(ref(db,`pending_notifications/${user.uid}`),{type:'eta_update',eta:{days:days||0,hours:hours||0,minutes:minutes||0,dist:dist||0,transport:transport||'car'},destination:lastDest?.name||'',user_email:notifChannels.email?(profile.email||''):'',user_phone:notifChannels.sms?(profile.phone||''):'',user_name:profile.displayName||'',channels:{browser:!!notifChannels.browser,email:!!notifChannels.email,sms:!!notifChannels.sms},sent_at:new Date().toISOString(),processed:false}).catch(()=>{});
   }
 }
-
 function addLog(type,msg){
-  const log=$('nlog');const item=document.createElement('div');
-  item.className=`nlog-item ${type}`;
+  const log=$('nlog'); if(!log) return;
+  const item=document.createElement('div'); item.className=`nlog-item ${type}`;
   item.innerHTML=`<div class="ni-t">${new Date().toLocaleTimeString('es-CO')}</div>${msg}`;
-  if(log.children.length===1&&log.firstElementChild.classList.contains('g'))log.innerHTML='';
-  log.prepend(item);if(log.children.length>20)log.lastChild.remove();
+  if(log.children.length===1&&log.firstElementChild.classList.contains('g')) log.innerHTML='';
+  log.prepend(item); if(log.children.length>20) log.lastChild.remove();
   saveSession();
 }
-
-/* ══════════════════════════════════════
-   AJUSTES (EmailJS)
-══════════════════════════════════════ */
-$('settings-btn').onclick=()=>{
-  if(ejsConfig.serviceId)$('ejs-service').value=ejsConfig.serviceId;
-  if(ejsConfig.templateId)$('ejs-template').value=ejsConfig.templateId;
-  if(ejsConfig.publicKey)$('ejs-pubkey').value=ejsConfig.publicKey;
-  showModal('modal-settings');
-};
-$('save-ejs').onclick=()=>{
-  ejsConfig={serviceId:$('ejs-service').value.trim(),templateId:$('ejs-template').value.trim(),publicKey:$('ejs-pubkey').value.trim()};
-  initEmailJS();saveSession();hideModal('modal-settings');
-  if(ejsConfig.publicKey)toast('✅ EmailJS configurado — emails activados',4000);
-  else toast('⚠ Faltan datos de EmailJS',3000);
-};
-const _onh=$('open-notif-help');if(_onh)_onh.onclick=()=>{hideModal('modal-settings');showModal('modal-notif');};
 
 /* ══════════════════════════════════════
    SIDEBAR / MOBILE
 ══════════════════════════════════════ */
-$('fab-menu').onclick=toggleSB;
+const fabm=$('fab-menu'); if(fabm) fabm.onclick=toggleSB;
 function toggleSB(){
   const sb=$('sidebar');
-  if(isMob()){const op=!sb.classList.contains('open');sb.classList.toggle('open',op);$('sb-overlay').style.display=op?'block':'none';}
+  if(isMob()){ const op=!sb.classList.contains('open'); sb.classList.toggle('open',op); $('sb-overlay').style.display=op?'block':'none'; }
   else sb.classList.toggle('closed');
   setTimeout(()=>map.invalidateSize(),360);
 }
-$('sb-overlay').onclick=()=>{$('sidebar').classList.remove('open');hideEl('sb-overlay');setTimeout(()=>map.invalidateSize(),360);};
-
-function setMob(id){document.querySelectorAll('.mb-btn').forEach(b=>b.classList.remove('on'));$(id)?.classList.add('on')}
-$('mb-map').onclick=()=>{$('sidebar').classList.remove('open');hideEl('sb-overlay');setTimeout(()=>map.invalidateSize(),360);setMob('mb-map')};
-$('mb-eta').onclick=()=>{toggleSB();setMob('mb-eta');setTimeout(()=>$('ec-h')?.scrollIntoView({behavior:'smooth',block:'center'}),400)};
-$('mb-sim').onclick=()=>{toggleSB();setMob('mb-sim');setTimeout(()=>$('sim-origin')?.scrollIntoView({behavior:'smooth',block:'start'}),400)};
-$('mb-gps').onclick=()=>{$('gps-btn').click();setMob('mb-gps')};
-$('mb-install').onclick=()=>{triggerInstall();setMob('mb-install')};
-
-/* PLATAFORMAS */
-$('platforms-toggle').onclick=()=>{const g=$('platform-grid'),b=$('platforms-toggle');const o=g.classList.toggle('open');b.classList.toggle('open',o);};
+const sbo=$('sb-overlay'); if(sbo) sbo.onclick=()=>{ $('sidebar').classList.remove('open'); hideEl('sb-overlay'); setTimeout(()=>map.invalidateSize(),360); };
+function setMob(id){ document.querySelectorAll('.mb-btn').forEach(b=>b.classList.remove('on')); $(id)?.classList.add('on'); }
+const mbmap=$('mb-map'); if(mbmap) mbmap.onclick=()=>{ $('sidebar').classList.remove('open'); hideEl('sb-overlay'); setTimeout(()=>map.invalidateSize(),360); setMob('mb-map'); };
+const mbeta=$('mb-eta'); if(mbeta) mbeta.onclick=()=>{ toggleSB(); setMob('mb-eta'); setTimeout(()=>$('ec-h')?.scrollIntoView({behavior:'smooth',block:'center'}),400); };
+const mbsim=$('mb-sim'); if(mbsim) mbsim.onclick=()=>{ toggleSB(); setMob('mb-sim'); setTimeout(()=>$('sim-origin')?.scrollIntoView({behavior:'smooth',block:'start'}),400); };
+const mbgps=$('mb-gps'); if(mbgps) mbgps.onclick=()=>{ gpsbtn?.click(); setMob('mb-gps'); };
+const mbinst=$('mb-install'); if(mbinst) mbinst.onclick=()=>{ triggerInstall(); setMob('mb-install'); };
 
 /* ══════════════════════════════════════
-   INSTALACIÓN PWA
+   SETTINGS / EMAILJS
 ══════════════════════════════════════ */
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;$('install-main').style.borderColor='var(--cyan)';$('install-main').style.boxShadow='0 0 30px var(--cy15)';toast('✅ App lista para instalar — toca ⬇️',4000);});
-window.addEventListener('appinstalled',()=>{toast('🎉 ¡NEXUS TRACK instalado!',5000);addLog('ok','App instalada en el dispositivo');});
+const stbtn=$('settings-btn');
+if(stbtn) stbtn.onclick=()=>{
+  if(ejsConfig.serviceId) $('ejs-service').value=ejsConfig.serviceId;
+  if(ejsConfig.templateId) $('ejs-template').value=ejsConfig.templateId;
+  if(ejsConfig.publicKey) $('ejs-pubkey').value=ejsConfig.publicKey;
+  showModal('modal-settings');
+};
+const saveejs=$('save-ejs');
+if(saveejs) saveejs.onclick=()=>{
+  ejsConfig={serviceId:$('ejs-service').value.trim(),templateId:$('ejs-template').value.trim(),publicKey:$('ejs-pubkey').value.trim()};
+  initEmailJS(); saveSession(); hideModal('modal-settings');
+  if(ejsConfig.publicKey) toast('✅ EmailJS configurado',4000); else toast('⚠ Faltan datos',3000);
+};
+const onh=$('open-notif-help'); if(onh) onh.onclick=()=>{ hideModal('modal-settings'); showModal('modal-notif'); };
 
+/* ══════════════════════════════════════
+   INSTALAR PWA
+══════════════════════════════════════ */
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredInstall=e;
+  const im=$('install-main'); if(im){im.style.borderColor='var(--cyan)';im.style.boxShadow='0 0 30px var(--cy15)';}
+  toast('✅ App lista para instalar — toca ⬇️',4000);
+});
+window.addEventListener('appinstalled',()=>{ toast('🎉 ¡NEXUS TRACK instalado!',5000); addLog('ok','App instalada'); });
 function triggerInstall(){
-  if(deferredInstall){deferredInstall.prompt();deferredInstall.userChoice.then(r=>{if(r.outcome==='accepted')toast('🎉 ¡Instalando...',4000);deferredInstall=null;});}
-  else{const ua=navigator.userAgent;if(/iPad|iPhone|iPod/.test(ua))showModal('modal-ios');else if(/android/i.test(ua))toast('ℹ Chrome: toca ⋮ → "Agregar a pantalla de inicio"',5000);else toast('ℹ Chrome: toca ⋮ → "Instalar NEXUS TRACK"',5000);}
+  if(deferredInstall){ deferredInstall.prompt(); deferredInstall.userChoice.then(r=>{ if(r.outcome==='accepted') toast('🎉 ¡Instalando...',4000); deferredInstall=null; }); }
+  else{ const ua=navigator.userAgent; if(/iPad|iPhone|iPod/.test(ua)) showModal('modal-ios'); else toast('ℹ Chrome: ⋮ → "Instalar NEXUS TRACK"',5000); }
 }
-$('install-main').onclick=triggerInstall;
-$('btn-android').onclick=()=>toast('ℹ Chrome → ⋮ → "Agregar a pantalla de inicio"',5000);
-$('btn-ios').onclick=()=>showModal('modal-ios');
-['btn-windows','btn-mac','btn-linux'].forEach(id=>$(id).onclick=()=>{if(deferredInstall)triggerInstall();else toast('ℹ Chrome → ⋮ → "Instalar NEXUS TRACK"',5000);});
-$('btn-desktop-app').onclick=()=>showModal('modal-desktop');
+const imb=$('install-main'); if(imb) imb.onclick=triggerInstall;
+['btn-android','btn-windows','btn-mac','btn-linux'].forEach(id=>{ const el=$(id); if(el) el.onclick=()=>{ if(deferredInstall) triggerInstall(); else toast('ℹ Chrome → ⋮ → Instalar',5000); }; });
+const bios=$('btn-ios'); if(bios) bios.onclick=()=>showModal('modal-ios');
+const bdsk=$('btn-desktop-app'); if(bdsk) bdsk.onclick=()=>showModal('modal-desktop');
+
+/* PLATAFORMAS TOGGLE */
+const pltog=$('platforms-toggle');
+if(pltog) pltog.onclick=()=>{ const g=$('platform-grid'),b=$('platforms-toggle'); const o=g.classList.toggle('open'); b.classList.toggle('open',o); };
 
 /* MODALES */
-function showModal(id){$(id).classList.add('show')}
-function hideModal(id){$(id).classList.remove('show')}
-$('mc-desktop').onclick=()=>hideModal('modal-desktop');
-$('mc-ios').onclick=()=>hideModal('modal-ios');
-$('mc-notif').onclick=()=>hideModal('modal-notif');
-$('mc-settings').onclick=()=>hideModal('modal-settings');
-['modal-desktop','modal-ios','modal-notif','modal-settings','modal-logistics'].forEach(id=>{$(id)&&($(id).onclick=e=>{if(e.target===$(id))hideModal(id)});});
+function showModal(id){ const e=$(id); if(e) e.classList.add('show'); }
+function hideModal(id){ const e=$(id); if(e) e.classList.remove('show'); }
+['modal-desktop','modal-ios','modal-notif','modal-settings','modal-logistics'].forEach(id=>{ const e=$(id); if(e) e.onclick=ev=>{ if(ev.target===e) hideModal(id); }; });
+const mclist=['mc-desktop','mc-ios','mc-notif','mc-settings','mc-logistics'];
+mclist.forEach(id=>{ const e=$(id); if(e) e.onclick=()=>{ const mid=id.replace('mc-','modal-'); hideModal(mid); }; });
+
+/* ══════════════════════════════════════
+   PEDIDO ASIGNADO — Vista SEGURA para clientes
+   El cliente ve estado, zona aproximada y ETA
+   pero NO las coordenadas exactas del GPS
+══════════════════════════════════════ */
+async function loadAssignedOrder(){
+  if(!user) return;
+  try{
+    const snap=await get(ref(db,`user_orders/${user.uid}`));
+    if(!snap.exists()) return;
+    const order=snap.val();
+
+    // Mostrar card de pedido al cliente
+    const sect=$('client-order-section');
+    if(sect){
+      sect.style.display='block';
+      const oid=$('ct-order-id'); if(oid) oid.textContent=order.order_id||'—';
+      const dest=$('ct-dest');
+      if(dest) dest.textContent=(order.destination_address||'—').slice(0,35)+(order.destination_address?.length>35?'…':'');
+      const stBadge=$('ct-status-badge');
+      if(stBadge){
+        const stMap={in_transit:'🚛 EN TRÁNSITO',completed:'✅ ENTREGADO',pending:'⏳ PENDIENTE'};
+        stBadge.textContent=stMap[order.status]||'EN TRÁNSITO';
+        stBadge.style.background=order.status==='completed'?'var(--gn15)':order.status==='pending'?'var(--am10)':'rgba(0,245,255,.08)';
+        stBadge.style.color=order.status==='completed'?'var(--grn)':order.status==='pending'?'var(--amb)':'var(--cyan)';
+        stBadge.style.border=order.status==='completed'?'1px solid rgba(0,255,136,.3)':order.status==='pending'?'1px solid var(--am30)':'1px solid rgba(0,245,255,.2)';
+      }
+    }
+
+    // Ocultar coordenadas exactas para usuarios normales con pedido asignado
+    document.querySelectorAll('.gps-coord-card').forEach(c=>c.style.display='none');
+    // Ocultar la overlay del mapa con coordenadas
+    const ovc=$('ov-coords'); if(ovc) ovc.style.display='none';
+
+    // Si hay pedido activo, escuchar GPS (pero en modo seguro para cliente)
+    if(order.gps_device&&order.status==='in_transit'){
+      deviceId=order.gps_device;
+      startDevice(deviceId);
+      const sel=$('device-sel');
+      if(sel){
+        sel.value=['device_01','device_02','mobile_gps'].includes(deviceId)?deviceId:'custom';
+        sel.disabled=true; // El cliente no puede cambiar de dispositivo
+      }
+      // Ocultar botón GPS manual del cliente
+      const gb=$('gps-btn'); if(gb) gb.style.display='none';
+
+      if(order.destination_address) $('dest-inp').value=order.destination_address;
+      toast(`📦 Pedido ${order.order_id} — siguiendo en tiempo real`,5000);
+      addLog('ok',`📦 Pedido ${order.order_id} — GPS: ${deviceId}`);
+
+      // Iniciar listener que actualiza la card del cliente de forma segura
+      if(activeRef) off(activeRef);
+      activeRef=ref(db,`devices/${deviceId}/location`);
+      onValue(activeRef,snap2=>{
+        if(!snap2.exists()) return;
+        const d=snap2.val();
+        if(typeof d.lat!=='number') return;
+        const age=(Date.now()-new Date(d.timestamp||0).getTime())/1000;
+        const spdKmh=((d.speed||0)*3.6).toFixed(0);
+
+        // Actualizar card cliente — sin coords exactas
+        const ctSpd=$('ct-speed'); if(ctSpd) ctSpd.textContent=spdKmh+' km/h';
+        const ctSig=$('ct-signal');
+        if(ctSig){
+          if(age<60) ctSig.innerHTML='<span style="color:var(--grn)">● Activo</span>';
+          else if(age<300) ctSig.innerHTML='<span style="color:var(--amb)">● Moderado</span>';
+          else ctSig.innerHTML='<span style="color:var(--red)">● Sin señal</span>';
+        }
+        // Zona aproximada — reverse geocoding de zona amplia (±0.05 grados ~ 5km)
+        const zoneLat=Math.round(d.lat*20)/20, zoneLng=Math.round(d.lng*20)/20;
+        const ctZone=$('ct-zone');
+        if(ctZone) ctZone.textContent=`Zona ${zoneLat.toFixed(2)}° N, ${Math.abs(zoneLng).toFixed(2)}° O`;
+
+        // El mapa SÍ muestra el GPS pero sin overlay de coordenadas
+        if(!gpsM){
+          gpsM=L.marker([d.lat,d.lng],{icon:mkPin('#00f5ff',42)}).addTo(map);
+          map.flyTo([d.lat,d.lng],13,{duration:1.5});
+        } else {
+          gpsM.setLatLng([d.lat,d.lng]);
+        }
+        gpsM.bindPopup(`<b style="color:#00f5ff;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">📦 TU PEDIDO</b><br><span style="color:#7a9cc4">Vel: <b style="color:#e8f4ff">${spdKmh} km/h</b><br>Estado: activo</span>`);
+
+        lastLoc={lat:d.lat,lng:d.lng,speed:d.speed||0,heading:d.heading||0,accuracy:d.accuracy||0,timestamp:d.timestamp};
+        // Centrar GPS visible
+        const cgb=$('center-gps-btn'); if(cgb) cgb.style.display='flex';
+      });
+
+      // Calcular ETA automáticamente
+      setTimeout(async()=>{
+        if(lastLoc&&order.destination_address){
+          const geo=await geocodeAddress(order.destination_address);
+          if(geo){ lastDest={lat:geo.lat,lng:geo.lng,name:geo.name}; await doCalc(lastLoc.lat,lastLoc.lng,geo.lat,geo.lng,geo.name); }
+        }
+      },2500);
+    }
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════
+   PANEL LOGÍSTICA COMPLETO
+══════════════════════════════════════ */
+let lgMap=null, currentOrderFilter='all', currentHistFilter=0, selectedUserId=null, selectedUserData=null;
+
+// Tabs de la pantalla logística
+document.querySelectorAll('.lg-tab').forEach(tab=>{
+  tab.onclick=()=>{
+    document.querySelectorAll('.lg-tab').forEach(t=>t.classList.remove('on'));
+    tab.classList.add('on');
+    const sec=tab.dataset.section;
+    ['dashboard','orders','assign','history','map-view'].forEach(s=>{
+      const el=$(`lg-sec-${s}`); if(el) el.style.display=s===sec?'':'none';
+    });
+    if(sec==='map-view'){ initLgMap(); setTimeout(()=>{ lgMap?.invalidateSize(); refreshLgMapFull(); },300); }
+    if(sec==='dashboard') refreshDashboard();
+    if(sec==='orders') loadOrders();
+    if(sec==='history') loadHistory();
+    if(sec==='assign') loadUsersForAssign();
+  };
+});
+
+function initLogisticsScreen(){
+  $('lg-logout-btn').onclick=doLogout;
+  $('lg-to-map').onclick=goToMapScreen;
+  refreshDashboard();
+  initOrdersSection();
+  initAssignSection();
+  initHistorySection();
+  initOdpPanel();
+}
+
+function goToMapScreen(){
+  $('logistics-screen').classList.remove('active');
+  $('app-screen').classList.add('active');
+  const k=profile?.displayName||user?.email?.split('@')[0]||'?';
+  $('u-av').textContent=k[0].toUpperCase(); $('u-name').textContent=k;
+  if(!isMob()) $('sidebar').classList.remove('closed');
+  showEl('logistics-panel');
+  startDevice(deviceId);
+  setTimeout(()=>map.invalidateSize(),300);
+  if(Notification.permission==='default') setTimeout(()=>Notification.requestPermission(),2000);
+  loadNotes();
+}
+
+async function refreshDashboard(){
+  if(!user) return;
+  try{
+    const [devSnap, delSnap, usrSnap] = await Promise.all([
+      get(ref(db,'devices')), get(ref(db,'deliveries')), get(ref(db,'users'))
+    ]);
+    const devs=devSnap.val()||{}, dels=delSnap.val()||{}, usrs=usrSnap.val()||{};
+    const gpsActive=Object.values(devs).filter(d=>{ if(!d?.location?.timestamp) return false; return (Date.now()-new Date(d.location.timestamp).getTime())<300000; }).length;
+    const today=new Date().toDateString();
+    const todayDone=Object.values(dels).filter(d=>d?.status==='completed'&&d?.updated_at&&new Date(d.updated_at).toDateString()===today).length;
+    const active=Object.values(dels).filter(d=>d?.status==='in_transit').length;
+    const clients=Object.values(usrs).filter(u=>u?.role==='user').length;
+    $('lgs-active').textContent=active;
+    $('lgs-today').textContent=todayDone;
+    $('lgs-gps').textContent=gpsActive;
+    $('lgs-clients').textContent=clients;
+    // Actividad reciente
+    const recent=Object.values(dels).filter(d=>d?.updated_at).sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at)).slice(0,6);
+    const act=$('lg-recent-activity');
+    if(act) act.innerHTML=recent.length?recent.map(d=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b0)">
+        <span style="font-size:16px">${d.status==='completed'?'✅':d.status==='in_transit'?'🚛':'⏳'}</span>
+        <div style="flex:1">
+          <div style="font-size:12px;color:var(--txt1);font-family:var(--fm)">${d.order_id||'—'}</div>
+          <div style="font-size:10px;color:var(--txt3)">${d.destination_address?.slice(0,45)||'—'}</div>
+        </div>
+        <span style="font-size:9px;color:var(--txt3);white-space:nowrap">${new Date(d.updated_at).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}</span>
+      </div>`).join(''):'<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px">Sin actividad reciente</div>';
+  }catch(e){ console.warn(e); }
+}
+
+/* ─── SECCIÓN PEDIDOS ─── */
+let allOrders=[];
+function initOrdersSection(){
+  // Filtros
+  document.querySelectorAll('#orders-filter .filter-chip').forEach(chip=>{
+    chip.onclick=()=>{
+      document.querySelectorAll('#orders-filter .filter-chip').forEach(c=>c.classList.remove('on'));
+      chip.classList.add('on'); currentOrderFilter=chip.dataset.status; renderOrdersTable();
+    };
+  });
+  const srch=$('orders-search'); if(srch) srch.oninput=()=>renderOrdersTable();
+  const cob=$('create-order-btn'); if(cob) cob.onclick=createOrder;
+  loadOrders();
+}
+
+async function loadOrders(){
+  try{
+    const snap=await get(ref(db,'deliveries'));
+    allOrders=Object.values(snap.val()||{}).filter(Boolean);
+    renderOrdersTable();
+  }catch(e){ console.warn(e); }
+}
+
+function renderOrdersTable(){
+  const tbody=$('orders-tbody'); if(!tbody) return;
+  const q=($('orders-search')?.value||'').toLowerCase();
+  const icons={plane:'✈️',car:'🚗',bike:'🏍',walk:'🚶'};
+  let rows=allOrders.filter(o=>{
+    if(currentOrderFilter!=='all'&&o.status!==currentOrderFilter) return false;
+    if(q&&!`${o.order_id||''} ${o.client_email||''} ${o.device_id||''} ${o.destination_address||''}`.toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a,b)=>new Date(b.updated_at||0)-new Date(a.updated_at||0));
+
+  if(!rows.length){ tbody.innerHTML=`<tr><td class="lg-td" colspan="6" style="text-align:center;color:var(--txt3)">Sin pedidos para mostrar</td></tr>`; return; }
+  tbody.innerHTML=rows.map(o=>{
+    const stClass={in_transit:'sb-transit',completed:'sb-done',pending:'sb-pending'}[o.status]||'sb-pending';
+    const stLabel={in_transit:'EN TRÁNSITO',completed:'ENTREGADO',pending:'PENDIENTE'}[o.status]||'PENDIENTE';
+    const eta=o.eta?`${o.eta.days>0?o.eta.days+'d ':''} ${o.eta.hours>0?o.eta.hours+'h ':''} ${o.eta.minutes}min`:'—';
+    return `<tr class="lg-tr" onclick="showOrderDetail('${o.order_id||o.device_id||''}')">
+      <td class="lg-td">${o.order_id||'—'}</td>
+      <td class="lg-td" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.client_email||'—'}</td>
+      <td class="lg-td"><span style="font-family:var(--fm);font-size:11px;color:#00d4ff">${o.device_id||'—'}</span></td>
+      <td class="lg-td" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.destination_address?.slice(0,40)||'—'}</td>
+      <td class="lg-td"><span style="font-family:var(--fm)">${eta}</span></td>
+      <td class="lg-td"><span class="status-badge ${stClass}">${stLabel}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+async function createOrder(){
+  const btn=$('create-order-btn');
+  const oid=($('new-order-id')?.value||'').trim();
+  const client=($('new-order-client')?.value||'').trim();
+  const dest=($('new-order-dest')?.value||'').trim();
+  const gps=($('new-order-gps')?.value||'').trim();
+  const mode=$('new-order-mode')?.value||'car';
+  const notes=($('new-order-notes')?.value||'').trim();
+  hideEl('create-order-err');
+  if(!oid||!client||!dest||!gps) return showErr('create-order-err','Completa ID del pedido, cliente, destino y GPS');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Creando pedido...';
+  try{
+    // Geocodificar destino
+    const geo=await geocodeAddress(dest);
+    if(!geo){ showErr('create-order-err','Dirección de destino no reconocida'); return; }
+    // Buscar uid del cliente por email
+    const usrSnap=await get(ref(db,'users'));
+    const allUsers=Object.values(usrSnap.val()||{});
+    const clientUser=allUsers.find(u=>u.email===client||u.uid===client);
+    const orderData={
+      order_id:oid, client_email:client, client_uid:clientUser?.uid||null,
+      device_id:gps, transport_mode:mode,
+      destination_address:geo.name, destination:{lat:geo.lat,lng:geo.lng},
+      notes, status:'in_transit',
+      created_at:new Date().toISOString(), updated_at:new Date().toISOString(),
+      created_by:user.uid
+    };
+    await set(ref(db,`deliveries/${oid}`),orderData);
+    // Asignar al usuario cliente si existe
+    if(clientUser?.uid){
+      await set(ref(db,`user_orders/${clientUser.uid}`),{
+        order_id:oid, gps_device:gps, destination_address:geo.name,
+        status:'in_transit', assigned_at:new Date().toISOString()
+      });
+    }
+    // Guardar historial de salida
+    await push(ref(db,`delivery_history/${oid}`),{event:'created',ts:new Date().toISOString(),by:user.uid,details:`GPS: ${gps} | Destino: ${geo.name}`});
+    toast('✅ Pedido creado y asignado correctamente',4000);
+    ['new-order-id','new-order-client','new-order-dest','new-order-gps','new-order-notes'].forEach(id=>{ const el=$(id); if(el) el.value=''; });
+    await loadOrders();
+  }catch(e){ showErr('create-order-err','Error: '+e.message); }
+  finally{ btn.disabled=false; btn.textContent='✚ CREAR PEDIDO Y ASIGNAR'; }
+}
+
+/* ─── SECCIÓN ASIGNAR GPS ─── */
+let allUsers=[];
+function initAssignSection(){
+  const search=$('assign-user-search'); if(search) search.oninput=searchUsers;
+  const sel=$('assign-gps-select'); if(sel) sel.onchange=function(){ $('assign-gps-custom').style.display=this.value==='custom'?'block':'none'; };
+  const btn=$('do-assign-btn'); if(btn) btn.onclick=doAssign;
+  loadUsersForAssign();
+}
+
+async function loadUsersForAssign(){
+  try{
+    const snap=await get(ref(db,'users'));
+    allUsers=Object.values(snap.val()||{}).filter(u=>u?.role==='user');
+  }catch(e){}
+}
+
+function searchUsers(){
+  const q=($('assign-user-search')?.value||'').toLowerCase().trim();
+  const res=$('assign-user-results'); if(!res) return;
+  if(!q||q.length<2){ res.innerHTML='<div style="font-size:11px;color:var(--txt3);text-align:center;padding:10px">Escribe para buscar usuarios...</div>'; return; }
+  const found=allUsers.filter(u=>`${u.displayName||''} ${u.email||''} ${u.uid||''}`.toLowerCase().includes(q)).slice(0,8);
+  if(!found.length){ res.innerHTML='<div style="font-size:11px;color:var(--txt3);text-align:center;padding:10px">Sin resultados</div>'; return; }
+  res.innerHTML=found.map(u=>`
+    <div class="user-row" onclick="selectUserForAssign('${u.uid}','${u.displayName||''}','${u.email||''}')">
+      <div class="user-row-av">${(u.displayName||'?')[0].toUpperCase()}</div>
+      <div class="user-row-info">
+        <div class="user-row-name">${u.displayName||'—'}</div>
+        <div class="user-row-email">${u.email||'—'}</div>
+      </div>
+      <span class="user-row-badge">USUARIO</span>
+    </div>`).join('');
+}
+
+window.selectUserForAssign=function(uid,name,email){
+  selectedUserId=uid; selectedUserData={uid,name,email};
+  const panel=$('assign-selected-user'); if(panel) panel.style.display='block';
+  const sn=$('assign-sel-name'); if(sn) sn.textContent=name;
+  const se=$('assign-sel-email'); if(se) se.textContent=email;
+  $('assign-user-results').innerHTML='';
+  $('assign-user-search').value=name;
+};
+
+async function doAssign(){
+  const btn=$('do-assign-btn');
+  hideEl('assign-err'); hideEl('assign-ok');
+  if(!selectedUserId) return showErr('assign-err','Selecciona un cliente primero');
+  const oid=($('assign-order-id')?.value||'').trim();
+  const gpsVal=$('assign-gps-select')?.value||'';
+  const gps=gpsVal==='custom'?($('assign-gps-custom')?.value||'').trim():gpsVal;
+  const dest=($('assign-dest')?.value||'').trim();
+  const notes=($('assign-notes')?.value||'').trim();
+  if(!oid||!gps||!dest) return showErr('assign-err','Completa ID del pedido, GPS y destino');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Asignando...';
+  try{
+    const geo=await geocodeAddress(dest);
+    if(!geo){ showErr('assign-err','Dirección no reconocida'); return; }
+    const orderData={
+      order_id:oid, client_uid:selectedUserId, client_email:selectedUserData?.email||'',
+      device_id:gps, destination_address:geo.name, destination:{lat:geo.lat,lng:geo.lng},
+      notes, status:'in_transit', created_at:new Date().toISOString(), updated_at:new Date().toISOString(), created_by:user.uid
+    };
+    await set(ref(db,`deliveries/${oid}`),orderData);
+    await set(ref(db,`user_orders/${selectedUserId}`),{
+      order_id:oid, gps_device:gps, destination_address:geo.name,
+      status:'in_transit', assigned_at:new Date().toISOString()
+    });
+    await push(ref(db,`delivery_history/${oid}`),{event:'assigned',ts:new Date().toISOString(),by:user.uid,details:`GPS: ${gps} → Cliente: ${selectedUserData?.email}`});
+    const ok=$('assign-ok'); if(ok){ok.textContent=`✅ Pedido ${oid} asignado a ${selectedUserData?.name}. El cliente verá el tracking en su perfil.`;ok.style.display='block';}
+    selectedUserId=null; selectedUserData=null;
+    $('assign-user-search').value=''; $('assign-order-id').value=''; $('assign-dest').value=''; $('assign-notes').value='';
+    $('assign-selected-user').style.display='none';
+    toast('✅ GPS asignado al cliente',4000);
+  }catch(e){ showErr('assign-err','Error: '+e.message); }
+  finally{ btn.disabled=false; btn.textContent='🔗 CONFIRMAR ASIGNACIÓN'; }
+}
+
+/* ─── HISTORIAL ─── */
+let allHistory=[], customHistDate='';
+function initHistorySection(){
+  document.querySelectorAll('#hist-date-filter .filter-chip').forEach(chip=>{
+    chip.onclick=()=>{
+      document.querySelectorAll('#hist-date-filter .filter-chip').forEach(c=>c.classList.remove('on'));
+      chip.classList.add('on');
+      const days=parseInt(chip.dataset.days);
+      if(days===-1){
+        // Mostrar selector de fecha personalizada
+        const wrap=$('hist-custom-date-wrap');
+        if(wrap) wrap.style.display='block';
+        const inp=$('hist-custom-date');
+        if(inp) inp.focus();
+        return;
+      }
+      const wrap=$('hist-custom-date-wrap'); if(wrap) wrap.style.display='none';
+      customHistDate='';
+      currentHistFilter=days;
+      renderHistory();
+    };
+  });
+  const custD=$('hist-custom-date');
+  if(custD) custD.oninput=()=>{
+    customHistDate=custD.value;
+    currentHistFilter=-1;
+    renderHistory();
+  };
+  const s=$('hist-search'); if(s) s.oninput=renderHistory;
+  loadHistory();
+}
+
+async function loadHistory(){
+  try{
+    const snap=await get(ref(db,'deliveries'));
+    allHistory=Object.values(snap.val()||{}).filter(Boolean).sort((a,b)=>new Date(b.updated_at||0)-new Date(a.updated_at||0));
+    renderHistory();
+  }catch(e){}
+}
+
+function renderHistory(){
+  const tbody=$('hist-tbody'); if(!tbody) return;
+  const q=($('hist-search')?.value||'').toLowerCase();
+  const now=Date.now(), dayMs=86400000;
+  const rows=allHistory.filter(o=>{
+    // Filtro de fecha
+    if(currentHistFilter===-1&&customHistDate){
+      // Fecha personalizada exacta
+      const d=new Date(customHistDate);
+      const dayStart=d.setHours(0,0,0,0);
+      const dayEnd=dayStart+dayMs-1;
+      const ts=new Date(o.updated_at||0).getTime();
+      if(ts<dayStart||ts>dayEnd) return false;
+    } else if(currentHistFilter===0){
+      // Hoy
+      const today=new Date(); today.setHours(0,0,0,0);
+      if(new Date(o.updated_at||0)<today) return false;
+    } else if(currentHistFilter>0){
+      const age=(now-new Date(o.updated_at||0).getTime())/dayMs;
+      if(age>currentHistFilter) return false;
+    }
+    // Filtro de búsqueda
+    if(q&&!`${o.order_id||''} ${o.client_email||''} ${o.device_id||''} ${o.destination_address||''}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if(!rows.length){ tbody.innerHTML=`<tr><td class="lg-td" colspan="7" style="text-align:center;color:var(--txt3)">Sin registros</td></tr>`; return; }
+  tbody.innerHTML=rows.map(o=>{
+    const start=o.created_at?new Date(o.created_at).toLocaleString('es-CO',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+    const end=o.completed_at?new Date(o.completed_at).toLocaleString('es-CO',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'En curso';
+    let dur='—';
+    if(o.created_at&&o.completed_at){
+      const ms=new Date(o.completed_at)-new Date(o.created_at);
+      const h=Math.floor(ms/3600000), m=Math.floor((ms%3600000)/60000);
+      dur=h>0?`${h}h ${m}min`:`${m}min`;
+    }
+    const stClass={in_transit:'sb-transit',completed:'sb-done',pending:'sb-pending'}[o.status]||'sb-pending';
+    const stLabel={in_transit:'EN TRÁNSITO',completed:'ENTREGADO',pending:'PENDIENTE'}[o.status]||o.status||'—';
+    return `<tr class="lg-tr" onclick="showOrderDetail('${o.order_id||''}')">
+      <td class="lg-td">${o.order_id||'—'}</td>
+      <td class="lg-td" style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.client_email||'—'}</td>
+      <td class="lg-td"><span style="font-family:var(--fm);font-size:11px;color:#00d4ff">${o.device_id||'—'}</span></td>
+      <td class="lg-td" style="font-family:var(--fm);font-size:10px">${start}</td>
+      <td class="lg-td" style="font-family:var(--fm);font-size:10px;color:${o.completed_at?'var(--grn)':'var(--txt3)'}">${end}</td>
+      <td class="lg-td" style="font-family:var(--fm)">${dur}</td>
+      <td class="lg-td"><span class="status-badge ${stClass}">${stLabel}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ─── DETALLE DE PEDIDO ─── */
+let currentOrder=null;
+function initOdpPanel(){
+  const cls=$('odp-close'); if(cls) cls.onclick=()=>$('order-detail-panel').classList.remove('show');
+  const odp=$('order-detail-panel'); if(odp) odp.onclick=e=>{ if(e.target===odp) odp.classList.remove('show'); };
+  const trk=$('odp-track-btn'); if(trk) trk.onclick=()=>{
+    if(!currentOrder) return;
+    deviceId=currentOrder.device_id||'device_01';
+    $('order-detail-panel').classList.remove('show');
+    goToMapScreen();
+    startDevice(deviceId);
+    toast('📡 Rastreando '+currentOrder.order_id);
+  };
+  const cpl=$('odp-complete-btn'); if(cpl) cpl.onclick=async()=>{
+    if(!currentOrder?.order_id) return;
+    if(!confirm('¿Marcar este pedido como entregado?')) return;
+    const ts=new Date().toISOString();
+    await set(ref(db,`deliveries/${currentOrder.order_id}/status`),'completed');
+    await set(ref(db,`deliveries/${currentOrder.order_id}/completed_at`),ts);
+    if(currentOrder.client_uid) await set(ref(db,`user_orders/${currentOrder.client_uid}/status`),'completed');
+    await push(ref(db,`delivery_history/${currentOrder.order_id}`),{event:'completed',ts,by:user.uid,details:'Marcado como entregado por el operador'});
+    toast('✅ Pedido marcado como entregado');
+    $('order-detail-panel').classList.remove('show');
+    await loadOrders(); await loadHistory(); await refreshDashboard();
+  };
+}
+
+window.showOrderDetail=async function(orderId){
+  if(!orderId) return;
+  try{
+    const snap=await get(ref(db,`deliveries/${orderId}`));
+    if(!snap.exists()){ toast('❌ Pedido no encontrado'); return; }
+    currentOrder={order_id:orderId,...snap.val()};
+    const o=currentOrder;
+    const modes={plane:'✈️ Avión',car:'🚗 Vehículo',bike:'🏍 Moto',walk:'🚶 A pie'};
+    $('odp-id').textContent=o.order_id||'—';
+    $('odp-client').textContent=o.client_email||o.client_uid||'—';
+    $('odp-gps').textContent=o.device_id||'—';
+    $('odp-dest').textContent=o.destination_address||'—';
+    $('odp-mode').textContent=modes[o.transport_mode]||'🚗 Vehículo';
+    $('odp-start').textContent=o.created_at?new Date(o.created_at).toLocaleString('es-CO'):'—';
+    $('odp-end').textContent=o.completed_at?new Date(o.completed_at).toLocaleString('es-CO'):'En curso';
+    if(o.created_at&&o.completed_at){
+      const ms=new Date(o.completed_at)-new Date(o.created_at);
+      const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000);
+      $('odp-dur').textContent=h>0?`${h}h ${m}min`:`${m}min`;
+    }else $('odp-dur').textContent='En curso';
+    const stLabel={in_transit:'🚛 EN TRÁNSITO',completed:'✅ ENTREGADO',pending:'⏳ PENDIENTE'}[o.status]||o.status||'—';
+    $('odp-status').innerHTML=`<span class="status-badge ${({in_transit:'sb-transit',completed:'sb-done',pending:'sb-pending'})[o.status]||'sb-pending'}">${stLabel}</span>`;
+    $('odp-notes').textContent=o.notes||'Sin notas';
+    // Timeline
+    const histSnap=await get(ref(db,`delivery_history/${orderId}`));
+    const hist=Object.values(histSnap.val()||{}).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+    const tl=$('odp-timeline');
+    if(tl) tl.innerHTML=hist.length?hist.map(h=>`
+      <div class="hist-entry">
+        <div class="hist-dot" style="background:${h.event==='completed'?'var(--grn)':h.event==='created'||h.event==='assigned'?'#00d4ff':'var(--amb)'}"></div>
+        <div style="flex:1"><div class="hist-txt">${{created:'📦 Pedido creado',assigned:'🔗 GPS asignado',completed:'✅ Entregado'}[h.event]||h.event}</div><div style="font-size:10px;color:var(--txt3)">${h.details||''}</div></div>
+        <span class="hist-time">${new Date(h.ts).toLocaleString('es-CO',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span>
+      </div>`).join(''):`<div style="font-size:12px;color:var(--txt3);text-align:center;padding:12px">Sin eventos registrados</div>`;
+    $('order-detail-panel').classList.add('show');
+  }catch(e){ toast('❌ Error cargando pedido: '+e.message); }
+};
+
+/* ─── MAPA DE FLOTA — con filtros avanzados ─── */
+let lgMapDateFilter='today', lgMapSigFilter='all', lgMapSearchQ='', lgMapCustomDate='';
+let lgAllDevices={}, lgAllDeliveries={}, lgAllUsers=[];
+const lgMarkers={};
+
+function initLgMap(){
+  if(lgMap) return;
+  const mapEl=$('lg-map'); if(!mapEl) return;
+  lgMap=L.map('lg-map',{zoomControl:true,attributionControl:false}).setView([4.711,-74.072],11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(lgMap);
+  initLgMapControls();
+  refreshLgMapFull();
+}
+
+function initLgMapControls(){
+  // Filtros de fecha
+  document.querySelectorAll('[data-lgdate]').forEach(btn=>{
+    btn.onclick=()=>{
+      document.querySelectorAll('[data-lgdate]').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      lgMapDateFilter=btn.dataset.lgdate;
+      lgMapCustomDate='';
+      $('lg-map-custom-date').value='';
+      applyLgMapFilters();
+    };
+  });
+  // Fecha personalizada
+  const custDate=$('lg-map-custom-date');
+  if(custDate) custDate.oninput=()=>{
+    lgMapCustomDate=custDate.value;
+    if(lgMapCustomDate){
+      document.querySelectorAll('[data-lgdate]').forEach(b=>b.classList.remove('on'));
+      lgMapDateFilter='custom';
+    }
+    applyLgMapFilters();
+  };
+  // Filtros de señal
+  document.querySelectorAll('[data-lgsig]').forEach(btn=>{
+    btn.onclick=()=>{
+      document.querySelectorAll('[data-lgsig]').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      lgMapSigFilter=btn.dataset.lgsig;
+      applyLgMapFilters();
+    };
+  });
+  // Buscador
+  const srch=$('lg-map-search');
+  if(srch) srch.oninput=()=>{ lgMapSearchQ=srch.value.toLowerCase().trim(); applyLgMapFilters(); };
+  // Refresh
+  const rb=$('lg-map-refresh-btn');
+  if(rb) rb.onclick=()=>{ rb.textContent='↻ Cargando...'; rb.disabled=true; refreshLgMapFull().finally(()=>{ rb.textContent='↻ ACTUALIZAR'; rb.disabled=false; }); };
+}
+
+async function refreshLgMapFull(){
+  if(!lgMap) return;
+  try{
+    const [devSnap, delSnap, usrSnap]=await Promise.all([
+      get(ref(db,'devices')), get(ref(db,'deliveries')), get(ref(db,'users'))
+    ]);
+    lgAllDevices=devSnap.val()||{};
+    lgAllDeliveries=delSnap.val()||{};
+    lgAllUsers=Object.values(usrSnap.val()||{});
+    applyLgMapFilters();
+    setTimeout(()=>lgMap?.invalidateSize(),200);
+  }catch(e){ console.warn('Fleet map error:',e); }
+}
+
+function applyLgMapFilters(){
+  if(!lgMap) return;
+  const now=Date.now();
+
+  // Determinar rango de fecha
+  let dateFrom=0;
+  if(lgMapDateFilter==='today'){
+    const d=new Date(); d.setHours(0,0,0,0); dateFrom=d.getTime();
+  } else if(lgMapDateFilter==='yesterday'){
+    const d=new Date(); d.setDate(d.getDate()-1); d.setHours(0,0,0,0);
+    const d2=new Date(d); d2.setHours(23,59,59,999);
+    dateFrom=d.getTime(); // usamos variable extra para rango
+    window._lgYesterdayTo=d2.getTime();
+  } else if(lgMapDateFilter==='7d'){
+    dateFrom=now-7*86400000;
+  } else if(lgMapDateFilter==='custom'&&lgMapCustomDate){
+    const d=new Date(lgMapCustomDate); d.setHours(0,0,0,0);
+    dateFrom=d.getTime();
+    window._lgYesterdayTo=d.getTime()+86400000-1;
+  } else {
+    dateFrom=0; // 'all'
+  }
+
+  // Construir mapa de cliente por device_id para búsqueda rápida
+  const deviceToClient={};
+  Object.values(lgAllDeliveries).forEach(d=>{
+    if(d?.device_id&&(d?.client_email||d?.client_uid)){
+      deviceToClient[d.device_id]={email:d.client_email||'',orderId:d.order_id||''};
+    }
+  });
+  const uidToUser={};
+  lgAllUsers.forEach(u=>{ if(u?.uid) uidToUser[u.uid]=u; });
+
+  let visibleCount=0;
+  // Ocultar todos primero
+  Object.values(lgMarkers).forEach(m=>{ if(lgMap.hasLayer(m)) lgMap.removeLayer(m); });
+
+  for(const[id, val] of Object.entries(lgAllDevices)){
+    const loc=val?.location;
+    if(!loc?.lat||!loc?.lng) continue;
+
+    const ts=new Date(loc.timestamp||0).getTime();
+    const age=(now-ts)/1000; // en segundos
+
+    // Filtro de señal
+    const sigStatus=age<60?'active':age<300?'moderate':'inactive';
+    if(lgMapSigFilter!=='all'&&sigStatus!==lgMapSigFilter) continue;
+
+    // Filtro de fecha por timestamp del GPS
+    if(lgMapDateFilter==='yesterday'||lgMapDateFilter==='custom'){
+      const to=window._lgYesterdayTo||now;
+      if(ts<dateFrom||ts>to) continue;
+    } else if(dateFrom>0&&ts<dateFrom) continue;
+
+    // Filtro de búsqueda (GPS id, email cliente, teléfono)
+    if(lgMapSearchQ){
+      const clientInfo=deviceToClient[id];
+      // Buscar también en usuarios por teléfono/email
+      let clientPhone='';
+      if(clientInfo?.email){
+        const u=lgAllUsers.find(u=>u?.email===clientInfo.email);
+        clientPhone=u?.phone||'';
+      }
+      const searchStr=`${id} ${clientInfo?.email||''} ${clientInfo?.orderId||''} ${clientPhone}`.toLowerCase();
+      if(!searchStr.includes(lgMapSearchQ)) continue;
+    }
+
+    // Color según estado
+    const color=sigStatus==='active'?'#00ff88':sigStatus==='moderate'?'#ffaa00':'#ff3355';
+    const clientInfo=deviceToClient[id];
+    const spdKmh=((loc.speed||0)*3.6).toFixed(0);
+    const timeStr=new Date(ts).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+    const popupHtml=`<b style="color:#00d4ff;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px">📡 ${id}</b><br>`+
+      `<span style="color:#7a9cc4">Vel: <b style="color:#e8f4ff">${spdKmh} km/h</b><br>`+
+      `Señal: <b style="color:${color}">${sigStatus==='active'?'Activa':sigStatus==='moderate'?'Moderada':'Sin señal'}</b><br>`+
+      `${clientInfo?`Pedido: <b style="color:#e8f4ff">${clientInfo.orderId}</b><br>Cliente: <b style="color:#e8f4ff">${clientInfo.email.slice(0,25)}</b><br>`:'Sin pedido asignado<br>'}`+
+      `Última señal: <b style="color:#e8f4ff">${timeStr}</b></span>`;
+
+    if(lgMarkers[id]){
+      lgMarkers[id].setLatLng([loc.lat,loc.lng]).setIcon(mkPin(color,34));
+      lgMarkers[id].setPopupContent(popupHtml);
+      lgMap.addLayer(lgMarkers[id]);
+    } else {
+      lgMarkers[id]=L.marker([loc.lat,loc.lng],{icon:mkPin(color,34)}).addTo(lgMap);
+      lgMarkers[id].bindPopup(popupHtml);
+    }
+    visibleCount++;
+  }
+
+  const mc=$('lg-map-count'); if(mc) mc.textContent=visibleCount;
+  const fi=$('lg-map-filter-info');
+  if(fi){
+    const dateLabel={today:'Hoy',yesterday:'Ayer','7d':'7 días','all':'Todo','custom':lgMapCustomDate||'Fecha personalizada'}[lgMapDateFilter]||lgMapDateFilter;
+    fi.textContent=`${dateLabel}${lgMapSearchQ?' · "'+lgMapSearchQ+'"':''}${lgMapSigFilter!=='all'?' · '+lgMapSigFilter:''}`;
+  }
+}
 
 /* ══════════════════════════════════════
    NOTAS DE ENTREGA — Persisten en localStorage
